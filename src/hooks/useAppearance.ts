@@ -3,6 +3,7 @@ import { call, errorText, setUiScale } from '../api';
 import { applyUi, normalizeUi } from '../appearance';
 import type { InitData, Settings, Ui } from '../types';
 import type { Toast } from '../components/common';
+import { t } from '../i18n';
 
 /**
  * The window's appearance: the saved ui settings, the visual editor's draft, panel layout changes
@@ -48,7 +49,9 @@ export function useAppearance(init: InitData | null, setInit: Dispatch<SetStateA
         setSafeUi((s) => {
           toast(
             s ? 'info' : 'warn',
-            s ? 'Custom CSS and element styles are back on.' : 'Safe appearance: custom CSS and element styles are off until Ctrl+Alt+Shift+0 or a restart.',
+            s
+              ? t('Custom CSS and element styles are back on.')
+              : t('Safe appearance: custom CSS and element styles are off until Ctrl+Alt+Shift+0 or a restart.'),
           );
           return !s;
         });

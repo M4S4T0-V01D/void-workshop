@@ -23,6 +23,7 @@ import { formatTokens } from './common';
 import { MODE_LABEL } from '../timeline';
 import { call, errorText } from '../api';
 import { MAX_PICTURES, isPicture, preparePicture } from '../pictures';
+import { locale, msg, t } from '../i18n';
 
 /** A picture waiting to go with the next message. */
 interface Attachment {
@@ -34,10 +35,10 @@ interface Attachment {
 }
 
 export const MODES: Array<{ id: AgentMode; icon: ReactNode; hint: string }> = [
-  { id: 'ask', icon: <Hand size={14} />, hint: 'Approve every file change and command' },
-  { id: 'auto-edit', icon: <FilePen size={14} />, hint: 'File changes apply without asking; commands still ask' },
-  { id: 'auto', icon: <Zap size={14} />, hint: 'Changes and sandboxed commands run without asking. Blocked commands stay blocked' },
-  { id: 'plan', icon: <ClipboardList size={14} />, hint: 'Read-only: explore and propose a plan for you to approve' },
+  { id: 'ask', icon: <Hand size={14} />, hint: msg('Approve every file change and command') },
+  { id: 'auto-edit', icon: <FilePen size={14} />, hint: msg('File changes apply without asking; commands still ask') },
+  { id: 'auto', icon: <Zap size={14} />, hint: msg('Changes and sandboxed commands run without asking. Blocked commands stay blocked') },
+  { id: 'plan', icon: <ClipboardList size={14} />, hint: msg('Read-only: explore and propose a plan for you to approve') },
 ];
 
 /** The Claude plan / API key switch. `using` differs from `value` while a fallback is in effect. */
@@ -58,12 +59,12 @@ export interface Tuning {
 }
 
 const EFFORTS: Array<{ id: Effort | null; label: string; hint: string }> = [
-  { id: null, label: 'Default', hint: "The model's default" },
-  { id: 'low', label: 'Low', hint: 'Fastest, fewest thinking tokens' },
-  { id: 'medium', label: 'Medium', hint: 'Good for routine edits' },
-  { id: 'high', label: 'High', hint: 'More thinking for harder problems' },
-  { id: 'xhigh', label: 'Extra high', hint: 'Slower; for tricky bugs and design' },
-  { id: 'max', label: 'Max', hint: 'Slowest and most tokens' },
+  { id: null, label: msg('Default'), hint: msg("The model's default") },
+  { id: 'low', label: msg('Low'), hint: msg('Fastest, fewest thinking tokens') },
+  { id: 'medium', label: msg('Medium'), hint: msg('Good for routine edits') },
+  { id: 'high', label: msg('High'), hint: msg('More thinking for harder problems') },
+  { id: 'xhigh', label: msg('Extra high'), hint: msg('Slower; for tricky bugs and design') },
+  { id: 'max', label: msg('Max'), hint: msg('Slowest and most tokens') },
 ];
 
 const AUTH_ICON: Record<AnthropicAuth, ReactNode> = { subscription: <CircleUser size={13} />, 'api-key': <KeyRound size={13} /> };
@@ -165,7 +166,7 @@ export function Composer({
     const room = MAX_PICTURES - pictures.length;
     for (const file of files.filter(isPicture).slice(0, Math.max(0, room))) {
       const key = ++nextKey.current;
-      setPictures((ps) => [...ps, { key, name: file.name || 'Pasted picture', preview: URL.createObjectURL(file), imageId: null, error: null }]);
+      setPictures((ps) => [...ps, { key, name: file.name || t('Pasted picture'), preview: URL.createObjectURL(file), imageId: null, error: null }]);
       preparePicture(file)
         .then((data) => call<{ imageId: string }>('image.upload', { data }))
         .then(
@@ -187,7 +188,10 @@ export function Composer({
     const t = text.trim();
     if (!t || busy || uploading || (running && !canQueue) || blocked) return;
     setBusy(true);
-    const ok = await onSubmit(t, pictures.flatMap((p) => (p.imageId ? [p.imageId] : [])));
+    const ok = await onSubmit(
+      t,
+      pictures.flatMap((p) => (p.imageId ? [p.imageId] : [])),
+    );
     setBusy(false);
     if (ok) {
       setText('');
@@ -197,7 +201,7 @@ export function Composer({
   };
 
   const current = MODES.find((m) => m.id === mode)!;
-  const modelName = models.find((m) => m.id === model)?.displayName ?? model ?? 'Choose model';
+  const modelName = models.find((m) => m.id === model)?.displayName ?? model ?? t('Choose model');
 
   return (
     <div
@@ -221,7 +225,7 @@ export function Composer({
             <div key={p.key} className={`composer-picture${p.error ? ' bad' : ''}`} title={p.error ?? p.name}>
               <img src={p.preview} alt={p.name} />
               {!p.imageId && !p.error && <Loader2 size={14} className="spin" />}
-              <button className="btn small ghost" onClick={() => dropPicture(p.key)} title="Remove" aria-label={`Remove ${p.name}`}>
+              <button className="btn small ghost" onClick={() => dropPicture(p.key)} title={t('Remove')} aria-label={t('Remove {name}', { name: p.name })}>
                 <X size={11} />
               </button>
             </div>
@@ -255,11 +259,11 @@ export function Composer({
       />
       <div className="composer-bar">
         <Dropdown
-          title="Mode (Shift+Tab to cycle)"
+          title={t('Mode (Shift+Tab to cycle)')}
           className={`mode-pill mode-${mode}`}
           trigger={
             <>
-              {current.icon} {MODE_LABEL[mode]}
+              {current.icon} {t(MODE_LABEL[mode])}
             </>
           }
         >
@@ -275,8 +279,8 @@ export function Composer({
               >
                 <span className={`mode-icon mode-${m.id}`}>{m.icon}</span>
                 <span className="grow">
-                  <span className="label">{MODE_LABEL[m.id]}</span>
-                  <span className="sub">{m.hint}</span>
+                  <span className="label">{t(MODE_LABEL[m.id])}</span>
+                  <span className="sub">{t(m.hint)}</span>
                 </span>
                 {m.id === mode && <Check size={14} />}
               </button>
@@ -284,7 +288,7 @@ export function Composer({
           }
         </Dropdown>
         <Dropdown
-          title="Model"
+          title={t('Model')}
           trigger={
             <>
               <Sparkles size={13} /> {modelName}
@@ -293,7 +297,7 @@ export function Composer({
         >
           {(close) => (
             <>
-              {models.length === 0 && <div className="sub pad">No models loaded. Verify your key in Settings.</div>}
+              {models.length === 0 && <div className="sub pad">{t('No models loaded. Verify your key in Settings.')}</div>}
               {models.map((m) => (
                 <button
                   key={m.id}
@@ -317,7 +321,7 @@ export function Composer({
                   onManageModels();
                 }}
               >
-                Model settings…
+                {t('Model settings…')}
               </button>
             </>
           )}
@@ -326,14 +330,17 @@ export function Composer({
           <Dropdown
             title={
               account.using && account.using !== account.value
-                ? `Using ${account.options.find((o) => o.id === account.using)?.label} while ${account.options.find((o) => o.id === account.value)?.label} is unavailable`
-                : 'Pay with your Claude plan or your API key'
+                ? t('Using {using} while {chosen} is unavailable', {
+                    using: account.options.find((o) => o.id === account.using)?.label ?? '',
+                    chosen: account.options.find((o) => o.id === account.value)?.label ?? '',
+                  })
+                : t('Pay with your Claude plan or your API key')
             }
             className={account.using && account.using !== account.value ? 'warn' : ''}
             trigger={
               <>
                 {AUTH_ICON[account.using ?? account.value]} {account.options.find((o) => o.id === (account.using ?? account.value))?.label}
-                {account.using && account.using !== account.value && ' (fallback)'}
+                {account.using && account.using !== account.value && ` ${t('(fallback)')}`}
               </>
             }
           >
@@ -363,7 +370,7 @@ export function Composer({
                     account.onManage();
                   }}
                 >
-                  Sign-in &amp; key settings…
+                  {t('Sign-in & key settings…')}
                 </button>
               </>
             )}
@@ -371,10 +378,10 @@ export function Composer({
         )}
         {tuning && (
           <Dropdown
-            title="Effort: how much the model thinks (applies immediately)"
+            title={t('Effort: how much the model thinks (applies immediately)')}
             trigger={
               <>
-                <Brain size={13} /> {EFFORTS.find((e) => e.id === tuning.effort)?.label ?? 'Default'}
+                <Brain size={13} /> {t(EFFORTS.find((e) => e.id === tuning.effort)?.label ?? 'Default')}
               </>
             }
           >
@@ -389,8 +396,8 @@ export function Composer({
                   }}
                 >
                   <span className="grow">
-                    <span className="label">{e.label}</span>
-                    <span className="sub">{e.hint}</span>
+                    <span className="label">{t(e.label)}</span>
+                    <span className="sub">{t(e.hint)}</span>
                   </span>
                   {e.id === tuning.effort && <Check size={14} />}
                 </button>
@@ -404,12 +411,12 @@ export function Composer({
             className={`pill ${tuning.fast ? 'warn' : ''}`}
             title={
               tuning.fast
-                ? 'Fast mode is on: faster output at a higher price (extra usage on a Claude plan). Click to turn off.'
-                : 'Fast mode: faster output at a higher price (extra usage on a Claude plan)'
+                ? t('Fast mode is on: faster output at a higher price (extra usage on a Claude plan). Click to turn off.')
+                : t('Fast mode: faster output at a higher price (extra usage on a Claude plan)')
             }
             onClick={() => tuning.onFastChange(!tuning.fast)}
           >
-            <Rabbit size={13} /> Fast{tuning.fast ? ' on' : ''}
+            <Rabbit size={13} /> {tuning.fast ? t('Fast on') : t('Fast')}
           </button>
         )}
         <span className="hint grow">{hint}</span>
@@ -418,16 +425,17 @@ export function Composer({
             type="button"
             className={`pill ctx ${context.tokens / context.max > 0.8 ? 'warn' : ''}`}
             disabled={!onCompact}
-            title={`Context: ${context.tokens.toLocaleString()} of ${context.max.toLocaleString()} tokens. Every step re-sends it, so a smaller context is cheaper and faster. ${
-              onCompact ? 'Click to compact (summarise) the conversation now.' : 'Compacting is possible when the agent is idle.'
-            }`}
+            title={`${t('Context: {used} of {max} tokens. Every step re-sends it, so a smaller context is cheaper and faster.', {
+              used: context.tokens.toLocaleString(locale()),
+              max: context.max.toLocaleString(locale()),
+            })} ${onCompact ? t('Click to compact (summarise) the conversation now.') : t('Compacting is possible when the agent is idle.')}`}
             onClick={() => onCompact?.()}
           >
             <Gauge size={13} /> {formatTokens(context.tokens)} / {formatTokens(context.max)}
           </button>
         )}
         {running && (
-          <button className="send stop" onClick={onStop} title="Stop the agent">
+          <button className="send stop" onClick={onStop} title={t('Stop the agent')}>
             <Square size={13} fill="currentColor" />
           </button>
         )}
@@ -436,7 +444,7 @@ export function Composer({
             className="send"
             onClick={() => void submit()}
             disabled={!text.trim() || busy || blocked}
-            title={running ? 'Queue: sent when the agent finishes (Enter)' : 'Send (Enter)'}
+            title={running ? t('Queue: sent when the agent finishes (Enter)') : t('Send (Enter)')}
           >
             {busy ? <Loader2 size={15} className="spin" /> : running ? <ListPlus size={16} /> : <ArrowUp size={16} />}
           </button>

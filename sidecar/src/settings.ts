@@ -215,6 +215,11 @@ export const SettingsSchema = z.object({
   autoPublish: z.boolean(),
   commandTimeoutSec: z.number().int().min(5).max(3600),
   commandOutputLimitKb: z.number().int().min(16).max(4096),
+  /** Interface language code (one of the bundled translations, see src/i18n); empty follows the system language. */
+  language: z
+    .string()
+    .max(10)
+    .regex(/^(?:[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})?)?$/, 'A language code looks like de or pt-BR.'),
   themeId: z.string().max(40),
   customThemes: z.array(ThemeSchema).max(20),
   /** Layout, text and per-element styles from the visual editor (desktop only; the phone can't change it). */
@@ -276,6 +281,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoPublish: true,
   commandTimeoutSec: 600,
   commandOutputLimitKb: 512,
+  language: '',
   themeId: 'void',
   customThemes: [],
   ui: UiSchema.parse({}),

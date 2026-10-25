@@ -7,6 +7,7 @@ import { CodeEditor, type CodeEditorHandle } from './CodeEditor';
 import { Callout, ConfirmDialog, DiffView, Modal, type Toast } from './common';
 import { GithubMark } from './ServicePanels';
 import { ServiceViewPane } from './ServiceViews';
+import { locale, t, tn } from '../i18n';
 
 export const DEFAULT_EDITOR: EditorSettings = { fontSize: 13, tabSize: 2, wordWrap: false };
 
@@ -93,7 +94,11 @@ export function EditorArea({
 
   const addTab = useCallback(
     (projectRoot: string, v: FileView) => {
-      if (v.binary) return toast('info', `${v.rel} is a binary file (${v.size} bytes); it is not opened.`);
+      if (v.binary)
+        return toast(
+          'info',
+          tn(v.size, '{name} is a binary file ({n} byte); it is not opened.', '{name} is a binary file ({n} bytes); it is not opened.', { name: v.rel }),
+        );
       const key = tabKey(projectRoot, v.rel);
       const tab: Tab = {
         key,
@@ -102,7 +107,9 @@ export function EditorArea({
         initial: v.content ?? '',
         hash: v.hash,
         readOnly: v.truncated,
-        note: v.truncated ? `Showing the first 1 MB of ${Math.round(v.size / 1024)} KB; files this large open read-only.` : null,
+        note: v.truncated
+          ? t('Showing the first 1 MB of {size} KB; files this large open read-only.', { size: Math.round(v.size / 1024).toLocaleString(locale()) })
+          : null,
         sensitive: v.sensitive,
         saveOk: false,
         dirty: false,
@@ -123,7 +130,7 @@ export function EditorArea({
         if (v.sensitive && v.content === null) return setConfirmOpen({ rel, sensitive: v.sensitive });
         addTab(root, v);
       } catch (err) {
-        toast('error', `Could not open ${rel}: ${errorText(err)}`);
+        toast('error', t('Could not open {name}: {error}', { name: rel, error: errorText(err) }));
       }
     },
     [root, addTab, toast],
@@ -218,7 +225,7 @@ export function EditorArea({
     const tab = tabsRef.current.find((t) => t.key === key);
     const ed = editors.current.get(key);
     if (!tab || !ed || tab.readOnly || tab.saving) return;
-    if (tab.disk) return toast('warn', `${tab.rel} changed on disk. Reload it, or keep your version, before saving.`);
+    if (tab.disk) return toast('warn', t('{name} changed on disk. Reload it, or keep your version, before saving.', { name: tab.rel }));
     const allowSensitive = tab.saveOk || confirmed;
     if (tab.sensitive && !allowSensitive) return setConfirmSave(key);
     const content = ed.text();
@@ -231,11 +238,11 @@ export function EditorArea({
     } catch (err) {
       update(key, { saving: false });
       if ((err as { code?: string } | null)?.code === 'conflict') {
-        toast('warn', `${tab.rel} changed on disk since you opened it. Nothing was saved.`);
+        toast('warn', t('{name} changed on disk since you opened it. Nothing was saved.', { name: tab.rel }));
         tabsRef.current = tabsRef.current.map((t) => (t.key === key ? { ...t, saving: false } : t));
         void checkTab(key);
       } else {
-        toast('error', `Could not save ${tab.rel}: ${errorText(err)}`);
+        toast('error', t('Could not save {name}: {error}', { name: tab.rel, error: errorText(err) }));
       }
     }
   };
@@ -246,7 +253,7 @@ export function EditorArea({
     if (d.kind === 'deleted') return close(tab.key, true);
     if (d.content === null) {
       close(tab.key, true);
-      return toast('info', `${tab.rel} is no longer a text file; its tab was closed.`);
+      return toast('info', t('{name} is no longer a text file; its tab was closed.', { name: tab.rel }));
     }
     editors.current.get(tab.key)?.replace(d.content);
     update(tab.key, { hash: d.hash, disk: null });
@@ -262,7 +269,7 @@ export function EditorArea({
   const diffTab = tabs.find((t) => t.key === diffFor);
   const diffText =
     diffTab?.disk?.kind === 'changed' && diffTab.disk.content !== null
-      ? createTwoFilesPatch(diffTab.rel, diffTab.rel, diffTab.disk.content, editors.current.get(diffTab.key)?.text() ?? '', 'on disk', 'your edits')
+      ? createTwoFilesPatch(diffTab.rel, diffTab.rel, diffTab.disk.content, editors.current.get(diffTab.key)?.text() ?? '', t('on disk'), t('your edits'))
       : null;
 
   return (
@@ -270,30 +277,30 @@ export function EditorArea({
       {allVisible.length > 0 && (
         <div className="tabs editor-tabs" role="tablist">
           <button role="tab" aria-selected={current === CHAT} className={`tab ${current === CHAT ? 'active' : ''}`} onClick={() => activate(CHAT)}>
-            <MessagesSquare size={13} /> Conversation
+            <MessagesSquare size={13} /> {t('Conversation')}
           </button>
-          {visible.map((t) => (
+          {visible.map((tab) => (
             <div
-              key={t.key}
+              key={tab.key}
               role="tab"
-              aria-selected={current === t.key}
-              className={`tab file-tab ${current === t.key ? 'active' : ''}`}
-              title={t.rel}
-              onClick={() => activate(t.key)}
-              onAuxClick={(e) => e.button === 1 && close(t.key)}
+              aria-selected={current === tab.key}
+              className={`tab file-tab ${current === tab.key ? 'active' : ''}`}
+              title={tab.rel}
+              onClick={() => activate(tab.key)}
+              onAuxClick={(e) => e.button === 1 && close(tab.key)}
             >
               <FileCode2 size={13} />
-              <span className="name">{baseName(t.rel)}</span>
-              {t.disk && <span className="tab-flag" title="Changed on disk" />}
+              <span className="name">{baseName(tab.rel)}</span>
+              {tab.disk && <span className="tab-flag" title={t('Changed on disk')} />}
               <button
-                className={`icon-btn tab-close ${t.dirty ? 'dirty' : ''}`}
-                aria-label={t.dirty ? `Close ${t.rel} (unsaved)` : `Close ${t.rel}`}
+                className={`icon-btn tab-close ${tab.dirty ? 'dirty' : ''}`}
+                aria-label={tab.dirty ? t('Close {name} (unsaved)', { name: tab.rel }) : t('Close {name}', { name: tab.rel })}
                 onClick={(e) => {
                   e.stopPropagation();
-                  close(t.key);
+                  close(tab.key);
                 }}
               >
-                {t.dirty ? <Circle size={9} fill="currentColor" /> : <X size={12} />}
+                {tab.dirty ? <Circle size={9} fill="currentColor" /> : <X size={12} />}
               </button>
             </div>
           ))}
@@ -311,7 +318,7 @@ export function EditorArea({
               <span className="name">{v.title}</span>
               <button
                 className="icon-btn tab-close"
-                aria-label={`Close ${v.title}`}
+                aria-label={t('Close {name}', { name: v.title })}
                 onClick={(e) => {
                   e.stopPropagation();
                   close(v.key);
@@ -326,48 +333,50 @@ export function EditorArea({
       <div className="center-pane" hidden={current !== CHAT}>
         {children}
       </div>
-      {tabs.map((t) => (
-        <div key={t.key} className="center-pane editor-pane" hidden={current !== t.key}>
+      {tabs.map((tab) => (
+        <div key={tab.key} className="center-pane editor-pane" hidden={current !== tab.key}>
           <div className="editor-bar">
-            <span className="path">{t.rel}</span>
+            <span className="path">{tab.rel}</span>
             <span className="spacer" />
-            <span className="muted">{t.saving ? 'Saving…' : t.readOnly ? 'Read-only' : t.dirty ? 'Unsaved' : ''}</span>
-            {!t.readOnly && (
-              <button className="btn small" onClick={() => void save(t.key)} disabled={t.saving || !t.dirty} title="Save (Ctrl+S)">
-                <Save size={13} /> Save
+            <span className="muted">{tab.saving ? t('Saving…') : tab.readOnly ? t('Read-only') : tab.dirty ? t('Unsaved') : ''}</span>
+            {!tab.readOnly && (
+              <button className="btn small" onClick={() => void save(tab.key)} disabled={tab.saving || !tab.dirty} title={t('Save (Ctrl+S)')}>
+                <Save size={13} /> {t('Save')}
               </button>
             )}
           </div>
-          {t.note && <Callout tone="warn">{t.note}</Callout>}
-          {t.disk && (
+          {tab.note && <Callout tone="warn">{tab.note}</Callout>}
+          {tab.disk && (
             <div className="editor-banner">
               <Callout tone="warn">
-                {t.disk.kind === 'deleted' ? `${t.rel} was deleted on disk.` : `${t.rel} changed on disk (perhaps by the agent) while you had unsaved edits.`}
+                {tab.disk.kind === 'deleted'
+                  ? t('{name} was deleted on disk.', { name: tab.rel })
+                  : t('{name} changed on disk (perhaps by the agent) while you had unsaved edits.', { name: tab.rel })}
               </Callout>
               <div className="actions">
-                <button className="btn small" onClick={() => reloadFromDisk(t)}>
-                  {t.disk.kind === 'deleted' ? 'Close tab' : 'Reload from disk'}
+                <button className="btn small" onClick={() => reloadFromDisk(tab)}>
+                  {tab.disk.kind === 'deleted' ? t('Close tab') : t('Reload from disk')}
                 </button>
-                {t.disk.kind === 'changed' && t.disk.content !== null && (
-                  <button className="btn small" onClick={() => setDiffFor(t.key)}>
-                    Show diff
+                {tab.disk.kind === 'changed' && tab.disk.content !== null && (
+                  <button className="btn small" onClick={() => setDiffFor(tab.key)}>
+                    {t('Show diff')}
                   </button>
                 )}
-                <button className="btn small" onClick={() => keepMine(t)}>
-                  {t.disk.kind === 'deleted' ? 'Keep editing (save recreates it)' : 'Keep mine'}
+                <button className="btn small" onClick={() => keepMine(tab)}>
+                  {tab.disk.kind === 'deleted' ? t('Keep editing (save recreates it)') : t('Keep mine')}
                 </button>
               </div>
             </div>
           )}
           <CodeEditor
-            rel={t.rel}
-            initial={t.initial}
-            readOnly={t.readOnly}
+            rel={tab.rel}
+            initial={tab.initial}
+            readOnly={tab.readOnly}
             settings={editorSettings}
-            onDirty={(dirty) => update(t.key, { dirty })}
-            onSave={() => void save(t.key)}
+            onDirty={(dirty) => update(tab.key, { dirty })}
+            onSave={() => void save(tab.key)}
             handle={(h) => {
-              if (h) editors.current.set(t.key, h);
+              if (h) editors.current.set(tab.key, h);
             }}
           />
         </div>
@@ -380,8 +389,8 @@ export function EditorArea({
 
       {confirmOpen && (
         <ConfirmDialog
-          title="Open a sensitive file?"
-          confirmLabel="Show contents"
+          title={t('Open a sensitive file?')}
+          confirmLabel={t('Show contents')}
           onCancel={() => setConfirmOpen(null)}
           onConfirm={() => {
             const rel = confirmOpen.rel;
@@ -389,13 +398,16 @@ export function EditorArea({
             void read(rel, true);
           }}
         >
-          {confirmOpen.rel} looks sensitive ({confirmOpen.sensitive}). Opening it here shows its contents in this window; it is not sent to the agent.
+          {t('{name} looks sensitive ({reason}). Opening it here shows its contents in this window; it is not sent to the agent.', {
+            name: confirmOpen.rel,
+            reason: confirmOpen.sensitive,
+          })}
         </ConfirmDialog>
       )}
       {confirmSave && (
         <ConfirmDialog
-          title="Save a sensitive file?"
-          confirmLabel="Save"
+          title={t('Save a sensitive file?')}
+          confirmLabel={t('Save')}
           onCancel={() => setConfirmSave(null)}
           onConfirm={() => {
             const key = confirmSave;
@@ -403,13 +415,16 @@ export function EditorArea({
             void save(key, true);
           }}
         >
-          {tabs.find((t) => t.key === confirmSave)?.rel} looks sensitive ({tabs.find((t) => t.key === confirmSave)?.sensitive}). Save your changes to it?
+          {t('{name} looks sensitive ({reason}). Save your changes to it?', {
+            name: tabs.find((x) => x.key === confirmSave)?.rel ?? '',
+            reason: tabs.find((x) => x.key === confirmSave)?.sensitive ?? '',
+          })}
         </ConfirmDialog>
       )}
       {confirmClose && (
         <ConfirmDialog
-          title="Discard unsaved changes?"
-          confirmLabel="Discard"
+          title={t('Discard unsaved changes?')}
+          confirmLabel={t('Discard')}
           danger
           onCancel={() => setConfirmClose(null)}
           onConfirm={() => {
@@ -418,11 +433,11 @@ export function EditorArea({
             close(key, true);
           }}
         >
-          {tabs.find((t) => t.key === confirmClose)?.rel} has changes that are not saved.
+          {t('{name} has changes that are not saved.', { name: tabs.find((x) => x.key === confirmClose)?.rel ?? '' })}
         </ConfirmDialog>
       )}
       {diffTab && diffText !== null && (
-        <Modal title={`${diffTab.rel}: disk → your edits`} wide onClose={() => setDiffFor(null)}>
+        <Modal title={t('{name}: disk → your edits', { name: diffTab.rel })} wide onClose={() => setDiffFor(null)}>
           <DiffView diff={diffText} maxHeight={520} />
         </Modal>
       )}

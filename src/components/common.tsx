@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { AlertTriangle, CheckCircle2, Info, X, XCircle } from 'lucide-react';
 import type { FileChangeStatus, TaskState } from '../types';
+import { locale, msg, t, tn } from '../i18n';
 
 export function formatUsd(v: number | null | undefined): string {
   const n = v ?? 0;
@@ -16,55 +17,55 @@ export function formatTokens(n: number): string {
 
 export function timeAgo(ts: number): string {
   const s = Math.round((Date.now() - ts) / 1000);
-  if (s < 60) return 'just now';
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
-  return new Date(ts).toLocaleDateString();
+  if (s < 60) return t('just now');
+  if (s < 3600) return tn(Math.floor(s / 60), '{n}m ago', '{n}m ago');
+  if (s < 86400) return tn(Math.floor(s / 3600), '{n}h ago', '{n}h ago');
+  return new Date(ts).toLocaleDateString(locale());
 }
 
 const STATE_LABEL: Record<TaskState, [string, string]> = {
-  planning: ['Planning', 'cyan'],
-  'awaiting-plan-approval': ['Plan ready', 'accent'],
-  executing: ['Working', 'cyan'],
-  idle: ['Waiting for you', 'accent'],
-  completed: ['Completed', 'ok'],
-  cancelled: ['Cancelled', ''],
-  failed: ['Failed', 'bad'],
-  'stopped-budget': ['Limit reached', 'warn'],
-  'stopped-billing': ['Billing stop', 'bad'],
-  'stopped-limit': ['Plan limit', 'warn'],
-  interrupted: ['Interrupted', 'warn'],
+  planning: [msg('Planning'), 'cyan'],
+  'awaiting-plan-approval': [msg('Plan ready'), 'accent'],
+  executing: [msg('Working'), 'cyan'],
+  idle: [msg('Waiting for you'), 'accent'],
+  completed: [msg('Completed'), 'ok'],
+  cancelled: [msg('Cancelled'), ''],
+  failed: [msg('Failed'), 'bad'],
+  'stopped-budget': [msg('Limit reached'), 'warn'],
+  'stopped-billing': [msg('Billing stop'), 'bad'],
+  'stopped-limit': [msg('Plan limit'), 'warn'],
+  interrupted: [msg('Interrupted'), 'warn'],
 };
 
 export function StateBadge({ state }: { state: TaskState }) {
   const [label, tone] = STATE_LABEL[state] ?? [state, ''];
-  return <span className={`chip ${tone}`}>{label}</span>;
+  return <span className={`chip ${tone}`}>{t(label)}</span>;
 }
 
 export const ACTIVE: TaskState[] = ['planning', 'awaiting-plan-approval', 'executing'];
 export const RUNNING: TaskState[] = ['planning', 'executing'];
 
 const CHANGE_LABEL: Record<FileChangeStatus, [string, string, string]> = {
-  proposed: ['Proposed', 'cyan', 'Approved for writing; not yet applied'],
-  applied: ['Applied', 'accent', 'Written to disk; not yet tested or reviewed'],
-  tested: ['Tested', 'ok', 'A build/test/lint command succeeded after this change'],
-  accepted: ['Accepted', 'ok', 'You kept this change'],
-  rejected: ['Rejected', '', 'Restored to the original content'],
-  committed: ['Committed', 'ok', 'Included in a Git commit'],
-  conflict: ['Conflict', 'bad', 'Changed outside VOID Workshop after the agent wrote it'],
+  proposed: [msg('Proposed'), 'cyan', msg('Approved for writing; not yet applied')],
+  applied: [msg('Applied'), 'accent', msg('Written to disk; not yet tested or reviewed')],
+  tested: [msg('Tested'), 'ok', msg('A build/test/lint command succeeded after this change')],
+  accepted: [msg('Accepted'), 'ok', msg('You kept this change')],
+  rejected: [msg('Rejected'), '', msg('Restored to the original content')],
+  committed: [msg('Committed'), 'ok', msg('Included in a Git commit')],
+  conflict: [msg('Conflict'), 'bad', msg('Changed outside VOID Workshop after the agent wrote it')],
 };
 
 export function ChangeBadge({ status }: { status: FileChangeStatus }) {
   const [label, tone, title] = CHANGE_LABEL[status] ?? [status, '', ''];
   return (
-    <span className={`chip ${tone}`} title={title}>
-      {label}
+    <span className={`chip ${tone}`} title={title && t(title)}>
+      {t(label)}
     </span>
   );
 }
 
 export function changeLegend(): Array<[FileChangeStatus, string]> {
-  return (Object.keys(CHANGE_LABEL) as FileChangeStatus[]).map((s) => [s, CHANGE_LABEL[s][2]]);
+  return (Object.keys(CHANGE_LABEL) as FileChangeStatus[]).map((s) => [s, t(CHANGE_LABEL[s][2])]);
 }
 
 export function Modal({
@@ -97,7 +98,7 @@ export function Modal({
           {icon}
           <h3>{title}</h3>
           {onClose && (
-            <button className="icon-btn" onClick={onClose} aria-label="Close">
+            <button className="icon-btn" onClick={onClose} aria-label={t('Close')}>
               <X size={16} />
             </button>
           )}
@@ -149,17 +150,17 @@ export interface Toast {
 export function Toasts({ toasts, dismiss }: { toasts: Toast[]; dismiss: (id: number) => void }) {
   return (
     <div className="toast-stack" aria-live="polite">
-      {toasts.map((t) => (
-        <div key={t.id} className={`toast ${t.tone}`}>
-          {t.tone === 'error' ? (
+      {toasts.map((toast) => (
+        <div key={toast.id} className={`toast ${toast.tone}`}>
+          {toast.tone === 'error' ? (
             <XCircle size={15} color="var(--danger)" />
-          ) : t.tone === 'warn' ? (
+          ) : toast.tone === 'warn' ? (
             <AlertTriangle size={15} color="var(--warning)" />
           ) : (
             <CheckCircle2 size={15} color="var(--accent-2)" />
           )}
-          <div>{t.text}</div>
-          <button className="icon-btn x" onClick={() => dismiss(t.id)} aria-label="Dismiss">
+          <div>{toast.text}</div>
+          <button className="icon-btn x" onClick={() => dismiss(toast.id)} aria-label={t('Dismiss')}>
             <X size={13} />
           </button>
         </div>
@@ -192,7 +193,7 @@ export function ConfirmDialog({
       footer={
         <>
           <button className="btn" onClick={onCancel} disabled={busy}>
-            Cancel
+            {t('Cancel')}
           </button>
           <button className={`btn ${danger ? 'danger' : 'primary'}`} onClick={onConfirm} disabled={busy}>
             {confirmLabel}

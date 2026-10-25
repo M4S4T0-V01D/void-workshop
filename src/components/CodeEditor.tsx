@@ -17,6 +17,7 @@ import {
   rectangularSelection,
 } from '@codemirror/view';
 import { loadLanguage } from '../editor/languages';
+import { editorPhrases } from '../editor/phrases';
 import { workshopHighlight, workshopTheme } from '../editor/theme';
 import type { EditorSettings } from '../types';
 
@@ -81,6 +82,7 @@ export function CodeEditor({
         extensions: [
           // Keep Windows line endings as they are; CodeMirror would otherwise save them as \n.
           initial.includes('\r\n') ? EditorState.lineSeparator.of('\r\n') : [],
+          editorPhrases(),
           lineNumbers(),
           highlightActiveLineGutter(),
           highlightSpecialChars(),

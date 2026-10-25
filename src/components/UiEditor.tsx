@@ -2,28 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Copy, Dices, GripHorizontal, MousePointerClick, RotateCcw, Save, Trash2, Upload, X } from 'lucide-react';
 import type { ElementStyle, Settings, Theme, Ui, UiElement } from '../types';
-import {
-  DEFAULT_LAYOUT,
-  DEFAULT_UI,
-  ELEMENTS,
-  LIMITS,
-  elementLabel,
-  exportProfile,
-  parseProfile,
-  pickElement,
-  randomTheme,
-  saveLayout,
-} from '../appearance';
+import { DEFAULT_LAYOUT, DEFAULT_UI, ELEMENTS, LIMITS, elementLabel, exportProfile, parseProfile, pickElement, randomTheme, saveLayout } from '../appearance';
 import { COLOR_KEYS, allThemes, applyTheme, contrastWarnings, findTheme, slug, uniqueId } from '../themes';
+import { msg, t } from '../i18n';
 
 type Tab = 'element' | 'layout' | 'text' | 'theme' | 'css' | 'saved';
 const TABS: Array<[Tab, string]> = [
-  ['element', 'Element'],
-  ['layout', 'Layout'],
-  ['text', 'Text'],
-  ['theme', 'Theme'],
+  ['element', msg('Element')],
+  ['layout', msg('Layout')],
+  ['text', msg('Text')],
+  ['theme', msg('Theme')],
   ['css', 'CSS'],
-  ['saved', 'Saved'],
+  ['saved', msg('Saved')],
 ];
 
 const FONT_SUGGESTIONS = ['Inter', 'Noto Sans', 'Cantarell', 'Ubuntu', 'Roboto', 'Fira Sans', 'IBM Plex Sans', 'DejaVu Sans', 'system-ui'];
@@ -38,7 +28,12 @@ function toHex(css: string, fallback: string): string {
 /** The element's current look, to start the colour pickers from what is on screen. */
 function computed(id: UiElement): { bg: string; text: string; border: string } {
   const sel = ELEMENTS.find((e) => e.id === id)!.selector;
-  const node = document.querySelector(sel.split(',').map((p) => `.app ${p.trim()}`).join(', '));
+  const node = document.querySelector(
+    sel
+      .split(',')
+      .map((p) => `.app ${p.trim()}`)
+      .join(', '),
+  );
   const root = getComputedStyle(document.documentElement);
   const panel = root.getPropertyValue('--panel').trim() || '#121020';
   if (!node) return { bg: panel, text: root.getPropertyValue('--text').trim() || '#e8e4ff', border: root.getPropertyValue('--border').trim() || '#2a2546' };
@@ -67,24 +62,36 @@ function Slider({
     <label className="ui-prop">
       <span>{label}</span>
       <input type="range" min={range[0]} max={range[1]} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} />
-      <span className="val" onDoubleClick={onReset} title={onReset ? 'Double-click to reset' : undefined}>
+      <span className="val" onDoubleClick={onReset} title={onReset ? t('Double-click to reset') : undefined}>
         {fmt(value)}
       </span>
     </label>
   );
 }
 
-function ColorProp({ label, value, shown, onChange, onReset }: { label: string; value?: string; shown: string; onChange: (v: string) => void; onReset: () => void }) {
+function ColorProp({
+  label,
+  value,
+  shown,
+  onChange,
+  onReset,
+}: {
+  label: string;
+  value?: string;
+  shown: string;
+  onChange: (v: string) => void;
+  onReset: () => void;
+}) {
   return (
     <div className="ui-prop">
       <span>{label}</span>
       <input type="color" value={value ?? shown} onChange={(e) => onChange(e.target.value)} />
       {value ? (
-        <button className="icon-btn" title="Back to the theme's colour" onClick={onReset}>
+        <button className="icon-btn" title={t("Back to the theme's colour")} onClick={onReset}>
           <RotateCcw size={12} />
         </button>
       ) : (
-        <span className="val">theme</span>
+        <span className="val">{t('theme')}</span>
       )}
     </div>
   );
@@ -132,7 +139,7 @@ export function UiEditor({
       hovered = null;
     };
     const over = (e: MouseEvent) => {
-      if (exempt(e.target)) return unhover(), setHover(null);
+      if (exempt(e.target)) return (unhover(), setHover(null));
       const p = pickElement(e.target as Element);
       if (p?.node === hovered) return;
       unhover();
@@ -211,38 +218,45 @@ export function UiEditor({
   const rollTheme = () => setThemeDraft(randomTheme());
   const saveThemeDraft = async () => {
     if (!themeDraft) return;
-    if (settings.customThemes.length >= 20) return toast('warn', 'You can keep up to 20 custom themes. Delete one in Settings → Appearance first.');
-    const name = themeDraft.name.trim().slice(0, 60) || 'Random theme';
-    const t: Theme = { ...themeDraft, name, id: uniqueId(slug(name), themes.map((x) => x.id)) };
-    if (!(await save({ customThemes: [...settings.customThemes, t], themeId: t.id }))) return;
+    if (settings.customThemes.length >= 20) return toast('warn', t('You can keep up to 20 custom themes. Delete one in Settings → Appearance first.'));
+    const name = themeDraft.name.trim().slice(0, 60) || t('Random theme');
+    const theme: Theme = {
+      ...themeDraft,
+      name,
+      id: uniqueId(
+        slug(name),
+        themes.map((x) => x.id),
+      ),
+    };
+    if (!(await save({ customThemes: [...settings.customThemes, theme], themeId: theme.id }))) return;
     setThemeDraft(null);
-    toast('info', `Saved theme "${t.name}".`);
+    toast('info', t('Saved theme "{name}".', { name: theme.name }));
   };
 
   const applySaved = async (id: string) => {
     const l = settings.layouts.find((x) => x.id === id);
     if (!l) return;
-    if (!(await save({ ui: l.ui, ...(l.themeId && themes.some((t) => t.id === l.themeId) ? { themeId: l.themeId } : {}) }))) return;
+    if (!(await save({ ui: l.ui, ...(l.themeId && themes.some((x) => x.id === l.themeId) ? { themeId: l.themeId } : {}) }))) return;
     onUi(l.ui);
-    toast('info', `Layout "${l.name}" applied.`);
+    toast('info', t('Layout "{name}" applied.', { name: l.name }));
   };
   const storeLayout = async () => {
-    const name = layoutName.trim() || 'My layout';
+    const name = layoutName.trim() || t('My layout');
     const layouts = saveLayout(settings.layouts, name, ui, withTheme ? settings.themeId : null);
-    if (layouts.length > 20) return toast('warn', 'You can keep up to 20 layouts.');
+    if (layouts.length > 20) return toast('warn', t('You can keep up to 20 layouts.'));
     if (!(await save({ layouts }))) return;
     setLayoutName('');
-    toast('info', `Saved layout "${name}".`);
+    toast('info', t('Saved layout "{name}".', { name }));
   };
   const currentTheme = findTheme(settings.themeId, settings.customThemes);
   const doImport = async () => {
     try {
       const p = parseProfile(
         importText,
-        themes.map((t) => t.id),
+        themes.map((x) => x.id),
       );
       const customThemes = p.theme ? [...settings.customThemes, p.theme] : settings.customThemes;
-      if (customThemes.length > 20) return toast('warn', 'You can keep up to 20 custom themes.');
+      if (customThemes.length > 20) return toast('warn', t('You can keep up to 20 custom themes.'));
       const layouts = saveLayout(settings.layouts, p.name, p.ui, p.theme?.id ?? null);
       if (!(await save({ customThemes, layouts, ui: p.ui, ...(p.theme ? { themeId: p.theme.id } : {}) }))) return;
       onUi(p.ui);
@@ -273,15 +287,18 @@ export function UiEditor({
         onPointerUp={() => (drag.current = null)}
       >
         <GripHorizontal size={14} />
-        <span className="grow">Edit UI{dirty ? ' •' : ''}</span>
-        <button className="icon-btn" title="Close without saving" onClick={() => onClose(false)}>
+        <span className="grow">
+          {t('Edit UI')}
+          {dirty ? ' •' : ''}
+        </span>
+        <button className="icon-btn" title={t('Close without saving')} onClick={() => onClose(false)}>
           <X size={14} />
         </button>
       </div>
       <div className="tabs">
         {TABS.map(([id, label]) => (
           <button key={id} className={`tab ${tab === id ? 'active' : ''}`} onClick={() => setTab(id)}>
-            {label}
+            {t(label)}
           </button>
         ))}
       </div>
@@ -289,14 +306,18 @@ export function UiEditor({
         {tab === 'element' && (
           <>
             <p className="muted" style={{ margin: 0 }}>
-              <MousePointerClick size={12} /> Click any part of the window to select it{hover ? ` (pointing at: ${elementLabel(hover)})` : ''}. Drag the
-              highlighted panel edges to resize.
+              <MousePointerClick size={12} />{' '}
+              {hover
+                ? t('Click any part of the window to select it (pointing at: {element}). Drag the highlighted panel edges to resize.', {
+                    element: elementLabel(hover),
+                  })
+                : t('Click any part of the window to select it. Drag the highlighted panel edges to resize.')}
             </p>
             <select className="select" value={selected ?? ''} onChange={(e) => setSelected((e.target.value || null) as UiElement | null)}>
-              <option value="">Choose an element…</option>
+              <option value="">{t('Choose an element…')}</option>
               {ELEMENTS.map((e) => (
                 <option key={e.id} value={e.id}>
-                  {e.label}
+                  {t(e.label)}
                   {ui.elements[e.id] ? ' •' : ''}
                 </option>
               ))}
@@ -304,17 +325,29 @@ export function UiEditor({
             {selected && shown && (
               <>
                 <h5>{elementLabel(selected)}</h5>
-                <ColorProp label="Background" value={style.bg} shown={shown.bg} onChange={(bg) => setStyle({ bg })} onReset={() => setStyle({ bg: undefined })} />
-                <ColorProp label="Text" value={style.text} shown={shown.text} onChange={(text) => setStyle({ text })} onReset={() => setStyle({ text: undefined })} />
                 <ColorProp
-                  label="Border"
+                  label={t('Background')}
+                  value={style.bg}
+                  shown={shown.bg}
+                  onChange={(bg) => setStyle({ bg })}
+                  onReset={() => setStyle({ bg: undefined })}
+                />
+                <ColorProp
+                  label={t('Text')}
+                  value={style.text}
+                  shown={shown.text}
+                  onChange={(text) => setStyle({ text })}
+                  onReset={() => setStyle({ text: undefined })}
+                />
+                <ColorProp
+                  label={t('Border')}
                   value={style.border}
                   shown={shown.border}
                   onChange={(border) => setStyle({ border })}
                   onReset={() => setStyle({ border: undefined })}
                 />
                 <Slider
-                  label="Border width"
+                  label={t('Border width')}
                   value={style.borderWidth ?? 1}
                   range={LIMITS.borderWidth}
                   fmt={(v) => `${v}px`}
@@ -322,7 +355,7 @@ export function UiEditor({
                   onReset={() => setStyle({ borderWidth: undefined })}
                 />
                 <Slider
-                  label="Size"
+                  label={t('Size')}
                   value={style.zoom ?? 1}
                   range={LIMITS.zoom}
                   step={0.05}
@@ -331,7 +364,7 @@ export function UiEditor({
                   onReset={() => setStyle({ zoom: undefined })}
                 />
                 <Slider
-                  label="Padding"
+                  label={t('Padding')}
                   value={style.padding ?? 0}
                   range={LIMITS.padding}
                   fmt={(v) => (style.padding === undefined ? 'auto' : `${v}px`)}
@@ -339,7 +372,7 @@ export function UiEditor({
                   onReset={() => setStyle({ padding: undefined })}
                 />
                 <Slider
-                  label="Corners"
+                  label={t('Corners')}
                   value={style.radius ?? ui.radius}
                   range={LIMITS.elementRadius}
                   fmt={(v) => (style.radius === undefined ? 'auto' : `${v}px`)}
@@ -347,27 +380,31 @@ export function UiEditor({
                   onReset={() => setStyle({ radius: undefined })}
                 />
                 <div className="ui-prop">
-                  <span>Weight</span>
+                  <span>{t('Weight')}</span>
                   <div className="ui-chips">
                     {(
                       [
-                        [undefined, 'Default'],
-                        [false, 'Normal'],
-                        [true, 'Bold'],
+                        [undefined, msg('Default')],
+                        [false, msg('Normal')],
+                        [true, msg('Bold')],
                       ] as const
                     ).map(([v, label]) => (
                       <button key={label} className={`btn small ${style.bold === v ? 'active' : ''}`} onClick={() => setStyle({ bold: v })}>
-                        {label}
+                        {t(label)}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="row">
-                  <button className="btn small" disabled={!ui.elements[selected]} onClick={() => setStyle({ ...Object.fromEntries(Object.keys(style).map((k) => [k, undefined])) })}>
-                    <RotateCcw size={12} /> Reset {elementLabel(selected).toLowerCase()}
+                  <button
+                    className="btn small"
+                    disabled={!ui.elements[selected]}
+                    onClick={() => setStyle({ ...Object.fromEntries(Object.keys(style).map((k) => [k, undefined])) })}
+                  >
+                    <RotateCcw size={12} /> {t('Reset: {element}', { element: elementLabel(selected) })}
                   </button>
                   <button className="btn small" disabled={!Object.keys(ui.elements).length} onClick={() => onUi({ ...ui, elements: {} })}>
-                    Reset all elements
+                    {t('Reset all elements')}
                   </button>
                 </div>
               </>
@@ -377,32 +414,50 @@ export function UiEditor({
 
         {tab === 'layout' && (
           <>
-            <h5>Panels</h5>
+            <h5>{t('Panels')}</h5>
             {(
               [
-                ['showLeft', 'Files & tasks', 'Ctrl+B'],
-                ['showRight', 'Review & git', 'Ctrl+Alt+B'],
-                ['showBottom', 'Terminal & log', 'Ctrl+J'],
+                ['showLeft', msg('Files & tasks'), 'Ctrl+B'],
+                ['showRight', msg('Review & git'), 'Ctrl+Alt+B'],
+                ['showBottom', msg('Terminal & log'), 'Ctrl+J'],
               ] as const
             ).map(([k, label, keys]) => (
               <label key={k} className="row">
                 <input type="checkbox" checked={ui.layout[k]} onChange={(e) => setLayout({ [k]: e.target.checked })} />
-                <span className="grow">{label}</span>
+                <span className="grow">{t(label)}</span>
                 <span className="muted">{keys}</span>
               </label>
             ))}
             <label className="row">
               <input type="checkbox" checked={ui.layout.swapSides} onChange={(e) => setLayout({ swapSides: e.target.checked })} />
-              <span className="grow">Swap the side panels</span>
+              <span className="grow">{t('Swap the side panels')}</span>
             </label>
-            <h5>Sizes</h5>
-            <Slider label="Files & tasks" value={ui.layout.leftW} range={LIMITS.leftW} fmt={(v) => `${v}px`} onChange={(leftW) => setLayout({ leftW })} />
-            <Slider label="Review & git" value={ui.layout.rightW} range={LIMITS.rightW} fmt={(v) => `${v}px`} onChange={(rightW) => setLayout({ rightW })} />
-            <Slider label="Terminal" value={ui.layout.bottomH} range={LIMITS.bottomH} fmt={(v) => `${v}px`} onChange={(bottomH) => setLayout({ bottomH })} />
-            <Slider label="File tree share" value={ui.layout.leftSplit} range={LIMITS.leftSplit} fmt={(v) => `${v}%`} onChange={(leftSplit) => setLayout({ leftSplit })} />
+            <h5>{t('Sizes')}</h5>
+            <Slider label={t('Files & tasks')} value={ui.layout.leftW} range={LIMITS.leftW} fmt={(v) => `${v}px`} onChange={(leftW) => setLayout({ leftW })} />
+            <Slider
+              label={t('Review & git')}
+              value={ui.layout.rightW}
+              range={LIMITS.rightW}
+              fmt={(v) => `${v}px`}
+              onChange={(rightW) => setLayout({ rightW })}
+            />
+            <Slider
+              label={t('Terminal')}
+              value={ui.layout.bottomH}
+              range={LIMITS.bottomH}
+              fmt={(v) => `${v}px`}
+              onChange={(bottomH) => setLayout({ bottomH })}
+            />
+            <Slider
+              label={t('File tree share')}
+              value={ui.layout.leftSplit}
+              range={LIMITS.leftSplit}
+              fmt={(v) => `${v}%`}
+              onChange={(leftSplit) => setLayout({ leftSplit })}
+            />
             <div>
               <button className="btn small" onClick={() => onUi({ ...ui, layout: DEFAULT_LAYOUT })}>
-                <RotateCcw size={12} /> Default layout
+                <RotateCcw size={12} /> {t('Default layout')}
               </button>
             </div>
           </>
@@ -411,7 +466,7 @@ export function UiEditor({
         {tab === 'text' && (
           <>
             <Slider
-              label="UI scale"
+              label={t('UI scale')}
               value={ui.scale}
               range={LIMITS.scale}
               step={0.05}
@@ -420,7 +475,7 @@ export function UiEditor({
               onReset={() => onUi({ ...ui, scale: 1 })}
             />
             <div className="ui-prop">
-              <span>Density</span>
+              <span>{t('Density')}</span>
               <div className="ui-chips">
                 {(['compact', 'comfortable', 'spacious'] as const).map((d) => (
                   <button key={d} className={`btn small ${ui.density === d ? 'active' : ''}`} onClick={() => onUi({ ...ui, density: d })}>
@@ -429,13 +484,13 @@ export function UiEditor({
                 ))}
               </div>
             </div>
-            <Slider label="Corners" value={ui.radius} range={LIMITS.radius} fmt={(v) => `${v}px`} onChange={(radius) => onUi({ ...ui, radius })} />
+            <Slider label={t('Corners')} value={ui.radius} range={LIMITS.radius} fmt={(v) => `${v}px`} onChange={(radius) => onUi({ ...ui, radius })} />
             <label className="field">
-              Interface font (empty = default)
+              {t('Interface font (empty = default)')}
               <input className="input" list="ui-fonts" value={ui.fontSans} maxLength={120} onChange={(e) => onUi({ ...ui, fontSans: e.target.value })} />
             </label>
             <label className="field">
-              Code font (empty = default)
+              {t('Code font (empty = default)')}
               <input className="input" list="ui-mono-fonts" value={ui.fontMono} maxLength={120} onChange={(e) => onUi({ ...ui, fontMono: e.target.value })} />
             </label>
             <datalist id="ui-fonts">
@@ -449,7 +504,7 @@ export function UiEditor({
               ))}
             </datalist>
             <p className="muted" style={{ margin: 0 }}>
-              Fonts must be installed on this PC; letters, digits, spaces, quotes, commas and dashes only.
+              {t('Fonts must be installed on this PC; letters, digits, spaces, quotes, commas and dashes only.')}
             </p>
           </>
         )}
@@ -458,25 +513,29 @@ export function UiEditor({
           <>
             <div className="row">
               <button className="btn primary" onClick={rollTheme}>
-                <Dices size={14} /> Random theme
+                <Dices size={14} /> {t('Random theme')}
               </button>
               {themeDraft && (
                 <button className="btn" onClick={() => setThemeDraft(null)}>
-                  Discard
+                  {t('Discard')}
                 </button>
               )}
             </div>
             {themeDraft ? (
               <>
                 <label className="field">
-                  Name
+                  {t('Name')}
                   <input className="input" value={themeDraft.name} maxLength={60} onChange={(e) => setThemeDraft({ ...themeDraft, name: e.target.value })} />
                 </label>
                 <div className="ui-chips">
                   {COLOR_KEYS.map(({ key, label }) => (
-                    <label key={key} title={label} className="ui-prop" style={{ gridTemplateColumns: '1fr auto' }}>
-                      <span>{label}</span>
-                      <input type="color" value={themeDraft.colors[key]} onChange={(e) => setThemeDraft({ ...themeDraft, colors: { ...themeDraft.colors, [key]: e.target.value } })} />
+                    <label key={key} title={t(label)} className="ui-prop" style={{ gridTemplateColumns: '1fr auto' }}>
+                      <span>{t(label)}</span>
+                      <input
+                        type="color"
+                        value={themeDraft.colors[key]}
+                        onChange={(e) => setThemeDraft({ ...themeDraft, colors: { ...themeDraft.colors, [key]: e.target.value } })}
+                      />
                     </label>
                   ))}
                 </div>
@@ -487,36 +546,36 @@ export function UiEditor({
                 ))}
                 <div className="row">
                   <button className="btn primary" onClick={() => void saveThemeDraft()}>
-                    <Save size={14} /> Save theme
+                    <Save size={14} /> {t('Save theme')}
                   </button>
                   <button className="btn" onClick={rollTheme}>
-                    <Dices size={14} /> Another
+                    <Dices size={14} /> {t('Another')}
                   </button>
                 </div>
               </>
             ) : (
               <p className="muted" style={{ margin: 0 }}>
-                Roll until you like one, name it, save it. It previews on the whole window.
+                {t('Roll until you like one, name it, save it. It previews on the whole window.')}
               </p>
             )}
-            <h5>Themes</h5>
+            <h5>{t('Themes')}</h5>
             <div className="ui-list">
-              {themes.map((t) => (
-                <div key={t.id} className="row">
+              {themes.map((theme) => (
+                <div key={theme.id} className="row">
                   <span style={{ display: 'flex', gap: 2 }}>
-                    {[t.colors.bg, t.colors.panel, t.colors.accent, t.colors.accent2].map((c, i) => (
+                    {[theme.colors.bg, theme.colors.panel, theme.colors.accent, theme.colors.accent2].map((c, i) => (
                       <span key={i} style={{ width: 10, height: 14, background: c, borderRadius: 2 }} />
                     ))}
                   </span>
-                  <span className="grow">{t.name}</span>
+                  <span className="grow">{theme.name}</span>
                   <button
-                    className={`btn small ${!themeDraft && settings.themeId === t.id ? 'active' : ''}`}
+                    className={`btn small ${!themeDraft && settings.themeId === theme.id ? 'active' : ''}`}
                     onClick={() => {
                       setThemeDraft(null);
-                      void save({ themeId: t.id });
+                      void save({ themeId: theme.id });
                     }}
                   >
-                    {settings.themeId === t.id ? 'In use' : 'Use'}
+                    {settings.themeId === theme.id ? t('In use') : t('Use')}
                   </button>
                 </div>
               ))}
@@ -527,8 +586,9 @@ export function UiEditor({
         {tab === 'css' && (
           <>
             <p className="muted" style={{ margin: 0 }}>
-              Your own stylesheet, applied after everything else (live). It can't load anything from the internet. If it breaks the window, press
-              Ctrl+Alt+Shift+0 to turn it off until the next start.
+              {t(
+                "Your own stylesheet, applied after everything else (live). It can't load anything from the internet. If it breaks the window, press Ctrl+Alt+Shift+0 to turn it off until the next start.",
+              )}
             </p>
             <textarea
               className="textarea mono"
@@ -544,78 +604,80 @@ export function UiEditor({
 
         {tab === 'saved' && (
           <>
-            <h5>Save this layout</h5>
+            <h5>{t('Save this layout')}</h5>
             <div className="row">
-              <input className="input" placeholder="Name" value={layoutName} maxLength={60} onChange={(e) => setLayoutName(e.target.value)} />
+              <input className="input" placeholder={t('Name')} value={layoutName} maxLength={60} onChange={(e) => setLayoutName(e.target.value)} />
               <button className="btn primary" onClick={() => void storeLayout()}>
-                <Save size={14} /> Save
+                <Save size={14} /> {t('Save')}
               </button>
             </div>
             <label className="row">
               <input type="checkbox" checked={withTheme} onChange={(e) => setWithTheme(e.target.checked)} />
-              <span>Include the theme ({currentTheme.name})</span>
+              <span>{t('Include the theme ({name})', { name: currentTheme.name })}</span>
             </label>
-            <h5>Saved layouts</h5>
-            {settings.layouts.length === 0 && <p className="muted">None yet. Layouts keep sizes, panels, text settings, element styles and CSS.</p>}
+            <h5>{t('Saved layouts')}</h5>
+            {settings.layouts.length === 0 && <p className="muted">{t('None yet. Layouts keep sizes, panels, text settings, element styles and CSS.')}</p>}
             <div className="ui-list">
               {settings.layouts.map((l) => (
                 <div key={l.id} className="row">
-                  <span className="grow" title={l.themeId ? `With theme ${findTheme(l.themeId, settings.customThemes).name}` : undefined}>
+                  <span className="grow" title={l.themeId ? t('With theme {name}', { name: findTheme(l.themeId, settings.customThemes).name }) : undefined}>
                     {l.name}
                   </span>
                   <button className="btn small" onClick={() => void applySaved(l.id)}>
-                    Apply
+                    {t('Apply')}
                   </button>
                   <button
                     className="icon-btn"
-                    title="Copy as a profile (JSON)"
+                    title={t('Copy as a profile (JSON)')}
                     onClick={() => {
                       const theme = l.themeId ? findTheme(l.themeId, settings.customThemes) : null;
-                      void navigator.clipboard.writeText(exportProfile(l.name, l.ui, theme)).then(() => toast('info', 'Profile copied to the clipboard.'));
+                      void navigator.clipboard.writeText(exportProfile(l.name, l.ui, theme)).then(() => toast('info', t('Profile copied to the clipboard.')));
                     }}
                   >
                     <Copy size={12} />
                   </button>
-                  <button className="icon-btn" title="Delete" onClick={() => void save({ layouts: settings.layouts.filter((x) => x.id !== l.id) })}>
+                  <button className="icon-btn" title={t('Delete')} onClick={() => void save({ layouts: settings.layouts.filter((x) => x.id !== l.id) })}>
                     <Trash2 size={12} />
                   </button>
                 </div>
               ))}
             </div>
-            <h5>Share</h5>
+            <h5>{t('Share')}</h5>
             <button
               className="btn small"
               onClick={() =>
-                void navigator.clipboard.writeText(exportProfile(layoutName.trim() || 'My layout', ui, currentTheme)).then(() => toast('info', 'Profile copied to the clipboard.'))
+                void navigator.clipboard
+                  .writeText(exportProfile(layoutName.trim() || t('My layout'), ui, currentTheme))
+                  .then(() => toast('info', t('Profile copied to the clipboard.')))
               }
             >
-              <Copy size={12} /> Copy current look as a profile
+              <Copy size={12} /> {t('Copy current look as a profile')}
             </button>
             <textarea
               className="textarea mono"
               rows={3}
-              placeholder="Paste a profile to import it…"
+              placeholder={t('Paste a profile to import it…')}
               value={importText}
               onChange={(e) => setImportText(e.target.value)}
             />
             <div>
               <button className="btn small" disabled={!importText.trim()} onClick={() => void doImport()}>
-                <Upload size={12} /> Import
+                <Upload size={12} /> {t('Import')}
               </button>
             </div>
           </>
         )}
       </div>
       <div className="ui-editor-foot">
-        <button className="btn small" title="Everything back to how VOID Workshop looks out of the box (not saved yet)" onClick={() => onUi(DEFAULT_UI)}>
-          Reset all
+        <button className="btn small" title={t('Everything back to how VOID Workshop looks out of the box (not saved yet)')} onClick={() => onUi(DEFAULT_UI)}>
+          {t('Reset all')}
         </button>
         <span className="spacer grow" />
         <button className="btn small" onClick={() => onClose(false)}>
-          Cancel
+          {t('Cancel')}
         </button>
         <button className="btn small primary" disabled={!dirty} onClick={() => void save({ ui }).then((ok) => ok && onClose(true))}>
-          <Save size={12} /> Save
+          <Save size={12} /> {t('Save')}
         </button>
       </div>
     </div>,

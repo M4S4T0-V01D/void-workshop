@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BarChart3 } from 'lucide-react';
 import { call, errorText } from '../api';
 import { Callout, Modal, formatTokens, formatUsd } from './common';
+import { t } from '../i18n';
 
 type Tokens = { cost: number; input: number; output: number; cacheRead: number; cacheWrite: number };
 type Summary = { today: string; spentTodayUsd: number; days: Array<Tokens & { day: string }>; week: Array<Tokens & { model: string }> };
@@ -17,13 +18,22 @@ export function weighted(t: Tokens): number {
 }
 
 const sum = (rows: Tokens[]): Tokens =>
-  rows.reduce((a, r) => ({ cost: a.cost + r.cost, input: a.input + r.input, output: a.output + r.output, cacheRead: a.cacheRead + r.cacheRead, cacheWrite: a.cacheWrite + r.cacheWrite }), {
-    cost: 0,
-    input: 0,
-    output: 0,
-    cacheRead: 0,
-    cacheWrite: 0,
-  });
+  rows.reduce(
+    (a, r) => ({
+      cost: a.cost + r.cost,
+      input: a.input + r.input,
+      output: a.output + r.output,
+      cacheRead: a.cacheRead + r.cacheRead,
+      cacheWrite: a.cacheWrite + r.cacheWrite,
+    }),
+    {
+      cost: 0,
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      cacheWrite: 0,
+    },
+  );
 
 const pct = (part: number, whole: number) => (whole > 0 ? `${Math.round((part / whole) * 100)}%` : '—');
 
@@ -41,25 +51,25 @@ export function UsageDialog({ onClose }: { onClose: () => void }) {
   const peak = Math.max(1, ...days.map(weighted));
 
   return (
-    <Modal title="Token usage in Workshop" icon={<BarChart3 size={16} />} onClose={onClose} wide>
+    <Modal title={t('Token usage in Workshop')} icon={<BarChart3 size={16} />} onClose={onClose} wide>
       {error && <Callout tone="bad">{error}</Callout>}
-      {!data && !error && <span className="muted">Loading…</span>}
+      {!data && !error && <span className="muted">{t('Loading…')}</span>}
       {data && week && (
         <>
-          <h4>Last 7 days by model</h4>
+          <h4>{t('Last 7 days by model')}</h4>
           {data.week.length === 0 ? (
-            <span className="muted">No use in the last 7 days.</span>
+            <span className="muted">{t('No use in the last 7 days.')}</span>
           ) : (
             <table className="usage-table">
               <thead>
                 <tr>
-                  <th>Model</th>
-                  <th>Input</th>
-                  <th>Cache write</th>
-                  <th>Cache read</th>
-                  <th>Output</th>
-                  <th title="Share of the estimated weight against plan limits">Weight</th>
-                  <th>API est.</th>
+                  <th>{t('Model')}</th>
+                  <th>{t('Input')}</th>
+                  <th>{t('Cache write')}</th>
+                  <th>{t('Cache read')}</th>
+                  <th>{t('Output')}</th>
+                  <th title={t('Share of the estimated weight against plan limits')}>{t('Weight')}</th>
+                  <th>{t('API est.')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -81,27 +91,37 @@ export function UsageDialog({ onClose }: { onClose: () => void }) {
           )}
           {weekWeight > 0 && (
             <Callout>
-              Where the weight went this week: cache reads {pct(week.cacheRead * WEIGHTS.cacheRead, weekWeight)}, cache writes{' '}
-              {pct(week.cacheWrite * WEIGHTS.cacheWrite, weekWeight)}, output {pct(week.output * WEIGHTS.output, weekWeight)}, new input{' '}
-              {pct(week.input * WEIGHTS.input, weekWeight)}. Cache reads grow with long sessions; the token saver (Settings → Speed) compacts
-              them sooner. Weights are estimates from API prices, not how Anthropic counts plan limits.
+              {t(
+                'Where the weight went this week: cache reads {cacheRead}, cache writes {cacheWrite}, output {output}, new input {input}. Cache reads grow with long sessions; the token saver (Settings → Speed) compacts them sooner. Weights are estimates from API prices, not how Anthropic counts plan limits.',
+                {
+                  cacheRead: pct(week.cacheRead * WEIGHTS.cacheRead, weekWeight),
+                  cacheWrite: pct(week.cacheWrite * WEIGHTS.cacheWrite, weekWeight),
+                  output: pct(week.output * WEIGHTS.output, weekWeight),
+                  input: pct(week.input * WEIGHTS.input, weekWeight),
+                },
+              )}
             </Callout>
           )}
-          <h4>Last 30 days</h4>
+          <h4>{t('Last 30 days')}</h4>
           {days.length === 0 ? (
-            <span className="muted">No use yet.</span>
+            <span className="muted">{t('No use yet.')}</span>
           ) : (
-            <div className="usage-bars" aria-label="Weighted tokens per day">
+            <div className="usage-bars" aria-label={t('Weighted tokens per day')}>
               {days.map((d) => (
                 <div
                   key={d.day}
                   style={{ height: `${Math.max(2, (weighted(d) / peak) * 100)}%` }}
-                  title={`${d.day}: ${formatTokens(d.input + d.cacheWrite + d.cacheRead + d.output)} tokens, ${formatTokens(d.output)} output, ${formatUsd(d.cost)} API est.`}
+                  title={t('{day}: {tokens} tokens, {output} output, {cost} API est.', {
+                    day: d.day,
+                    tokens: formatTokens(d.input + d.cacheWrite + d.cacheRead + d.output),
+                    output: formatTokens(d.output),
+                    cost: formatUsd(d.cost),
+                  })}
                 />
               ))}
             </div>
           )}
-          <div className="muted">Counts only Workshop's own tasks. The plan meter in the status bar shows the real limits from claude.ai.</div>
+          <div className="muted">{t("Counts only Workshop's own tasks. The plan meter in the status bar shows the real limits from claude.ai.")}</div>
         </>
       )}
     </Modal>

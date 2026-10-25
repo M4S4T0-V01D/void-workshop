@@ -1,4 +1,5 @@
 import type { ElementStyle, Layout, SavedLayout, Theme, ThemeColors, Ui, UiElement } from './types';
+import { msg, t } from './i18n';
 import { contrastWarnings, parseThemeJson, randomSyntax, slug } from './themes';
 
 export const DEFAULT_LAYOUT: Layout = {
@@ -44,26 +45,29 @@ export const DENSITY_SPACE: Record<Ui['density'], number> = { compact: 0.7, comf
 
 /** What the visual editor can select, most specific first (the first one matching a clicked node wins). */
 export const ELEMENTS: Array<{ id: UiElement; label: string; selector: string; container?: boolean }> = [
-  { id: 'primaryButtons', label: 'Primary buttons', selector: '.btn.primary' },
-  { id: 'buttons', label: 'Buttons', selector: '.btn' },
-  { id: 'inputs', label: 'Inputs', selector: '.input, .select, .textarea' },
-  { id: 'userMessage', label: 'Your messages', selector: '.msg.user .bubble' },
-  { id: 'assistantMessage', label: 'Agent messages', selector: '.msg.assistant .bubble' },
-  { id: 'planCard', label: 'Plan card', selector: '.plan-card', container: true },
-  { id: 'composer', label: 'Prompt box', selector: '.composer-box', container: true },
-  { id: 'panelHeader', label: 'Panel headers', selector: '.panel-header', container: true },
-  { id: 'tabs', label: 'Tab bars', selector: '.tabs', container: true },
-  { id: 'fileTree', label: 'File tree', selector: '.tree', container: true },
-  { id: 'topbar', label: 'Top bar', selector: '.topbar', container: true },
-  { id: 'statusbar', label: 'Status bar', selector: '.statusbar', container: true },
-  { id: 'left', label: 'Files & tasks panel', selector: '.left', container: true },
-  { id: 'right', label: 'Review & git panel', selector: '.right', container: true },
-  { id: 'bottom', label: 'Terminal panel', selector: '.bottom', container: true },
-  { id: 'codeEditor', label: 'Code editor', selector: '.code-editor', container: true },
-  { id: 'center', label: 'Conversation', selector: '.center', container: true },
+  { id: 'primaryButtons', label: msg('Primary buttons'), selector: '.btn.primary' },
+  { id: 'buttons', label: msg('Buttons'), selector: '.btn' },
+  { id: 'inputs', label: msg('Inputs'), selector: '.input, .select, .textarea' },
+  { id: 'userMessage', label: msg('Your messages'), selector: '.msg.user .bubble' },
+  { id: 'assistantMessage', label: msg('Agent messages'), selector: '.msg.assistant .bubble' },
+  { id: 'planCard', label: msg('Plan card'), selector: '.plan-card', container: true },
+  { id: 'composer', label: msg('Prompt box'), selector: '.composer-box', container: true },
+  { id: 'panelHeader', label: msg('Panel headers'), selector: '.panel-header', container: true },
+  { id: 'tabs', label: msg('Tab bars'), selector: '.tabs', container: true },
+  { id: 'fileTree', label: msg('File tree'), selector: '.tree', container: true },
+  { id: 'topbar', label: msg('Top bar'), selector: '.topbar', container: true },
+  { id: 'statusbar', label: msg('Status bar'), selector: '.statusbar', container: true },
+  { id: 'left', label: msg('Files & tasks panel'), selector: '.left', container: true },
+  { id: 'right', label: msg('Review & git panel'), selector: '.right', container: true },
+  { id: 'bottom', label: msg('Terminal panel'), selector: '.bottom', container: true },
+  { id: 'codeEditor', label: msg('Code editor'), selector: '.code-editor', container: true },
+  { id: 'center', label: msg('Conversation'), selector: '.center', container: true },
 ];
 
-export const elementLabel = (id: UiElement) => ELEMENTS.find((e) => e.id === id)?.label ?? id;
+export const elementLabel = (id: UiElement) => {
+  const label = ELEMENTS.find((e) => e.id === id)?.label;
+  return label ? t(label) : id;
+};
 
 /** The editable element a click landed on: the nearest ancestor (up to the window) that one of ELEMENTS matches. */
 export function pickElement(target: Element | null): { id: UiElement; node: Element } | null {
@@ -198,7 +202,7 @@ export function uniqueLayoutId(name: string, existing: string[]): string {
 
 /** A new or replaced (same name) saved layout. */
 export function saveLayout(layouts: SavedLayout[], name: string, ui: Ui, themeId: string | null): SavedLayout[] {
-  const clean = name.trim().slice(0, 60) || 'My layout';
+  const clean = name.trim().slice(0, 60) || t('My layout');
   const same = layouts.find((l) => l.name.toLowerCase() === clean.toLowerCase());
   const entry: SavedLayout = {
     id:
@@ -237,11 +241,11 @@ export function parseProfile(text: string, existingThemeIds: string[]): { name: 
   try {
     raw = JSON.parse(text);
   } catch {
-    throw new Error('Not valid JSON.');
+    throw new Error(t('Not valid JSON.'));
   }
   const o = (raw ?? {}) as Record<string, unknown>;
-  if (o.kind !== PROFILE_KIND) throw new Error('This is not a VOID Workshop appearance profile.');
-  const name = typeof o.name === 'string' && o.name.trim() ? o.name.trim().slice(0, 60) : 'Imported layout';
+  if (o.kind !== PROFILE_KIND) throw new Error(t('This is not a VOID Workshop appearance profile.'));
+  const name = typeof o.name === 'string' && o.name.trim() ? o.name.trim().slice(0, 60) : t('Imported layout');
   const theme = o.theme ? parseThemeJson(JSON.stringify(o.theme), existingThemeIds) : null;
   return { name, ui: normalizeUi(o.ui), theme };
 }

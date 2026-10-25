@@ -53,9 +53,17 @@ import { ConfirmDialog, StateBadge, Toasts, formatUsd, timeAgo } from './compone
 import logo from './assets/logo.svg';
 import type { TaskEvent } from './types';
 import { effectiveAuth } from './account';
+import { WelcomeLanguage, shouldWelcome } from './components/WelcomeLanguage';
+import { msg, resolveLanguage, setLanguage, t, tn, tx, useLanguage } from './i18n';
 
 export default function App() {
   const [init, setInit] = useState<InitData | null>(null);
+  useLanguage();
+  const [welcome, setWelcome] = useState(false);
+  const languagePref = init?.settings.language;
+  useEffect(() => {
+    if (languagePref !== undefined) void setLanguage(resolveLanguage(languagePref));
+  }, [languagePref]);
   const [fatal, setFatal] = useState<string | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -115,6 +123,7 @@ export default function App() {
     try {
       const data = await call<InitData>('app.init');
       setInit(data);
+      if (shouldWelcome(data.settings.language)) setWelcome(true);
       setApprovals(data.pendingApprovals);
       if (!modeLoaded.current) {
         modeLoaded.current = true;
@@ -143,7 +152,7 @@ export default function App() {
       try {
         setReview(await call<ReviewEntry[]>('review.list', { taskId }));
       } catch (err) {
-        addLog('error', `Could not load changes: ${errorText(err)}`);
+        addLog('error', t('Could not load changes: {error}', { error: errorText(err) }));
       }
     },
     [addLog],
@@ -157,7 +166,7 @@ export default function App() {
       setGit(g);
       setProject((cur) => (cur && cur.root === p.root ? { ...cur, git: g } : cur));
     } catch (err) {
-      addLog('warn', `Git status failed: ${errorText(err)}`);
+      addLog('warn', t('Git status failed: {error}', { error: errorText(err) }));
     }
   }, [addLog]);
 
@@ -225,40 +234,40 @@ export default function App() {
         const taskId = typeof p.taskId === 'string' ? p.taskId : null;
         switch (event) {
           case 'task.updated': {
-            const t = payload as Task;
-            if (projectRef.current && t.project === projectRef.current.root) {
-              setTasks((ts) => (ts.some((x) => x.id === t.id) ? ts.map((x) => (x.id === t.id ? t : x)) : [t, ...ts]));
+            const task = payload as Task;
+            if (projectRef.current && task.project === projectRef.current.root) {
+              setTasks((ts) => (ts.some((x) => x.id === task.id) ? ts.map((x) => (x.id === task.id ? task : x)) : [task, ...ts]));
             }
             setWorking((w) => {
-              const rest = w.filter((x) => x.id !== t.id);
-              return ['planning', 'executing', 'awaiting-plan-approval'].includes(t.state) ? [t, ...rest] : rest;
+              const rest = w.filter((x) => x.id !== task.id);
+              return ['planning', 'executing', 'awaiting-plan-approval'].includes(task.state) ? [task, ...rest] : rest;
             });
             if (
               startingRef.current !== null &&
-              t.prompt === startingRef.current &&
-              activeRef.current !== t.id &&
-              (t.state === 'planning' || t.state === 'executing')
+              task.prompt === startingRef.current &&
+              activeRef.current !== task.id &&
+              (task.state === 'planning' || task.state === 'executing')
             ) {
               startingRef.current = null;
-              activeRef.current = t.id;
-              setActiveId(t.id);
+              activeRef.current = task.id;
+              setActiveId(task.id);
               setTimeline(EMPTY_TIMELINE);
               setReview([]);
               setQueue([]);
               setContext(null);
             }
             if (
-              t.id === activeRef.current &&
-              ['idle', 'awaiting-plan-approval', 'completed', 'failed', 'cancelled', 'stopped-budget', 'stopped-billing', 'stopped-limit'].includes(t.state)
+              task.id === activeRef.current &&
+              ['idle', 'awaiting-plan-approval', 'completed', 'failed', 'cancelled', 'stopped-budget', 'stopped-billing', 'stopped-limit'].includes(task.state)
             )
               scheduleRefresh();
-            if (t.state === 'failed' && t.error) addLog('error', `Task failed: ${t.error}`);
+            if (task.state === 'failed' && task.error) addLog('error', t('Task failed: {error}', { error: task.error }));
             return;
           }
           case 'approval.request': {
             const req = payload as ApprovalRequest;
             setApprovals((a) => (a.some((x) => x.id === req.id) ? a : [...a, req]));
-            addLog('info', `Approval requested: ${req.summary}${req.command ? ` — ${req.command}` : ''}`);
+            addLog('info', t('Approval requested: {summary}', { summary: `${req.summary}${req.command ? ` — ${req.command}` : ''}` }));
             return;
           }
           case 'approval.resolved': {
@@ -266,7 +275,11 @@ export default function App() {
             setApprovals((a) => a.filter((x) => x.id !== p.id));
             if (req && taskId === activeRef.current)
               setTimeline((s) => applyEvent(s, 'approval.resolved', { summary: req.summary, decision: p.decision, kind: req.kind }));
-            if (req) addLog(p.decision === 'allow' ? 'info' : 'warn', `${p.decision === 'allow' ? 'Approved' : 'Denied'}: ${req.summary}`);
+            if (req)
+              addLog(
+                p.decision === 'allow' ? 'info' : 'warn',
+                p.decision === 'allow' ? t('Approved: {summary}', { summary: req.summary }) : t('Denied: {summary}', { summary: req.summary }),
+              );
             return;
           }
           case 'usage.updated':
@@ -309,32 +322,35 @@ export default function App() {
             if (taskId === activeRef.current) scheduleRefresh();
             return;
           case 'file.conflict':
-            toast('warn', `${String(p.rel)} ${String(p.reason)}. The edit was not applied.`);
-            addLog('warn', `External change detected in ${String(p.rel)}; edit refused.`);
+            toast('warn', t('{name} {reason}. The edit was not applied.', { name: String(p.rel), reason: String(p.reason) }));
+            addLog('warn', t('External change detected in {name}; edit refused.', { name: String(p.rel) }));
             return;
           case 'runner.started':
             applyRunEvent(event, p);
-            addLog('info', `Command started (${String(p.origin)}): ${String(p.command)}`);
+            addLog('info', t('Command started ({origin}): {command}', { origin: String(p.origin), command: String(p.command) }));
             return;
           case 'runner.output':
             applyRunEvent(event, p);
             return;
           case 'runner.finished':
             applyRunEvent(event, p);
-            addLog(p.status === 'succeeded' || p.ok ? 'info' : 'warn', `Command finished: ${String(p.status ?? (p.ok ? 'succeeded' : 'failed'))}`);
+            addLog(
+              p.status === 'succeeded' || p.ok ? 'info' : 'warn',
+              t('Command finished: {status}', { status: String(p.status ?? (p.ok ? 'succeeded' : 'failed')) }),
+            );
             scheduleRefresh();
             return;
           case 'agent.mode':
             if (taskId === activeRef.current) setMode(p.mode as AgentMode);
             break;
           case 'agent.policyDenied':
-            addLog('warn', `Policy blocked ${String(p.tool)}: ${String(p.reason)}`);
+            addLog('warn', t('Policy blocked {tool}: {reason}', { tool: String(p.tool), reason: String(p.reason) }));
             break;
           case 'agent.notice':
             if (p.level === 'error' || p.level === 'warn') addLog(p.level, String(p.text));
             break;
           case 'agent.retry':
-            addLog('warn', `API retry: ${String(p.error)} (${p.status === null ? 'no response' : String(p.status)})`);
+            addLog('warn', t('API retry: {error} ({status})', { error: String(p.error), status: p.status === null ? t('no response') : String(p.status) }));
             break;
           // Settings changed in VOID Portal (or anywhere else): show them, and apply a new theme.
           case 'settings.changed': {
@@ -349,16 +365,25 @@ export default function App() {
             if (!a.active) setAdminRestart(null);
             addLog(
               a.active ? 'warn' : 'info',
-              a.active ? `Admin dev session started ${a.by === 'phone' ? `from ${a.device ?? 'a phone'}` : 'on this PC'}.` : 'Admin dev session ended.',
+              a.active
+                ? a.by === 'phone'
+                  ? t('Admin dev session started from {device}.', { device: a.device ?? t('a phone') })
+                  : t('Admin dev session started on this PC.')
+                : t('Admin dev session ended.'),
             );
             break;
           }
           case 'admin.restartPending':
-            setAdminRestart(p.install ? 'restart with the new build scheduled' : 'restart scheduled');
-            addLog('info', `Restart requested by the agent${p.reason ? `: ${String(p.reason)}` : ''}. It happens once no task is working.`);
+            setAdminRestart(p.install ? t('restart with the new build scheduled') : t('restart scheduled'));
+            addLog(
+              'info',
+              p.reason
+                ? t('Restart requested by the agent: {reason}. It happens once no task is working.', { reason: String(p.reason) })
+                : t('Restart requested by the agent. It happens once no task is working.'),
+            );
             break;
           case 'admin.restarting':
-            setAdminRestart(p.install ? 'installing and restarting…' : 'restarting…');
+            setAdminRestart(p.install ? t('installing and restarting…') : t('restarting…'));
             break;
           case 'admin.restartFailed':
             setAdminRestart(null);
@@ -370,7 +395,11 @@ export default function App() {
     );
     handlers.push(
       onSidecarExit((code) => {
-        setFatal(`The agent backend stopped${code !== null ? ` (exit code ${code})` : ''}. Running tasks were interrupted; their history is saved.`);
+        setFatal(
+          code !== null
+            ? t('The agent backend stopped (exit code {code}). Running tasks were interrupted; their history is saved.', { code })
+            : t('The agent backend stopped. Running tasks were interrupted; their history is saved.'),
+        );
       }),
     );
     return () => {
@@ -400,7 +429,7 @@ export default function App() {
               }
             : i,
         );
-        addLog('info', `Opened project ${p.root}`);
+        addLog('info', t('Opened project {path}', { path: p.root }));
       } catch (err) {
         toast('error', errorText(err));
       }
@@ -508,7 +537,7 @@ export default function App() {
     return (
       <div className="empty" style={{ height: '100vh', justifyContent: 'center' }}>
         <img className="logo" src={logo} alt="" />
-        <h2>VOID Workshop could not start its backend</h2>
+        <h2>{t('VOID Workshop could not start its backend')}</h2>
         <p>{fatal}</p>
         <button
           className="btn primary"
@@ -518,7 +547,7 @@ export default function App() {
               .catch((e) => setFatal(errorText(e)));
           }}
         >
-          <RotateCcw size={14} /> Retry
+          <RotateCcw size={14} /> {t('Retry')}
         </button>
       </div>
     );
@@ -527,7 +556,7 @@ export default function App() {
     return (
       <div className="empty" style={{ height: '100vh', justifyContent: 'center' }}>
         <img className="logo" src={logo} alt="" />
-        <p>Starting VOID Workshop…</p>
+        <p>{t('Starting VOID Workshop…')}</p>
       </div>
     );
   }
@@ -568,21 +597,21 @@ export default function App() {
         <div className="brand">
           <img src={logo} alt="" />
           <span>
-            <span className="void">VOID</span> WORKSHOP
+            <span className="void">{t('VOID')}</span> {t('WORKSHOP')}
           </span>
         </div>
         <div style={{ position: 'relative' }}>
           <button className="btn" onClick={() => setProjectMenu(!projectMenu)}>
-            <FolderOpen size={14} /> {project ? project.name : 'Open project'} <ChevronDown size={12} />
+            <FolderOpen size={14} /> {project ? project.name : t('Open project')} <ChevronDown size={12} />
           </button>
           {projectMenu && (
             <div className="menu" onMouseLeave={() => setProjectMenu(false)}>
               <button onClick={() => void openProject()}>
-                <FolderOpen size={14} /> Open folder…
+                <FolderOpen size={14} /> {t('Open folder…')}
               </button>
               {init.recentProjects.length > 0 && (
                 <div className="muted" style={{ padding: '6px 10px 2px', fontSize: 11 }}>
-                  RECENT
+                  {t('RECENT')}
                 </div>
               )}
               {init.recentProjects.map((r) => (
@@ -596,7 +625,7 @@ export default function App() {
                   </span>
                   <span
                     className="icon-btn"
-                    title="Remove from recent"
+                    title={t('Remove from recent')}
                     onClick={(e) => {
                       e.stopPropagation();
                       void call('project.forget', { root: r.path }).then(() =>
@@ -612,14 +641,14 @@ export default function App() {
           )}
         </div>
         {project && (
-          <button className="btn ghost" onClick={() => void selectTask(null)} disabled={!activeId} title="Start a new session in this project">
-            <Plus size={14} /> New session
+          <button className="btn ghost" onClick={() => void selectTask(null)} disabled={!activeId} title={t('Start a new session in this project')}>
+            <Plus size={14} /> {t('New session')}
           </button>
         )}
         {working.length > 0 && (
           <div style={{ position: 'relative' }}>
-            <button className="btn ghost" onClick={() => setWorkingMenu(!workingMenu)} title="Tasks working right now, in every project">
-              <Activity size={14} /> Working ({working.length}) <ChevronDown size={12} />
+            <button className="btn ghost" onClick={() => setWorkingMenu(!workingMenu)} title={t('Tasks working right now, in every project')}>
+              <Activity size={14} /> {t('Working ({n})', { n: working.length })} <ChevronDown size={12} />
             </button>
             {workingMenu && (
               <div className="menu" onMouseLeave={() => setWorkingMenu(false)}>
@@ -642,36 +671,36 @@ export default function App() {
         {init.admin.active && (
           <span
             className="chip warn admin-chip"
-            title={`The agent may change VOID Workshop and VOID Portal${init.admin.sourceDir ? ` (${init.admin.sourceDir})` : ''}`}
+            title={`${t('The agent may change VOID Workshop and VOID Portal')}${init.admin.sourceDir ? ` (${init.admin.sourceDir})` : ''}`}
           >
-            <ShieldAlert size={12} /> Admin dev session
+            <ShieldAlert size={12} /> {t('Admin dev session')}
             {init.admin.since ? ` · ${timeAgo(init.admin.since)}` : ''}
-            {init.admin.by === 'phone' ? ` · from ${init.admin.device ?? 'phone'}` : ''}
+            {init.admin.by === 'phone' ? ` · ${t('from {device}', { device: init.admin.device ?? t('phone') })}` : ''}
             {adminRestart ? ` · ${adminRestart}` : ''}
             <button className="btn small" onClick={() => setConfirmAdminEnd(true)}>
-              End
+              {t('End')}
             </button>
           </span>
         )}
         {fatal && (
           <span className="chip bad" title={fatal}>
-            Backend stopped
+            {t('Backend stopped')}
             <button
               className="btn small"
               onClick={() => {
                 void restartSidecar()
                   .then(loadInit)
-                  .then(() => toast('info', 'Backend restarted.'))
+                  .then(() => toast('info', t('Backend restarted.')))
                   .catch((e) => toast('error', errorText(e)));
               }}
             >
-              Restart
+              {t('Restart')}
             </button>
           </span>
         )}
         <div style={{ position: 'relative' }}>
-          <button className="btn ghost" onClick={() => setLayoutMenu(!layoutMenu)} title="Panels, saved layouts and the visual editor">
-            <LayoutTemplate size={14} /> Layout <ChevronDown size={12} />
+          <button className="btn ghost" onClick={() => setLayoutMenu(!layoutMenu)} title={t('Panels, saved layouts and the visual editor')}>
+            <LayoutTemplate size={14} /> {t('Layout')} <ChevronDown size={12} />
           </button>
           {layoutMenu && (
             <div className="menu" style={{ right: 0, left: 'auto' }} onMouseLeave={() => setLayoutMenu(false)}>
@@ -681,28 +710,28 @@ export default function App() {
                   setUiDraft((d) => d ?? ui);
                 }}
               >
-                <Paintbrush size={14} /> <span className="grow">Edit UI…</span> <span className="muted">Ctrl+Alt+E</span>
+                <Paintbrush size={14} /> <span className="grow">{t('Edit UI…')}</span> <span className="muted">{t('Ctrl+Alt+E')}</span>
               </button>
               {(
                 [
-                  ['showLeft', 'Files & tasks', 'Ctrl+B'],
-                  ['showRight', 'Review & git', 'Ctrl+Alt+B'],
-                  ['showBottom', 'Terminal & log', 'Ctrl+J'],
+                  ['showLeft', msg('Files & tasks'), 'Ctrl+B'],
+                  ['showRight', msg('Review & git'), 'Ctrl+Alt+B'],
+                  ['showBottom', msg('Terminal & log'), 'Ctrl+J'],
                 ] as const
               ).map(([k, label, keys]) => (
                 <button key={k} onClick={() => setLayout({ [k]: !ui.layout[k] })}>
-                  <Check size={14} style={{ opacity: ui.layout[k] ? 1 : 0 }} /> <span className="grow">{label}</span> <span className="muted">{keys}</span>
+                  <Check size={14} style={{ opacity: ui.layout[k] ? 1 : 0 }} /> <span className="grow">{t(label)}</span> <span className="muted">{keys}</span>
                 </button>
               ))}
               <button onClick={() => setLayout({ swapSides: !ui.layout.swapSides })}>
-                <ArrowLeftRight size={14} /> <span className="grow">Swap side panels</span>
+                <ArrowLeftRight size={14} /> <span className="grow">{t('Swap side panels')}</span>
               </button>
               <button onClick={() => setLayout(DEFAULT_LAYOUT)}>
-                <RotateCcw size={14} /> <span className="grow">Default layout</span>
+                <RotateCcw size={14} /> <span className="grow">{t('Default layout')}</span>
               </button>
               {init.settings.layouts.length > 0 && (
                 <div className="muted" style={{ padding: '6px 10px 2px', fontSize: 11 }}>
-                  SAVED LAYOUTS
+                  {t('SAVED LAYOUTS')}
                 </div>
               )}
               {init.settings.layouts.map((l) => (
@@ -722,7 +751,7 @@ export default function App() {
           )}
         </div>
         <button className="btn ghost" onClick={() => setSettingsOpen('key')}>
-          <SettingsIcon size={14} /> Settings
+          <SettingsIcon size={14} /> {t('Settings')}
         </button>
       </header>
 
@@ -730,13 +759,13 @@ export default function App() {
         {servicesSide === 'left' && (
           <div className="tabs">
             <button className={`tab ${leftView === 'files' ? 'active' : ''}`} onClick={() => setLeftTab('files')}>
-              Files
+              {t('Files')}
             </button>
             <button className={`tab ${leftView === 'github' ? 'active' : ''}`} onClick={() => setLeftTab('github')}>
-              <GithubMark /> GitHub
+              <GithubMark /> {t('GitHub')}
             </button>
             <button className={`tab ${leftView === 'cloudflare' ? 'active' : ''}`} onClick={() => setLeftTab('cloudflare')}>
-              <Cloud size={13} /> Cloudflare
+              <Cloud size={13} /> {t('Cloudflare')}
             </button>
           </div>
         )}
@@ -750,7 +779,7 @@ export default function App() {
             <div className="left-split" style={{ flex: '1 1 0', minHeight: 0, display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--border)' }}>
               <Resizer
                 edge="top"
-                title="Drag to share the panel between files and tasks"
+                title={t('Drag to share the panel between files and tasks')}
                 value={ui.layout.leftSplit}
                 min={LIMITS.leftSplit[0]}
                 max={LIMITS.leftSplit[1]}
@@ -764,11 +793,11 @@ export default function App() {
             </div>
           </>
         ) : (
-          <div className="empty-small">Open a project to browse its files.</div>
+          <div className="empty-small">{t('Open a project to browse its files.')}</div>
         )}
         <Resizer
           edge={ui.layout.swapSides ? 'left' : 'right'}
-          title="Drag to resize"
+          title={t('Drag to resize')}
           value={ui.layout.leftW}
           min={LIMITS.leftW[0]}
           max={LIMITS.leftW[1]}
@@ -796,8 +825,8 @@ export default function App() {
               void saveSettings({ agentMode: m });
               void simple('task.approvePlan', { taskId: activeId, mode: m })();
             }}
-            onCancel={() => activeId && void simple('task.cancel', { taskId: activeId }, 'Task stopped.')()}
-            onFinish={() => activeId && void simple('task.finish', { taskId: activeId }, 'Task marked as completed.')()}
+            onCancel={() => activeId && void simple('task.cancel', { taskId: activeId }, t('Task stopped.'))()}
+            onFinish={() => activeId && void simple('task.finish', { taskId: activeId }, t('Task marked as completed.'))()}
             onOpenSettings={(s) => setSettingsOpen(s)}
             mode={mode}
             onModeChange={changeMode}
@@ -815,7 +844,7 @@ export default function App() {
       <aside className="right panel">
         <Resizer
           edge={ui.layout.swapSides ? 'right' : 'left'}
-          title="Drag to resize"
+          title={t('Drag to resize')}
           value={ui.layout.rightW}
           min={LIMITS.rightW[0]}
           max={LIMITS.rightW[1]}
@@ -834,7 +863,7 @@ export default function App() {
           onAccept={async (rel) => {
             try {
               await call('review.accept', { taskId: activeId, rel });
-              addLog('info', `Accepted change to ${rel}`);
+              addLog('info', t('Accepted change to {name}', { name: rel }));
             } catch (err) {
               toast('error', errorText(err));
             }
@@ -843,8 +872,8 @@ export default function App() {
           onReject={async (rel, force) => {
             try {
               const r = await call<{ restored: boolean; conflict: boolean }>('review.reject', { taskId: activeId, rel, force });
-              if (r.conflict) toast('warn', `${rel} was changed outside VOID Workshop. Confirm to overwrite those edits.`);
-              else addLog('info', `Rejected change to ${rel} (original restored)`);
+              if (r.conflict) toast('warn', t('{name} was changed outside VOID Workshop. Confirm to overwrite those edits.', { name: rel }));
+              else addLog('info', t('Rejected change to {name} (original restored)', { name: rel }));
             } catch (err) {
               toast('error', errorText(err));
             }
@@ -856,7 +885,12 @@ export default function App() {
             if (!project) return false;
             try {
               const r = await call<{ sha: string }>('git.commit', { root: project.root, paths, message, taskId: activeId ?? undefined });
-              toast('info', `Committed ${paths.length} file(s): ${r.sha.slice(0, 10)}. Nothing was pushed.`);
+              toast(
+                'info',
+                tn(paths.length, 'Committed {n} file: {sha}. Nothing was pushed.', 'Committed {n} files: {sha}. Nothing was pushed.', {
+                  sha: r.sha.slice(0, 10),
+                }),
+              );
               addLog('info', `Commit ${r.sha.slice(0, 10)}: ${paths.join(', ')}`);
               await refreshReview();
               await refreshGit();
@@ -870,7 +904,12 @@ export default function App() {
             if (!project) return;
             try {
               const cp = await call<{ ref: string; includesChanges: boolean }>('git.checkpoint', { root: project.root, label: 'manual' });
-              toast('info', `Checkpoint saved at ${cp.ref}${cp.includesChanges ? '' : ' (no uncommitted tracked changes)'}.`);
+              toast(
+                'info',
+                cp.includesChanges
+                  ? t('Checkpoint saved at {ref}.', { ref: cp.ref })
+                  : t('Checkpoint saved at {ref} (no uncommitted tracked changes).', { ref: cp.ref }),
+              );
               addLog('info', `Checkpoint ${cp.ref}`);
             } catch (err) {
               toast('error', errorText(err));
@@ -885,7 +924,7 @@ export default function App() {
         {!ui.layout.bottomCollapsed && (
           <Resizer
             edge="top"
-            title="Drag to resize"
+            title={t('Drag to resize')}
             value={ui.layout.bottomH}
             min={LIMITS.bottomH[0]}
             max={LIMITS.bottomH[1]}
@@ -966,8 +1005,8 @@ export default function App() {
 
       {confirmAdminEnd && (
         <ConfirmDialog
-          title="End the admin session?"
-          confirmLabel="End admin session"
+          title={t('End the admin session?')}
+          confirmLabel={t('End admin session')}
           danger
           onCancel={() => setConfirmAdminEnd(false)}
           onConfirm={() => {
@@ -978,16 +1017,16 @@ export default function App() {
           }}
         >
           <p>
-            Workshop goes back to normal: the agent can no longer change VOID Workshop or VOID Portal.
+            {t('Workshop goes back to normal: the agent can no longer change VOID Workshop or VOID Portal.')}
             {working.length > 0 &&
-              ` ${working.length === 1 ? 'The task' : `The ${working.length} tasks`} still working in it will be stopped (history is kept).`}
+              ` ${tn(working.length, 'The task still working in it will be stopped (history is kept).', 'The {n} tasks still working in it will be stopped (history is kept).')}`}
           </p>
         </ConfirmDialog>
       )}
       {confirmStart && (
         <ConfirmDialog
-          title="Start this task?"
-          confirmLabel="Start task"
+          title={t('Start this task?')}
+          confirmLabel={t('Start task')}
           onCancel={() => {
             confirmStart.resolve(false);
             setConfirmStart(null);
@@ -999,12 +1038,17 @@ export default function App() {
           }}
         >
           <p>
-            This task may use up to <b>{formatUsd(init.settings.perTaskBudgetUsd)}</b> (estimated) on <b>{init.settings.model}</b>, which is at or above your
-            confirmation threshold of {formatUsd(init.settings.confirmTaskBudgetAboveUsd ?? 0)}.
+            {tx('This task may use up to {cost} (estimated) on {model}, which is at or above your confirmation threshold of {threshold}.', {
+              cost: <b>{formatUsd(init.settings.perTaskBudgetUsd)}</b>,
+              model: <b>{init.settings.model}</b>,
+              threshold: formatUsd(init.settings.confirmTaskBudgetAboveUsd ?? 0),
+            })}
           </p>
           <p className="muted">
-            Estimated today so far: {formatUsd(init.spentTodayUsd)} of {formatUsd(init.settings.dailyBudgetUsd)}. These are local estimates, not your Console
-            balance.
+            {t('Estimated today so far: {spent} of {budget}. These are local estimates, not your Console balance.', {
+              spent: formatUsd(init.spentTodayUsd),
+              budget: formatUsd(init.settings.dailyBudgetUsd),
+            })}
           </p>
         </ConfirmDialog>
       )}
@@ -1034,6 +1078,16 @@ export default function App() {
           }}
           onPlanLimitCleared={() => setInit((i) => (i ? { ...i, planLimited: null } : i))}
           toast={toast}
+        />
+      )}
+
+      {welcome && (
+        <WelcomeLanguage
+          onDone={(code) => {
+            setWelcome(false);
+            if (code) void saveSettings({ language: code });
+            else void setLanguage(resolveLanguage(''));
+          }}
         />
       )}
 

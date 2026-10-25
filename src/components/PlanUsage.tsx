@@ -3,11 +3,12 @@ import { Gauge, RefreshCw } from 'lucide-react';
 import { call, errorText } from '../api';
 import type { PlanUsage, PlanUsageRow } from '../types';
 import { timeAgo } from './common';
+import { locale, t } from '../i18n';
 
 /** The short name a status-bar meter uses: 5h, Week, Fable… */
 export function shortLabel(r: PlanUsageRow): string {
   if (r.kind === 'session') return '5h';
-  if (r.kind === 'weekly_all') return 'Week';
+  if (r.kind === 'weekly_all') return t('Week');
   return r.label.replace(/ limit$/, '');
 }
 
@@ -19,15 +20,15 @@ export function meterTone(r: PlanUsageRow): string {
 export function resetText(at: number | null, now = Date.now()): string {
   if (!at) return '';
   const ms = at - now;
-  if (ms <= 0) return 'resetting now';
+  if (ms <= 0) return t('resetting now');
   const mins = Math.round(ms / 60_000);
-  if (mins < 60) return `resets in ${mins}m`;
-  if (mins < 24 * 60) return `resets in ${Math.floor(mins / 60)}h ${mins % 60}m`;
-  return `resets ${new Date(at).toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' })}`;
+  if (mins < 60) return t('resets in {m}m', { m: mins });
+  if (mins < 24 * 60) return t('resets in {h}h {m}m', { h: Math.floor(mins / 60), m: mins % 60 });
+  return t('resets {when}', { when: new Date(at).toLocaleString(locale(), { weekday: 'short', hour: '2-digit', minute: '2-digit' }) });
 }
 
 function money(v: number | null, currency: string): string {
-  return v === null ? '—' : v.toLocaleString(undefined, { style: 'currency', currency });
+  return v === null ? '—' : v.toLocaleString(locale(), { style: 'currency', currency });
 }
 
 /**
@@ -64,10 +65,10 @@ export function PlanMeter({ usage, onUsage }: { usage: PlanUsage | null; onUsage
 
   const rows = usage?.rows ?? [];
   return (
-    <span className="item clickable plan-meter" ref={box} onClick={() => setOpen(!open)} title="Claude plan usage: click for details">
+    <span className="item clickable plan-meter" ref={box} onClick={() => setOpen(!open)} title={t('Claude plan usage: click for details')}>
       <Gauge size={12} />
       {rows.length === 0 ? (
-        <span>{usage?.problem ? 'Plan usage unavailable' : 'Plan usage…'}</span>
+        <span>{usage?.problem ? t('Plan usage unavailable') : t('Plan usage…')}</span>
       ) : (
         rows.map((r) => (
           <span key={`${r.kind}-${r.label}`} className="plan-meter-cell">
@@ -81,11 +82,11 @@ export function PlanMeter({ usage, onUsage }: { usage: PlanUsage | null; onUsage
       {open && (
         <div className="plan-pop" onClick={(e) => e.stopPropagation()}>
           <div className="plan-pop-head">
-            <b>Claude plan usage</b>
+            <b>{t('Claude plan usage')}</b>
             {usage?.subscriptionType && <span className="chip cyan">{usage.subscriptionType}</span>}
             <span className="spacer" />
             <button className="btn small" onClick={refresh} disabled={busy}>
-              <RefreshCw size={12} className={busy ? 'spin' : ''} /> Refresh
+              <RefreshCw size={12} className={busy ? 'spin' : ''} /> {t('Refresh')}
             </button>
           </div>
           {rows.map((r) => (
@@ -93,7 +94,7 @@ export function PlanMeter({ usage, onUsage }: { usage: PlanUsage | null; onUsage
               <div className="plan-row-top">
                 <span>{r.label}</span>
                 <span className="spacer" />
-                <b>{Math.round(r.percent)}% used</b>
+                <b>{t('{percent}% used', { percent: Math.round(r.percent) })}</b>
               </div>
               <span className={`meter wide ${meterTone(r)}`}>
                 <div style={{ width: `${Math.min(100, r.percent)}%` }} />
@@ -104,7 +105,7 @@ export function PlanMeter({ usage, onUsage }: { usage: PlanUsage | null; onUsage
           {usage?.extra && (
             <div className="plan-row">
               <div className="plan-row-top">
-                <span>Extra usage</span>
+                <span>{t('Extra usage')}</span>
                 <span className="spacer" />
                 <b>
                   {money(usage.extra.used, usage.extra.currency)} / {money(usage.extra.limit, usage.extra.currency)}
@@ -116,13 +117,18 @@ export function PlanMeter({ usage, onUsage }: { usage: PlanUsage | null; onUsage
                 </span>
               )}
               <div className="muted">
-                {usage.extra.enabled ? 'On: covers you past the plan limits' : `Off${usage.extra.reason ? ` (${usage.extra.reason.replace(/_/g, ' ')})` : ''}`}
+                {usage.extra.enabled
+                  ? t('On: covers you past the plan limits')
+                  : usage.extra.reason
+                    ? t('Off ({reason})', { reason: usage.extra.reason.replace(/_/g, ' ') })
+                    : t('Off')}
               </div>
             </div>
           )}
           {(error ?? usage?.problem) && <div className="plan-problem">{error ?? usage?.problem}</div>}
           <div className="muted plan-foot">
-            {usage?.checkedAt ? `Checked ${timeAgo(usage.checkedAt)}` : 'Not checked yet'} · from claude.ai, includes use on other devices
+            {usage?.checkedAt ? t('Checked {when}', { when: timeAgo(usage.checkedAt) }) : t('Not checked yet')} ·{' '}
+            {t('from claude.ai, includes use on other devices')}
           </div>
         </div>
       )}

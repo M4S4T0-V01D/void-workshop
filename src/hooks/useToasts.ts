@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { RPC_REJECTED_EVENT, type RejectedCall } from '../api';
 import type { LogEntry } from '../components/BottomPanel';
 import type { Toast } from '../components/common';
+import { t } from '../i18n';
 
 /** Toasts (newest five, timed) and the bottom panel's log; also reports calls the shell refused. */
 export function useToasts() {
@@ -11,17 +12,17 @@ export function useToasts() {
 
   const toast = useCallback((tone: Toast['tone'], text: string) => {
     const id = ++toastId.current;
-    setToasts((t) => [...t.slice(-4), { id, tone, text }]);
-    window.setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), tone === 'error' ? 9000 : 5000);
+    setToasts((list) => [...list.slice(-4), { id, tone, text }]);
+    window.setTimeout(() => setToasts((list) => list.filter((x) => x.id !== id)), tone === 'error' ? 9000 : 5000);
   }, []);
-  const dismiss = useCallback((id: number) => setToasts((t) => t.filter((x) => x.id !== id)), []);
+  const dismiss = useCallback((id: number) => setToasts((list) => list.filter((x) => x.id !== id)), []);
   const addLog = useCallback((level: LogEntry['level'], text: string) => setLog((l) => [...l.slice(-499), { ts: Date.now(), level, text }]), []);
 
   useEffect(() => {
     const onRejected = (e: Event) => {
       const { method, message } = (e as CustomEvent<RejectedCall>).detail;
       addLog('error', `${method}: ${message}`);
-      toast('error', `Workshop bug: the window may not call ${method}. Please report it.`);
+      toast('error', t('Workshop bug: the window may not call {method}. Please report it.', { method }));
     };
     window.addEventListener(RPC_REJECTED_EVENT, onRejected);
     return () => window.removeEventListener(RPC_REJECTED_EVENT, onRejected);

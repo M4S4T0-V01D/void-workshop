@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp, CircleStop, FlaskConical, Loader2, ScrollText, SquareTerminal } from 'lucide-react';
 import type { Project } from '../types';
+import { t } from '../i18n';
 
 export interface RunRecord {
   runId: string;
@@ -57,16 +58,16 @@ export function BottomPanel({
     <>
       <div className="tabs">
         <button className={`tab ${tab === 'terminal' ? 'active' : ''}`} onClick={() => setTab('terminal')}>
-          <SquareTerminal size={13} /> Terminal {running > 0 && <span className="count">{running} running</span>}
+          <SquareTerminal size={13} /> {t('Terminal')} {running > 0 && <span className="count">{t('{n} running', { n: running })}</span>}
         </button>
         <button className={`tab ${tab === 'tests' ? 'active' : ''}`} onClick={() => setTab('tests')}>
-          <FlaskConical size={13} /> Tests &amp; builds
+          <FlaskConical size={13} /> {t('Tests & builds')}
         </button>
         <button className={`tab ${tab === 'log' ? 'active' : ''}`} onClick={() => setTab('log')}>
-          <ScrollText size={13} /> Activity log
+          <ScrollText size={13} /> {t('Activity log')}
         </button>
         <span className="spacer" />
-        <button className="icon-btn" onClick={onToggle} title={collapsed ? 'Expand panel' : 'Collapse panel'}>
+        <button className="icon-btn" onClick={onToggle} title={collapsed ? t('Expand panel') : t('Collapse panel')}>
           {collapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
       </div>
@@ -78,8 +79,8 @@ export function BottomPanel({
                 {shown.length === 0 && (
                   <div className="muted">
                     {tab === 'tests'
-                      ? 'Build, test, lint and type-check runs (yours and the agent’s) appear here.'
-                      : 'No commands yet. Nothing runs without your approval: type a command below or pick a suggestion. There is no unrestricted shell.'}
+                      ? t('Build, test, lint and type-check runs (yours and the agent’s) appear here.')
+                      : t('No commands yet. Nothing runs without your approval: type a command below or pick a suggestion. There is no unrestricted shell.')}
                   </div>
                 )}
                 {shown.map((r) => (
@@ -93,7 +94,7 @@ export function BottomPanel({
                           <Loader2 size={12} className="spin" />
                           {r.origin === 'user' && (
                             <button className="btn small danger" onClick={() => onCancelRun(r.runId)}>
-                              <CircleStop size={11} /> Cancel
+                              <CircleStop size={11} /> {t('Cancel')}
                             </button>
                           )}
                         </>
@@ -112,7 +113,7 @@ export function BottomPanel({
             )}
             {tab === 'log' && (
               <div style={{ padding: '4px 0' }}>
-                {log.length === 0 && <div className="empty-small">Approvals, denials, policy blocks and errors are recorded here for this session.</div>}
+                {log.length === 0 && <div className="empty-small">{t('Approvals, denials, policy blocks and errors are recorded here for this session.')}</div>}
                 {log.map((l, i) => (
                   <div key={i} className="log-row">
                     <span className="ts">{new Date(l.ts).toLocaleTimeString()}</span>
@@ -137,7 +138,7 @@ export function BottomPanel({
                 className="runner-input"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (cmd.trim()) onPrepare({ command: cmd, reason: 'Typed in the terminal panel' });
+                  if (cmd.trim()) onPrepare({ command: cmd, reason: t('Typed in the terminal panel') });
                   setCmd('');
                 }}
               >
@@ -146,10 +147,10 @@ export function BottomPanel({
                   className="input mono"
                   value={cmd}
                   onChange={(e) => setCmd(e.target.value)}
-                  placeholder="Single command, e.g. npm test (no pipes or redirects; you confirm before it runs)"
+                  placeholder={t('Single command, e.g. npm test (no pipes or redirects; you confirm before it runs)')}
                 />
                 <button className="btn" type="submit" disabled={!cmd.trim()}>
-                  Review &amp; run
+                  {t('Review & run')}
                 </button>
               </form>
             </>

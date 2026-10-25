@@ -3,6 +3,7 @@ import { Check, ChevronDown, Cloud, ChevronRight, Circle, CircleDot, GitBranch, 
 import type { GitStatus, PlanItem, Project, ReviewEntry, Task } from '../types';
 import { Callout, ChangeBadge, ConfirmDialog, DiffView, changeLegend } from './common';
 import { GithubMark } from './ServicePanels';
+import { t, tn, tx } from '../i18n';
 
 type Tab = 'plan' | 'changes' | 'git' | 'github' | 'cloudflare';
 
@@ -48,21 +49,21 @@ export function RightPanel({
         }}
       >
         <button className={`tab ${tab === 'plan' ? 'active' : ''}`} onClick={() => setTab('plan')}>
-          Plan {visiblePlan.length > 0 && <span className="count">{visiblePlan.length}</span>}
+          {t('Plan')} {visiblePlan.length > 0 && <span className="count">{visiblePlan.length}</span>}
         </button>
         <button className={`tab ${tab === 'changes' ? 'active' : ''}`} onClick={() => setTab('changes')}>
-          Changes {pendingReview > 0 && <span className="count">{pendingReview}</span>}
+          {t('Changes')} {pendingReview > 0 && <span className="count">{pendingReview}</span>}
         </button>
         <button className={`tab ${tab === 'git' ? 'active' : ''}`} onClick={() => setTab('git')}>
-          Git {git?.dirty && <span className="count">{git.files.length}</span>}
+          {t('Git')} {git?.dirty && <span className="count">{git.files.length}</span>}
         </button>
         {services && (
           <>
-            <button className={`tab ${tab === 'github' ? 'active' : ''}`} onClick={() => setTab('github')} title="GitHub">
-              <GithubMark /> GitHub
+            <button className={`tab ${tab === 'github' ? 'active' : ''}`} onClick={() => setTab('github')} title={t('GitHub')}>
+              <GithubMark /> {t('GitHub')}
             </button>
-            <button className={`tab ${tab === 'cloudflare' ? 'active' : ''}`} onClick={() => setTab('cloudflare')} title="Cloudflare">
-              <Cloud size={13} /> Cloudflare
+            <button className={`tab ${tab === 'cloudflare' ? 'active' : ''}`} onClick={() => setTab('cloudflare')} title={t('Cloudflare')}>
+              <Cloud size={13} /> {t('Cloudflare')}
             </button>
           </>
         )}
@@ -81,13 +82,13 @@ export function RightPanel({
 }
 
 function PlanTab({ plan, task }: { plan: PlanItem[]; task: Task | null }) {
-  if (!task) return <div className="empty-small">Start a task to see its plan here.</div>;
+  if (!task) return <div className="empty-small">{t('Start a task to see its plan here.')}</div>;
   if (!plan.length)
     return (
       <div className="empty-small">
         {task.state === 'planning'
-          ? 'The agent is exploring. Plan steps appear here as it records them.'
-          : 'No structured plan steps were recorded for this task. The full plan text is in the conversation.'}
+          ? t('The agent is exploring. Plan steps appear here as it records them.')
+          : t('No structured plan steps were recorded for this task. The full plan text is in the conversation.')}
       </div>
     );
   return (
@@ -136,7 +137,7 @@ function ChangesTab({
   const [forceFor, setForceFor] = useState<string | null>(null);
   const [legend, setLegend] = useState(false);
 
-  if (!task) return <div className="empty-small">Changes made by a task are listed here for review.</div>;
+  if (!task) return <div className="empty-small">{t('Changes made by a task are listed here for review.')}</div>;
 
   const committable = review.filter((r) => ['applied', 'tested', 'accepted'].includes(r.status));
   const act = async (rel: string, fn: () => Promise<void>) => {
@@ -151,11 +152,13 @@ function ChangesTab({
   return (
     <div>
       <div className="row" style={{ padding: '8px 10px', borderBottom: '1px solid var(--border)' }}>
-        <span className="muted grow">{review.length ? `${review.length} file(s) touched by this task` : 'No file changes yet.'}</span>
-        <button className="icon-btn" title="What do the labels mean?" onClick={() => setLegend(!legend)}>
+        <span className="muted grow">
+          {review.length ? tn(review.length, '{n} file touched by this task', '{n} files touched by this task') : t('No file changes yet.')}
+        </span>
+        <button className="icon-btn" title={t('What do the labels mean?')} onClick={() => setLegend(!legend)}>
           <History size={13} />
         </button>
-        <button className="icon-btn" title="Refresh" onClick={onRefresh}>
+        <button className="icon-btn" title={t('Refresh')} onClick={onRefresh}>
           <RefreshCw size={13} />
         </button>
       </div>
@@ -177,7 +180,7 @@ function ChangesTab({
               {git?.isRepo && !decided && (
                 <input
                   type="checkbox"
-                  title="Include in commit"
+                  title={t('Include in commit')}
                   checked={selected.has(r.rel)}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => {
@@ -191,12 +194,12 @@ function ChangesTab({
               <span className="path" title={r.rel}>
                 {r.rel}
               </span>
-              {!r.existed && <span className="chip cyan">new</span>}
+              {!r.existed && <span className="chip cyan">{t('new')}</span>}
               <ChangeBadge status={r.status} />
             </div>
             {r.externallyModified && (
               <div style={{ padding: '0 10px 6px' }}>
-                <Callout tone="warn">Modified outside VOID Workshop since the agent wrote it.</Callout>
+                <Callout tone="warn">{t('Modified outside VOID Workshop since the agent wrote it.')}</Callout>
               </div>
             )}
             {open === r.rel && (
@@ -205,7 +208,7 @@ function ChangesTab({
                   <DiffView diff={r.diff} maxHeight={360} />
                 ) : (
                   <span className="muted">
-                    {r.status === 'rejected' ? 'Restored to the original.' : 'Original no longer stored (change was accepted or committed).'}
+                    {r.status === 'rejected' ? t('Restored to the original.') : t('Original no longer stored (change was accepted or committed).')}
                   </span>
                 )}
               </div>
@@ -213,15 +216,15 @@ function ChangesTab({
             {!decided && (
               <div className="change-actions">
                 <button className="btn small cyan" disabled={busy === r.rel || r.status === 'proposed'} onClick={() => void act(r.rel, () => onAccept(r.rel))}>
-                  {busy === r.rel ? <Loader2 size={12} className="spin" /> : <Check size={12} />} Accept
+                  {busy === r.rel ? <Loader2 size={12} className="spin" /> : <Check size={12} />} {t('Accept')}
                 </button>
                 <button
                   className="btn small danger"
                   disabled={busy === r.rel || ['planning', 'executing'].includes(task.state)}
-                  title={['planning', 'executing'].includes(task.state) ? 'Wait for the agent turn to finish' : 'Restore the original content'}
+                  title={['planning', 'executing'].includes(task.state) ? t('Wait for the agent turn to finish') : t('Restore the original content')}
                   onClick={() => (r.status === 'conflict' || r.externallyModified ? setForceFor(r.rel) : void act(r.rel, () => onReject(r.rel, false)))}
                 >
-                  <Undo2 size={12} /> Reject
+                  <Undo2 size={12} /> {t('Reject')}
                 </button>
               </div>
             )}
@@ -231,14 +234,14 @@ function ChangesTab({
       {git?.isRepo && committable.length > 0 && (
         <div style={{ padding: 10 }}>
           <button className="btn" disabled={selected.size === 0} onClick={() => setCommitOpen(true)}>
-            <GitCommitHorizontal size={14} /> Commit selected ({selected.size})
+            <GitCommitHorizontal size={14} /> {t('Commit selected ({n})', { n: selected.size })}
           </button>
         </div>
       )}
       {forceFor && (
         <ConfirmDialog
-          title="Overwrite external changes?"
-          confirmLabel="Restore original anyway"
+          title={t('Overwrite external changes?')}
+          confirmLabel={t('Restore original anyway')}
           danger
           onCancel={() => setForceFor(null)}
           onConfirm={() => {
@@ -248,14 +251,16 @@ function ChangesTab({
           }}
         >
           <p>
-            <code>{forceFor}</code> was changed outside VOID Workshop after the agent wrote it. Restoring the original will discard those later edits too.
+            {tx('{file} was changed outside VOID Workshop after the agent wrote it. Restoring the original will discard those later edits too.', {
+              file: <code>{forceFor}</code>,
+            })}
           </p>
         </ConfirmDialog>
       )}
       {commitOpen && (
         <ConfirmDialog
-          title="Create a Git commit"
-          confirmLabel="Commit"
+          title={t('Create a Git commit')}
+          confirmLabel={t('Commit')}
           busy={busy === '__commit'}
           onCancel={() => setCommitOpen(false)}
           onConfirm={() => {
@@ -270,16 +275,14 @@ function ChangesTab({
             });
           }}
         >
-          <p>
-            Commits exactly these files on <b>{git?.branch ?? 'the current branch'}</b>. Nothing is pushed.
-          </p>
+          <p>{tx('Commits exactly these files on {branch}. Nothing is pushed.', { branch: <b>{git?.branch ?? t('the current branch')}</b> })}</p>
           <ul className="mono">
             {[...selected].map((s) => (
               <li key={s}>{s}</li>
             ))}
           </ul>
           <label className="field">
-            Commit message
+            {t('Commit message')}
             <textarea className="textarea" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} autoFocus />
           </label>
         </ConfirmDialog>
@@ -300,31 +303,31 @@ function GitTab({
   onRefresh: () => void;
 }) {
   const [busy, setBusy] = useState(false);
-  if (!project) return <div className="empty-small">Open a project.</div>;
-  if (!git) return <div className="empty-small">Loading…</div>;
+  if (!project) return <div className="empty-small">{t('Open a project.')}</div>;
+  if (!git) return <div className="empty-small">{t('Loading…')}</div>;
   if (!git.isRepo)
     return (
       <div className="empty-small">
-        Not a Git repository. VOID Workshop still keeps the original of every file the agent changes so you can reject changes individually.
+        {t('Not a Git repository. VOID Workshop still keeps the original of every file the agent changes so you can reject changes individually.')}
       </div>
     );
   return (
     <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div className="kv">
-        <span className="k">Branch</span>
+        <span className="k">{t('Branch')}</span>
         <span className="row">
-          <GitBranch size={13} /> {git.branch ?? '(detached)'}
+          <GitBranch size={13} /> {git.branch ?? t('(detached)')}
         </span>
-        <span className="k">HEAD</span>
-        <span className="mono">{git.head?.slice(0, 12) ?? '(no commits)'}</span>
-        <span className="k">Upstream</span>
-        <span>{git.upstream ? `${git.upstream} (↑${git.ahead} ↓${git.behind})` : 'none'}</span>
-        <span className="k">Working tree</span>
-        <span>{git.dirty ? `${git.files.length} changed file(s)` : 'clean'}</span>
+        <span className="k">{t('HEAD')}</span>
+        <span className="mono">{git.head?.slice(0, 12) ?? t('(no commits)')}</span>
+        <span className="k">{t('Upstream')}</span>
+        <span>{git.upstream ? `${git.upstream} (↑${git.ahead} ↓${git.behind})` : t('none')}</span>
+        <span className="k">{t('Working tree')}</span>
+        <span>{git.dirty ? tn(git.files.length, '{n} changed file', '{n} changed files') : t('clean')}</span>
       </div>
       {git.dirty && (
         <Callout tone="warn">
-          There is uncommitted work. The agent can edit these files too; a checkpoint keeps a copy of tracked changes without touching your branch.
+          {t('There is uncommitted work. The agent can edit these files too; a checkpoint keeps a copy of tracked changes without touching your branch.')}
         </Callout>
       )}
       <div className="row">
@@ -336,10 +339,10 @@ function GitTab({
             void onCheckpoint().finally(() => setBusy(false));
           }}
         >
-          {busy ? <Loader2 size={14} className="spin" /> : <History size={14} />} Create checkpoint
+          {busy ? <Loader2 size={14} className="spin" /> : <History size={14} />} {t('Create checkpoint')}
         </button>
         <button className="btn ghost" onClick={onRefresh}>
-          <RefreshCw size={14} /> Refresh
+          <RefreshCw size={14} /> {t('Refresh')}
         </button>
       </div>
       <div>
@@ -354,7 +357,7 @@ function GitTab({
           </div>
         ))}
       </div>
-      <p className="muted">VOID Workshop never pushes, force-pushes, rebases or deletes history. Commits happen only when you click Commit.</p>
+      <p className="muted">{t('VOID Workshop never pushes, force-pushes, rebases or deletes history. Commits happen only when you click Commit.')}</p>
     </div>
   );
 }

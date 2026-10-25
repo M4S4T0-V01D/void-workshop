@@ -5,6 +5,7 @@ import type { CloudflareStatus, GithubDeviceCode, GithubStatus, Settings } from 
 import { Callout } from '../common';
 import { CopyLink } from './AccountSections';
 import { GithubMark, notifyServicesChanged } from '../ServicePanels';
+import { locale, t, tx } from '../../i18n';
 
 type ToastFn = (t: 'info' | 'warn' | 'error', m: string) => void;
 
@@ -13,7 +14,7 @@ const NEW_OAUTH_APP = 'https://github.com/settings/applications/new';
 const CF_TOKENS = 'https://dash.cloudflare.com/profile/api-tokens';
 
 const storedIn = (b: 'secret-service' | 'file' | null) =>
-  b === 'secret-service' ? 'Desktop Secret Service (KWallet / GNOME Keyring)' : b === 'file' ? 'Owner-only key file (0600)' : '—';
+  b === 'secret-service' ? t('Desktop Secret Service (KWallet / GNOME Keyring)') : b === 'file' ? t('Owner-only key file (0600)') : '—';
 
 /** One toast per finished sign-in, even when Settings and the panel both listen. */
 let lastSignInToast = 0;
@@ -40,30 +41,32 @@ export function GithubSection({ settings, save, toast }: { settings: Settings; s
 
   return (
     <>
-      <h4>GitHub</h4>
+      <h4>{t('GitHub')}</h4>
       <p>
-        Shows this project's pull requests, issues, Actions runs and releases in the GitHub panel, and opens pull requests and issues as editor tabs. The token
-        stays in the backend; this window and the agent never see it. The agent keeps using <code>gh</code> with your approval.
+        {tx(
+          "Shows this project's pull requests, issues, Actions runs and releases in the GitHub panel, and opens pull requests and issues as editor tabs. The token stays in the backend; this window and the agent never see it. The agent keeps using {gh} with your approval.",
+          { gh: <code>gh</code> },
+        )}
       </p>
       <div className="kv">
-        <span className="k">Status</span>
+        <span className="k">{t('Status')}</span>
         <span className="row">
           <span className={`dot ${signedIn ? 'ok' : status?.configured ? 'warn' : 'bad'}`} />
           {!status
-            ? 'Checking…'
+            ? t('Checking…')
             : signedIn
-              ? `Signed in as ${status.login}${status.name ? ` (${status.name})` : ''}`
+              ? t('Signed in as {login}', { login: `${status.login}${status.name ? ` (${status.name})` : ''}` })
               : status.configured
-                ? 'Token stored but not accepted'
-                : 'Not signed in'}
+                ? t('Token stored but not accepted')
+                : t('Not signed in')}
         </span>
         {signedIn && (
           <>
-            <span className="k">Scopes</span>
+            <span className="k">{t('Scopes')}</span>
             <span className="mono">{status.scopes.length ? status.scopes.join(', ') : 'fine-grained token'}</span>
-            <span className="k">Stored in</span>
+            <span className="k">{t('Stored in')}</span>
             <span>{storedIn(status.backend)}</span>
-            <span className="k">Fingerprint</span>
+            <span className="k">{t('Fingerprint')}</span>
             <span className="mono">{status.fingerprint}</span>
           </>
         )}
@@ -86,7 +89,7 @@ export function GithubSection({ settings, save, toast }: { settings: Settings; s
                 .finally(() => setBusy(false));
             }}
           >
-            <LogOut size={14} /> Sign out of GitHub
+            <LogOut size={14} /> {t('Sign out of GitHub')}
           </button>
         </div>
       ) : (
@@ -132,7 +135,7 @@ export function GithubConnect({
       if (Date.now() - lastSignInToast < 2000) return;
       lastSignInToast = Date.now();
       if (p.error) toast('error', p.error);
-      else if (p.status.login) toast('info', `Signed in to GitHub as ${p.status.login}.`);
+      else if (p.status.login) toast('info', t('Signed in to GitHub as {login}.', { login: p.status.login }));
     });
     return () => void off.then((f) => f());
   }, [toast]);
@@ -164,20 +167,20 @@ export function GithubConnect({
       setToken('');
       onSignedIn?.(s);
       notifyServicesChanged();
-      toast('info', `Signed in to GitHub as ${s.login}.`);
+      toast('info', t('Signed in to GitHub as {login}.', { login: s.login ?? '' }));
     });
 
   if (code)
     return (
       <div className="device-code">
-        <p>Enter this code on GitHub (the page opened in your browser):</p>
+        <p>{t('Enter this code on GitHub (the page opened in your browser):')}</p>
         <div className="row wrap">
           <code className="code-big">{code.userCode}</code>
           <button className="btn small" onClick={() => void navigator.clipboard.writeText(code.userCode)}>
-            Copy
+            {t('Copy')}
           </button>
           <button className="btn small" onClick={() => void openServiceUrl(code.verificationUri).catch((err) => toast('error', errorText(err)))}>
-            <ExternalLink size={13} /> Open {code.verificationUri.replace(/^https:\/\//, '')}
+            <ExternalLink size={13} /> {t('Open {site}', { site: code.verificationUri.replace(/^https:\/\//, '') })}
           </button>
           <button
             className="btn small ghost"
@@ -188,11 +191,12 @@ export function GithubConnect({
               })
             }
           >
-            <X size={13} /> Cancel
+            <X size={13} /> {t('Cancel')}
           </button>
         </div>
         <p className="muted row">
-          <Loader2 size={12} className="spin" /> Waiting for GitHub… the code expires {new Date(code.expiresAt).toLocaleTimeString()}.
+          <Loader2 size={12} className="spin" />{' '}
+          {t('Waiting for GitHub… the code expires {time}.', { time: new Date(code.expiresAt).toLocaleTimeString(locale()) })}
         </p>
       </div>
     );
@@ -201,68 +205,72 @@ export function GithubConnect({
     <div className={compact ? 'service-connect' : undefined}>
       {editId ? (
         <>
-          {!compact && <h4>Sign in with your OAuth App</h4>}
+          {!compact && <h4>{t('Sign in with your OAuth App')}</h4>}
           <Callout tone="info">
-            Register an OAuth App on GitHub (any homepage and callback URL), tick <b>Enable Device Flow</b>, and paste its <b>Client ID</b> here. No client
-            secret is needed.
+            {tx('Register an OAuth App on GitHub (any homepage and callback URL), tick {flow}, and paste its {id} here. No client secret is needed.', {
+              flow: <b>Enable Device Flow</b>,
+              id: <b>Client ID</b>,
+            })}
           </Callout>
           <div className="row wrap">
             <button className="btn small" onClick={() => void openServiceUrl(NEW_OAUTH_APP).catch((err) => toast('error', errorText(err)))}>
-              <ExternalLink size={13} /> Register an OAuth App
+              <ExternalLink size={13} /> {t('Register an OAuth App')}
             </button>
             {!compact && <CopyLink url={OAUTH_APPS} />}
           </div>
           <div className="row">
             <input
               style={{ flex: 1, minWidth: 0 }}
-              placeholder="Client ID, e.g. Ov23li…"
+              placeholder={t('Client ID, e.g. Ov23li…')}
               value={clientId}
               spellCheck={false}
               onChange={(e) => setClientId(e.target.value.trim())}
             />
             <button className="btn primary" disabled={!clientId || !!busy} onClick={() => void signIn()}>
-              {busy === 'login' ? <Loader2 size={14} className="spin" /> : <LogIn size={14} />} Sign in
+              {busy === 'login' ? <Loader2 size={14} className="spin" /> : <LogIn size={14} />} {t('Sign in')}
             </button>
           </div>
         </>
       ) : (
         <div className="row wrap">
           <button className="btn primary" disabled={!!busy} onClick={() => void signIn()}>
-            {busy === 'login' ? <Loader2 size={14} className="spin" /> : <GithubMark size={14} />} Sign in with GitHub
+            {busy === 'login' ? <Loader2 size={14} className="spin" /> : <GithubMark size={14} />} {t('Sign in with GitHub')}
           </button>
-          <button className="btn small ghost" title={`Client ID ${settings.githubClientId}`} onClick={() => setEditId(true)}>
-            Change OAuth App
+          <button className="btn small ghost" title={t('Client ID {id}', { id: settings.githubClientId })} onClick={() => setEditId(true)}>
+            {t('Change OAuth App')}
           </button>
         </div>
       )}
 
       {showToken ? (
         <>
-          {compact ? <p className="muted">Or paste a personal access token:</p> : <h4>Or paste a token</h4>}
+          {compact ? <p className="muted">{t('Or paste a personal access token:')}</p> : <h4>{t('Or paste a token')}</h4>}
           {!compact && (
             <p className="muted">
-              A personal access token works too (classic with <code>repo</code>, or fine-grained with read access to the repositories, plus write to issues and
-              pull requests for commenting).
+              {tx(
+                'A personal access token works too (classic with {scope}, or fine-grained with read access to the repositories, plus write to issues and pull requests for commenting).',
+                { scope: <code>repo</code> },
+              )}
             </p>
           )}
           <div className="row">
             <input
               type="password"
               style={{ flex: 1, minWidth: 0 }}
-              placeholder="ghp_… or github_pat_…"
+              placeholder={t('ghp_… or github_pat_…')}
               value={token}
               autoComplete="off"
               onChange={(e) => setToken(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && token && !busy && void storeToken()}
             />
             <button className="btn" disabled={!token || !!busy} onClick={() => void storeToken()}>
-              {busy === 'token' ? <Loader2 size={14} className="spin" /> : <Save size={14} />} {compact ? 'Use' : 'Store token'}
+              {busy === 'token' ? <Loader2 size={14} className="spin" /> : <Save size={14} />} {compact ? t('Use') : t('Store token')}
             </button>
           </div>
         </>
       ) : (
         <button className="link small" onClick={() => setShowToken(true)}>
-          Use a personal access token instead
+          {t('Use a personal access token instead')}
         </button>
       )}
     </div>
@@ -300,27 +308,34 @@ export function CloudflareSection({ toast }: { toast: ToastFn }) {
 
   return (
     <>
-      <h4>Cloudflare</h4>
+      <h4>{t('Cloudflare')}</h4>
       <p>
-        Lists Workers, Pages projects, R2 buckets, D1 databases and KV namespaces in the Cloudflare panel, and opens a Worker's deployed code as a read-only
-        editor tab. Cloudflare has no sign-in for desktop apps, so this uses an API token you create. It stays in the backend; the agent keeps using{' '}
-        <code>wrangler</code> with its own login.
+        {tx(
+          "Lists Workers, Pages projects, R2 buckets, D1 databases and KV namespaces in the Cloudflare panel, and opens a Worker's deployed code as a read-only editor tab. Cloudflare has no sign-in for desktop apps, so this uses an API token you create. It stays in the backend; the agent keeps using {wrangler} with its own login.",
+          { wrangler: <code>wrangler</code> },
+        )}
       </p>
       <div className="kv">
-        <span className="k">Status</span>
+        <span className="k">{t('Status')}</span>
         <span className="row">
           <span className={`dot ${ok ? 'ok' : status?.configured ? 'warn' : 'bad'}`} />
-          {!status ? 'Checking…' : ok ? `Token ${status.tokenStatus ?? 'active'}` : status.configured ? 'Token stored but not accepted' : 'No token'}
+          {!status
+            ? t('Checking…')
+            : ok
+              ? t('Token {status}', { status: status.tokenStatus ?? 'active' })
+              : status.configured
+                ? t('Token stored but not accepted')
+                : t('No token')}
         </span>
         {ok && (
           <>
-            <span className="k">Accounts</span>
+            <span className="k">{t('Accounts')}</span>
             <span>{status.accounts.map((a) => a.name).join(', ') || 'none visible to this token'}</span>
-            <span className="k">Expires</span>
+            <span className="k">{t('Expires')}</span>
             <span>{status.expiresOn ? new Date(status.expiresOn).toLocaleDateString() : 'never'}</span>
-            <span className="k">Stored in</span>
+            <span className="k">{t('Stored in')}</span>
             <span>{storedIn(status.backend)}</span>
-            <span className="k">Fingerprint</span>
+            <span className="k">{t('Fingerprint')}</span>
             <span className="mono">{status.fingerprint}</span>
           </>
         )}
@@ -328,8 +343,8 @@ export function CloudflareSection({ toast }: { toast: ToastFn }) {
       {status?.problem && <Callout tone="bad">{status.problem}</Callout>}
       {status?.configured ? (
         <div className="row">
-          <button className="btn" disabled={busy} onClick={() => void run(() => call<CloudflareStatus>('cloudflare.logout'), 'Cloudflare token removed.')}>
-            <Trash2 size={14} /> Remove token
+          <button className="btn" disabled={busy} onClick={() => void run(() => call<CloudflareStatus>('cloudflare.logout'), t('Cloudflare token removed.'))}>
+            <Trash2 size={14} /> {t('Remove token')}
           </button>
         </div>
       ) : (
@@ -351,7 +366,7 @@ export function CloudflareConnect({ toast, onConnected, compact = false }: { toa
       setToken('');
       onConnected?.(s);
       notifyServicesChanged();
-      toast('info', 'Cloudflare token stored and checked.');
+      toast('info', t('Cloudflare token stored and checked.'));
     } catch (err) {
       toast('error', errorText(err));
     } finally {
@@ -364,32 +379,34 @@ export function CloudflareConnect({ toast, onConnected, compact = false }: { toa
       <Callout tone="info">
         {compact ? (
           <>
-            Create an API token with the <b>Read all resources</b> template and paste it here. Don't use the Global API Key.
+            {tx("Create an API token with the {template} template and paste it here. Don't use the Global API Key.", { template: <b>Read all resources</b> })}
           </>
         ) : (
           <>
-            Create a token under My Profile → API Tokens with the <b>Read all resources</b> template (or a custom token with Account Settings, Workers Scripts,
-            Pages, R2, D1 and Workers KV set to Read). Don't use the Global API Key.
+            {tx(
+              "Create a token under My Profile → API Tokens with the {template} template (or a custom token with Account Settings, Workers Scripts, Pages, R2, D1 and Workers KV set to Read). Don't use the Global API Key.",
+              { template: <b>Read all resources</b> },
+            )}
           </>
         )}
       </Callout>
       <div className="row">
         <button className="btn small" onClick={() => void openServiceUrl(CF_TOKENS).catch((err) => toast('error', errorText(err)))}>
-          <ExternalLink size={13} /> Open API Tokens
+          <ExternalLink size={13} /> {t('Open API Tokens')}
         </button>
       </div>
       <div className="row">
         <input
           type="password"
           style={{ flex: 1, minWidth: 0 }}
-          placeholder="Cloudflare API token"
+          placeholder={t('Cloudflare API token')}
           value={token}
           autoComplete="off"
           onChange={(e) => setToken(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && token && !busy && void store()}
         />
         <button className="btn primary" disabled={!token || busy} onClick={() => void store()}>
-          {busy ? <Loader2 size={14} className="spin" /> : <Save size={14} />} {compact ? 'Connect' : 'Store token'}
+          {busy ? <Loader2 size={14} className="spin" /> : <Save size={14} />} {compact ? t('Connect') : t('Store token')}
         </button>
       </div>
     </div>
@@ -399,15 +416,15 @@ export function CloudflareConnect({ toast, onConnected, compact = false }: { toa
 export function ServicesPlacement({ settings, save }: { settings: Settings; save: (p: Partial<Settings>) => Promise<void> }) {
   return (
     <>
-      <h4>Panel placement</h4>
+      <h4>{t('Panel placement')}</h4>
       <div className="row">
-        <span>Show the GitHub and Cloudflare panels in the</span>
+        <span>{t('GitHub and Cloudflare panels')}</span>
         <select value={settings.servicesPanel} onChange={(e) => void save({ servicesPanel: e.target.value as Settings['servicesPanel'] })}>
-          <option value="right">right panel</option>
-          <option value="left">left panel</option>
+          <option value="right">{t('Right panel')}</option>
+          <option value="left">{t('Left panel')}</option>
         </select>
       </div>
-      <p className="muted">The arrow button in each panel's header moves them too.</p>
+      <p className="muted">{t("The arrow button in each panel's header moves them too.")}</p>
     </>
   );
 }

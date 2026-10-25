@@ -202,6 +202,8 @@ export interface Settings {
   autoPublish: boolean;
   commandTimeoutSec: number;
   commandOutputLimitKb: number;
+  /** Interface language; empty follows the system language. */
+  language: string;
   themeId: string;
   customThemes: Theme[];
   ui: Ui;

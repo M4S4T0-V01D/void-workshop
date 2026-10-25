@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { t } from '../i18n';
 
 /**
  * A drag handle on a panel edge. `onMove` gets the live size while dragging (cheap, no re-render of the window),
@@ -41,7 +42,7 @@ export function Resizer({
       aria-valuenow={value}
       aria-valuemin={min}
       aria-valuemax={max}
-      title={`${title} (double-click to reset)`}
+      title={t('{title} (double-click to reset)', { title })}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.preventDefault();

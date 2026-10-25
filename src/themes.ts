@@ -1,17 +1,18 @@
 import type { SyntaxColors, Theme, ThemeColors } from './types';
+import { msg, t } from './i18n';
 
 export const COLOR_KEYS: Array<{ key: keyof ThemeColors; label: string }> = [
-  { key: 'bg', label: 'Background' },
-  { key: 'panel', label: 'Panels' },
-  { key: 'panelAlt', label: 'Raised surfaces' },
-  { key: 'border', label: 'Borders' },
-  { key: 'text', label: 'Text' },
-  { key: 'textDim', label: 'Secondary text' },
-  { key: 'accent', label: 'Primary accent' },
-  { key: 'accent2', label: 'Secondary accent' },
-  { key: 'success', label: 'Success' },
-  { key: 'warning', label: 'Warning' },
-  { key: 'danger', label: 'Danger' },
+  { key: 'bg', label: msg('Background') },
+  { key: 'panel', label: msg('Panels') },
+  { key: 'panelAlt', label: msg('Raised surfaces') },
+  { key: 'border', label: msg('Borders') },
+  { key: 'text', label: msg('Text') },
+  { key: 'textDim', label: msg('Secondary text') },
+  { key: 'accent', label: msg('Primary accent') },
+  { key: 'accent2', label: msg('Secondary accent') },
+  { key: 'success', label: msg('Success') },
+  { key: 'warning', label: msg('Warning') },
+  { key: 'danger', label: msg('Danger') },
 ];
 
 export const BUILTIN_THEMES: Theme[] = [
@@ -170,14 +171,14 @@ export function contrast(a: string, b: string): number {
 }
 
 /** Readability problems worth warning about in the theme editor. */
-export function contrastWarnings(t: Theme): string[] {
+export function contrastWarnings(theme: Theme): string[] {
   const w: string[] = [];
-  const c = t.colors;
-  if (contrast(c.text, c.bg) < 7) w.push(`Text on background contrast is ${contrast(c.text, c.bg).toFixed(1)}:1 (aim for 7:1).`);
-  if (contrast(c.text, c.panel) < 4.5) w.push(`Text on panels contrast is ${contrast(c.text, c.panel).toFixed(1)}:1 (minimum 4.5:1).`);
-  if (contrast(c.textDim, c.panel) < 3) w.push(`Secondary text on panels is hard to read (${contrast(c.textDim, c.panel).toFixed(1)}:1).`);
-  if (contrast(c.accent, c.panel) < 3) w.push(`Primary accent blends into panels (${contrast(c.accent, c.panel).toFixed(1)}:1).`);
-  if (contrast(c.danger, c.panel) < 3) w.push(`Danger colour is hard to see on panels.`);
+  const c = theme.colors;
+  if (contrast(c.text, c.bg) < 7) w.push(t('Text on background contrast is {ratio}:1 (aim for 7:1).', { ratio: contrast(c.text, c.bg).toFixed(1) }));
+  if (contrast(c.text, c.panel) < 4.5) w.push(t('Text on panels contrast is {ratio}:1 (minimum 4.5:1).', { ratio: contrast(c.text, c.panel).toFixed(1) }));
+  if (contrast(c.textDim, c.panel) < 3) w.push(t('Secondary text on panels is hard to read ({ratio}:1).', { ratio: contrast(c.textDim, c.panel).toFixed(1) }));
+  if (contrast(c.accent, c.panel) < 3) w.push(t('Primary accent blends into panels ({ratio}:1).', { ratio: contrast(c.accent, c.panel).toFixed(1) }));
+  if (contrast(c.danger, c.panel) < 3) w.push(t('Danger colour is hard to see on panels.'));
   return w;
 }
 
@@ -191,17 +192,17 @@ export function mix(a: string, b: string, t: number): string {
 // ---- code editor syntax colours ----------------------------------------------------------------------
 
 export const SYNTAX_KEYS: Array<{ key: keyof SyntaxColors; label: string }> = [
-  { key: 'keyword', label: 'Keywords' },
-  { key: 'string', label: 'Strings' },
-  { key: 'number', label: 'Numbers & constants' },
-  { key: 'comment', label: 'Comments' },
-  { key: 'function', label: 'Functions' },
-  { key: 'type', label: 'Types & classes' },
-  { key: 'tag', label: 'Tags & headings' },
-  { key: 'attribute', label: 'Attributes' },
-  { key: 'property', label: 'Properties' },
-  { key: 'operator', label: 'Operators & punctuation' },
-  { key: 'meta', label: 'Decorators & meta' },
+  { key: 'keyword', label: msg('Keywords') },
+  { key: 'string', label: msg('Strings') },
+  { key: 'number', label: msg('Numbers & constants') },
+  { key: 'comment', label: msg('Comments') },
+  { key: 'function', label: msg('Functions') },
+  { key: 'type', label: msg('Types & classes') },
+  { key: 'tag', label: msg('Tags & headings') },
+  { key: 'attribute', label: msg('Attributes') },
+  { key: 'property', label: msg('Properties') },
+  { key: 'operator', label: msg('Operators & punctuation') },
+  { key: 'meta', label: msg('Decorators & meta') },
 ];
 
 export function hexToHsl(hex: string): [number, number, number] {
@@ -336,18 +337,18 @@ export function parseThemeJson(text: string, existingIds: string[]): Theme {
   try {
     raw = JSON.parse(text);
   } catch {
-    throw new Error('Not valid JSON.');
+    throw new Error(t('Not valid JSON.'));
   }
-  if (!raw || typeof raw !== 'object') throw new Error('Theme must be an object.');
+  if (!raw || typeof raw !== 'object') throw new Error(t('Theme must be an object.'));
   const o = raw as Record<string, unknown>;
-  const name = typeof o.name === 'string' && o.name.trim() ? o.name.trim().slice(0, 60) : 'Imported theme';
+  const name = typeof o.name === 'string' && o.name.trim() ? o.name.trim().slice(0, 60) : t('Imported theme');
   const mode = o.mode === 'light' ? 'light' : 'dark';
   const colors = o.colors as Record<string, unknown> | undefined;
-  if (!colors || typeof colors !== 'object') throw new Error('Theme needs a "colors" object.');
+  if (!colors || typeof colors !== 'object') throw new Error(t('Theme needs a "colors" object.'));
   const out = {} as ThemeColors;
   for (const { key } of COLOR_KEYS) {
     const v = colors[key];
-    if (typeof v !== 'string' || !HEX.test(v)) throw new Error(`Colour "${key}" must be a #rrggbb value.`);
+    if (typeof v !== 'string' || !HEX.test(v)) throw new Error(t('Colour "{key}" must be a #rrggbb value.', { key }));
     out[key] = v.toLowerCase();
   }
   const theme: Theme = { id: uniqueId(slug(name), existingIds), name, mode, colors: out };
@@ -357,7 +358,7 @@ export function parseThemeJson(text: string, existingIds: string[]): Theme {
     for (const { key } of SYNTAX_KEYS) {
       const v = raw[key];
       if (v === undefined) continue;
-      if (typeof v !== 'string' || !HEX.test(v)) throw new Error(`Syntax colour "${key}" must be a #rrggbb value.`);
+      if (typeof v !== 'string' || !HEX.test(v)) throw new Error(t('Syntax colour "{key}" must be a #rrggbb value.', { key }));
       syntax[key] = v.toLowerCase();
     }
     if (Object.keys(syntax).length) theme.syntax = syntax;

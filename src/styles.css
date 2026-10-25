@@ -2282,3 +2282,16 @@ button.link:hover {
   font-weight: 600;
   margin: 10px 0 4px;
 }
+
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* Code, diffs, paths and command output read left to right in every interface language. */
+[dir='rtl'] :is(.cm-editor, .diff, .term, .mono, code, pre, .path) {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

@@ -22,7 +22,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"sidecar/{src,test}/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"sidecar/{src,test}/**/*.ts\"",
     "test": "./scripts/test-gentle.sh",
-    "test:web": "vitest run"
+    "test:web": "vitest run",
+    "i18n": "node --experimental-strip-types --no-warnings scripts/i18n.ts"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.4",

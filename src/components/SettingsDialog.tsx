@@ -38,23 +38,24 @@ import { AdminSection } from './settings/AdminSection';
 import { AppearanceSection } from './settings/AppearanceSection';
 import { RelayField, UpdateSection } from './settings/UpdateSection';
 import { CloudflareSection, GithubSection, ServicesPlacement } from './settings/ServiceSections';
+import { msg, t, tx } from '../i18n';
 
 export type SettingsSection =
   'key' | 'accounts' | 'model' | 'speed' | 'portal' | 'limits' | 'safety' | 'admin' | 'project' | 'appearance' | 'billing' | 'updates';
 
 const SECTIONS: Array<[SettingsSection, string, typeof KeyRound]> = [
-  ['key', 'Sign-in & API key', KeyRound],
-  ['accounts', 'GitHub & Cloudflare', Plug],
-  ['model', 'Provider & model', Sparkles],
-  ['speed', 'Speed & tokens', Gauge],
-  ['portal', 'VOID Portal (phone)', Smartphone],
-  ['limits', 'Spending limits', SlidersHorizontal],
-  ['safety', 'Safety', Shield],
-  ['admin', 'Admin', ShieldAlert],
-  ['project', 'Project access', FolderLock],
-  ['appearance', 'Appearance', Palette],
-  ['billing', 'Billing & usage', CreditCard],
-  ['updates', 'Updates', Download],
+  ['key', msg('Sign-in & API key'), KeyRound],
+  ['accounts', msg('GitHub & Cloudflare'), Plug],
+  ['model', msg('Provider & model'), Sparkles],
+  ['speed', msg('Speed & tokens'), Gauge],
+  ['portal', msg('VOID Portal (phone)'), Smartphone],
+  ['limits', msg('Spending limits'), SlidersHorizontal],
+  ['safety', msg('Safety'), Shield],
+  ['admin', msg('Admin'), ShieldAlert],
+  ['project', msg('Project access'), FolderLock],
+  ['appearance', msg('Appearance & language'), Palette],
+  ['billing', msg('Billing & usage'), CreditCard],
+  ['updates', msg('Updates'), Download],
 ];
 
 export function SettingsDialog({
@@ -103,12 +104,12 @@ export function SettingsDialog({
   };
 
   return (
-    <Modal title="Settings" onClose={onClose} wide>
+    <Modal title={t('Settings')} onClose={onClose} wide>
       <div className="settings" style={{ margin: '-14px -18px' }}>
         <nav>
           {SECTIONS.map(([id, label, Icon]) => (
             <button key={id} className={section === id ? 'active' : ''} onClick={() => setSection(id)}>
-              <Icon size={15} /> {label}
+              <Icon size={15} /> {t(label)}
             </button>
           ))}
         </nav>
@@ -189,7 +190,7 @@ function ModelSection({
         setModels([]);
         setCheckedAt(0);
         onModels([], res);
-        toast('error', res.message ?? 'Could not list models');
+        toast('error', res.message ?? t('Could not list models'));
       }
     } catch (err) {
       toast('error', errorText(err));
@@ -203,25 +204,25 @@ function ModelSection({
   };
   return (
     <>
-      <h4>Provider</h4>
+      <h4>{t('Provider')}</h4>
       <div className="row wrap">
         <label className="check">
           <input type="radio" checked={!local} disabled={busy} onChange={() => void switchProvider('anthropic')} />
           <span>
-            Anthropic <span className="muted">(Claude plan or Console API key)</span>
+            {t('Anthropic')} <span className="muted">{t('(Claude plan or Console API key)')}</span>
           </span>
         </label>
         <label className="check">
           <input type="radio" checked={local} disabled={busy} onChange={() => void switchProvider('ollama')} />
           <span>
-            Ollama <span className="muted">(local models on this computer, free)</span>
+            {t('Ollama')} <span className="muted">{t('(local models on this computer, free)')}</span>
           </span>
         </label>
       </div>
       {local && (
         <>
           <label className="field">
-            Ollama address
+            {t('Ollama address')}
             <input
               className="input mono"
               spellCheck={false}
@@ -231,24 +232,26 @@ function ModelSection({
                 if (ollamaUrl !== settings.ollamaUrl) void save({ ollamaUrl }).then(refresh);
               }}
             />
-            <span className="muted">Must be on this computer (http://127.0.0.1:11434 by default). Start Ollama with `ollama serve`.</span>
+            <span className="muted">{t('Must be on this computer (http://127.0.0.1:11434 by default). Start Ollama with `ollama serve`.')}</span>
           </label>
           <Callout tone="info">
-            Local models are free and your Console key is never sent to Ollama. The agent uses many tools and a long system prompt, so pick a capable coding
-            model (for example qwen3-coder, gpt-oss:20b or devstral) and give Ollama a large context window, e.g. OLLAMA_CONTEXT_LENGTH=32768 or more. Spending
-            limits and effort do not apply.
+            {t(
+              'Local models are free and your Console key is never sent to Ollama. The agent uses many tools and a long system prompt, so pick a capable coding model (for example qwen3-coder, gpt-oss:20b or devstral) and give Ollama a large context window, e.g. OLLAMA_CONTEXT_LENGTH=32768 or more. Spending limits and effort do not apply.',
+            )}
           </Callout>
         </>
       )}
-      <h4>Model</h4>
+      <h4>{t('Model')}</h4>
       <p>
         {local
-          ? 'The list shows the models installed in your Ollama server. Run `ollama pull <model>`, then Refresh.'
-          : 'The list comes from the Anthropic Models API for your key, so it only shows models your organization can use. No model IDs are built into the app.'}
+          ? t('The list shows the models installed in your Ollama server. Run `ollama pull <model>`, then Refresh.')
+          : t(
+              'The list comes from the Anthropic Models API for your key, so it only shows models your organization can use. No model IDs are built into the app.',
+            )}
       </p>
       <div className="row">
         <select className="select" value={settings.model ?? ''} onChange={(e) => void save({ model: e.target.value || null })} disabled={!models.length}>
-          <option value="">{models.length ? 'Choose a model…' : local ? 'Refresh to load Ollama models' : 'Verify your key to load models'}</option>
+          <option value="">{models.length ? t('Choose a model…') : local ? t('Refresh to load Ollama models') : t('Verify your key to load models')}</option>
           {models.map((m) => (
             <option key={m.id} value={m.id}>
               {m.displayName} ({m.id})
@@ -256,31 +259,32 @@ function ModelSection({
           ))}
         </select>
         <button className="btn" onClick={() => void refresh()} disabled={busy}>
-          <RefreshCw size={14} className={busy ? 'spin' : ''} /> Refresh
+          <RefreshCw size={14} className={busy ? 'spin' : ''} /> {t('Refresh')}
         </button>
       </div>
-      {checkedAt > 0 && <span className="muted">List fetched {timeAgo(checkedAt)}.</span>}
+      {checkedAt > 0 && <span className="muted">{t('List fetched {when}.', { when: timeAgo(checkedAt) })}</span>}
       {!local && (
         <>
           <Callout tone="info">
-            Larger models cost more per token. Check current prices on the Anthropic pricing page; VOID Workshop's cost estimates use the price table built into
-            the Agent SDK for the model that served each request.
+            {t(
+              "Larger models cost more per token. Check current prices on the Anthropic pricing page; VOID Workshop's cost estimates use the price table built into the Agent SDK for the model that served each request.",
+            )}
           </Callout>
           <label className="field">
-            Effort (thinking depth)
+            {t('Effort (thinking depth)')}
             <select className="select" value={settings.effort ?? ''} onChange={(e) => void save({ effort: (e.target.value || null) as Settings['effort'] })}>
-              <option value="">Model default</option>
-              <option value="low">Low: cheapest, fine for small edits</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="xhigh">Extra high</option>
-              <option value="max">Max: most expensive</option>
+              <option value="">{t('Model default')}</option>
+              <option value="low">{t('Low: cheapest, fine for small edits')}</option>
+              <option value="medium">{t('Medium')}</option>
+              <option value="high">{t('High')}</option>
+              <option value="xhigh">{t('Extra high')}</option>
+              <option value="max">{t('Max: most expensive')}</option>
             </select>
           </label>
         </>
       )}
       <label className="field">
-        Max output tokens per request
+        {t('Max output tokens per request')}
         <input
           className="input"
           type="number"
@@ -346,7 +350,7 @@ function PortalSection({
   toast: (t: 'info' | 'warn' | 'error', m: string) => void;
 }) {
   const [status, setStatus] = useState<PortalStatus | null>(null);
-  const [name, setName] = useState('My phone');
+  const [name, setName] = useState(() => t('My phone'));
   const [pairing, setPairing] = useState<{ qrSvg: string; link: string; id: string } | null>(null);
 
   useEffect(() => {
@@ -362,7 +366,7 @@ function PortalSection({
   useEffect(() => {
     if (pairedOnline) {
       setPairing(null);
-      toast('info', 'Phone paired. VOID Portal is connected.');
+      toast('info', t('Phone paired. VOID Portal is connected.'));
     }
   }, [pairedOnline, toast]);
 
@@ -387,11 +391,11 @@ function PortalSection({
 
   return (
     <>
-      <h4>VOID Portal</h4>
+      <h4>{t('VOID Portal')}</h4>
       <p>
-        Drive VOID Workshop from your phone: start tasks, queue messages, approve changes and commands, switch between your Claude plan, API key and Ollama, and
-        get notified when a task is done or needs you. Phone and PC both connect out to your relay, and everything between them is end-to-end encrypted with a
-        key only they hold. The phone can't change keys, sign-in, limits, safety settings, project access or commits.
+        {t(
+          "Drive VOID Workshop from your phone: start tasks, queue messages, approve changes and commands, switch between your Claude plan, API key and Ollama, and get notified when a task is done or needs you. Phone and PC both connect out to your relay, and everything between them is end-to-end encrypted with a key only they hold. The phone can't change keys, sign-in, limits, safety settings, project access or commits.",
+        )}
       </p>
       {status && status.devices.length > 0 && (
         <div className="kv">
@@ -401,12 +405,12 @@ function PortalSection({
               <span className="row">
                 <span className={`dot ${d.phoneOnline ? 'ok' : d.connected ? 'warn' : 'bad'}`} />
                 {d.phoneOnline
-                  ? 'Connected now'
+                  ? t('Connected now')
                   : d.connected
-                    ? `Waiting for the phone${d.lastSeenAt ? ` · last seen ${timeAgo(d.lastSeenAt)}` : ''}`
-                    : 'Relay not reachable'}
+                    ? `${t('Waiting for the phone')}${d.lastSeenAt ? ` · ${t('last seen {when}', { when: timeAgo(d.lastSeenAt) })}` : ''}`
+                    : t('Relay not reachable')}
                 <button className="btn small danger" onClick={() => void unpair(d.id)}>
-                  <Trash2 size={12} /> Remove
+                  <Trash2 size={12} /> {t('Remove')}
                 </button>
               </span>
             </div>
@@ -414,53 +418,66 @@ function PortalSection({
         </div>
       )}
       <div className="row" style={{ marginTop: 10 }}>
-        <input className="input" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="Phone name" style={{ maxWidth: 220 }} />
+        <input
+          className="input"
+          value={name}
+          maxLength={60}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t('Phone name')}
+          style={{ maxWidth: 220 }}
+        />
         <button
           className="btn primary"
           onClick={() => void pair()}
           disabled={!status?.relayUrl}
-          title={status?.relayUrl ? undefined : 'Set your relay address below first'}
+          title={status?.relayUrl ? undefined : t('Set your relay address below first')}
         >
-          <Smartphone size={14} /> Pair a phone
+          <Smartphone size={14} /> {t('Pair a phone')}
         </button>
       </div>
-      {status && !status.relayUrl && <p className="muted">No relay yet: deploy your own below, then pair a phone.</p>}
+      {status && !status.relayUrl && <p className="muted">{t('No relay yet: deploy your own below, then pair a phone.')}</p>}
       {pairing && (
         <div className="pair-box">
           <div className="qr" dangerouslySetInnerHTML={{ __html: pairing.qrSvg }} />
           <div>
             <p>
-              Open <b>VOID Portal</b> on your phone and tap <b>Scan pairing code</b>. This disappears once the phone connects.
+              {tx('Open {app} on your phone and tap {button}. This disappears once the phone connects.', {
+                app: <b>VOID Portal</b>,
+                button: <b>{t('Scan pairing code')}</b>,
+              })}
             </p>
-            <Callout tone="warn">This code is a key to your PC. Don't photograph it or share it; remove the phone here if it ever leaks.</Callout>
+            <Callout tone="warn">{t("This code is a key to your PC. Don't photograph it or share it; remove the phone here if it ever leaks.")}</Callout>
             <p className="muted">
-              Won't scan? Turn the screen brightness up and hold the phone 20–30 cm away. Or copy the link and type it into VOID Portal (Or paste the pairing
-              link):
+              {t(
+                "Won't scan? Turn the screen brightness up and hold the phone 20–30 cm away. Or copy the link and type it into VOID Portal (Or paste the pairing link):",
+              )}
             </p>
             <CopyLink url={pairing.link} />
             <button className="btn small" onClick={() => setPairing(null)}>
-              Hide code
+              {t('Hide code')}
             </button>
           </div>
         </div>
       )}
 
-      <h4>Keep it reachable</h4>
+      <h4>{t('Keep it reachable')}</h4>
       <label className="check">
         <input type="checkbox" checked={settings.runInBackground} onChange={(e) => void save({ runInBackground: e.target.checked })} />
-        <span>Keep running in the background when the window is closed (open it again from the tray icon; Quit is in the tray menu).</span>
+        <span>{t('Keep running in the background when the window is closed (open it again from the tray icon; Quit is in the tray menu).')}</span>
       </label>
       <label className="check">
         <input type="checkbox" checked={settings.startAtLogin} onChange={(e) => void save({ startAtLogin: e.target.checked })} />
-        <span>Start VOID Workshop hidden in the tray when you log in.</span>
+        <span>{t('Start VOID Workshop hidden in the tray when you log in.')}</span>
       </label>
-      <p className="muted">VOID Portal also tells you when this PC goes offline or comes back, so you'll know if it shuts down.</p>
+      <p className="muted">{t("VOID Portal also tells you when this PC goes offline or comes back, so you'll know if it shuts down.")}</p>
 
-      <h4>Relay</h4>
+      <h4>{t('Relay')}</h4>
       <RelayField toast={toast} onSaved={setStatus} />
       <p className="muted">
-        Your own Cloudflare Worker: run <code>npx wrangler deploy</code> in <code>remote/relay</code> (the free plan is enough) and enter the address it prints,
-        with wss:// instead of https://. It only forwards sealed messages and never sees their contents.
+        {tx(
+          'Your own Cloudflare Worker: run {cmd} in {dir} (the free plan is enough) and enter the address it prints, with wss:// instead of https://. It only forwards sealed messages and never sees their contents.',
+          { cmd: <code>npx wrangler deploy</code>, dir: <code>remote/relay</code> },
+        )}
       </p>
     </>
   );
@@ -469,24 +486,26 @@ function PortalSection({
 function SpeedSection({ settings, save, models }: { settings: Settings; save: (p: Partial<Settings>) => Promise<void>; models: ModelEntry[] }) {
   return (
     <>
-      <h4>Token saver</h4>
+      <h4>{t('Token saver')}</h4>
       <p>
-        Most of a Claude plan's allowance goes into re-sending the conversation on every step. The token saver compacts it at 120k tokens at the latest, keeps
-        less command output in it (12k instead of 30k characters per command) and asks the agent for quiet commands and small screenshots.
+        {t(
+          "Most of a Claude plan's allowance goes into re-sending the conversation on every step. The token saver compacts it at 120k tokens at the latest, keeps less command output in it (12k instead of 30k characters per command) and asks the agent for quiet commands and small screenshots.",
+        )}
       </p>
       <label className="check">
-        <input type="checkbox" checked={settings.tokenSaver} onChange={(e) => void save({ tokenSaver: e.target.checked })} /> Save tokens (recommended)
+        <input type="checkbox" checked={settings.tokenSaver} onChange={(e) => void save({ tokenSaver: e.target.checked })} /> {t('Save tokens (recommended)')}
       </label>
 
-      <h4>Model for approved plans</h4>
+      <h4>{t('Model for approved plans')}</h4>
       <p>
-        Plan with a strong model, then build with a cheaper one: once you approve a plan, the task switches to this model. Sonnet uses far less of a Claude
-        plan's weekly allowance than Opus.
+        {t(
+          "Plan with a strong model, then build with a cheaper one: once you approve a plan, the task switches to this model. Sonnet uses far less of a Claude plan's weekly allowance than Opus.",
+        )}
       </p>
       <label className="field">
-        Implement approved plans with
+        {t('Implement approved plans with')}
         <select className="select" value={settings.implementModel ?? ''} onChange={(e) => void save({ implementModel: e.target.value || null })}>
-          <option value="">The same model</option>
+          <option value="">{t('The same model')}</option>
           {settings.implementModel && !models.some((m) => m.id === settings.implementModel) && (
             <option value={settings.implementModel}>{settings.implementModel}</option>
           )}
@@ -498,59 +517,63 @@ function SpeedSection({ settings, save, models }: { settings: Settings; save: (p
         </select>
       </label>
 
-      <h4>Context size</h4>
+      <h4>{t('Context size')}</h4>
       <p>
-        Every step the agent takes re-sends the whole conversation. When it reaches this size, the conversation is compacted (summarised) automatically, which
-        keeps each step cheaper and faster. You can also compact at any time with the context meter under the prompt box.
+        {t(
+          'Every step the agent takes re-sends the whole conversation. When it reaches this size, the conversation is compacted (summarised) automatically, which keeps each step cheaper and faster. You can also compact at any time with the context meter under the prompt box.',
+        )}
       </p>
       <label className="field">
-        Compact the conversation at
+        {t('Compact the conversation at')}
         <select
           className="select"
           value={settings.contextCapTokens ?? ''}
           onChange={(e) => void save({ contextCapTokens: e.target.value ? Number(e.target.value) : null })}
         >
-          <option value="100000">100k tokens: cheapest, compacts often</option>
-          <option value="200000">200k tokens (recommended)</option>
-          <option value="400000">400k tokens</option>
-          <option value="">The model's full window (up to 1M on some models)</option>
+          <option value="100000">{t('100k tokens: cheapest, compacts often')}</option>
+          <option value="200000">{t('200k tokens (recommended)')}</option>
+          <option value="400000">{t('400k tokens')}</option>
+          <option value="">{t("The model's full window (up to 1M on some models)")}</option>
         </select>
       </label>
 
-      <h4>Prompt cache</h4>
+      <h4>{t('Prompt cache')}</h4>
       <p>
-        Repeated context is read from the prompt cache at a tenth of the price. The cache expires when nothing is sent for a while, for example while you review
-        a diff. A 1-hour cache survives longer breaks; on an API key its cache writes cost more (2× instead of 1.25× the input price).
+        {t(
+          'Repeated context is read from the prompt cache at a tenth of the price. The cache expires when nothing is sent for a while, for example while you review a diff. A 1-hour cache survives longer breaks; on an API key its cache writes cost more (2× instead of 1.25× the input price).',
+        )}
       </p>
       <label className="field">
-        Cache lifetime
+        {t('Cache lifetime')}
         <select
           className="select"
           value={settings.promptCacheTtl}
           onChange={(e) => void save({ promptCacheTtl: e.target.value as Settings['promptCacheTtl'] })}
         >
-          <option value="auto">Automatic: 1 hour on a Claude plan, 5 minutes on an API key</option>
-          <option value="5m">5 minutes</option>
-          <option value="1h">1 hour: best if you often take a while to approve changes</option>
+          <option value="auto">{t('Automatic: 1 hour on a Claude plan, 5 minutes on an API key')}</option>
+          <option value="5m">{t('5 minutes')}</option>
+          <option value="1h">{t('1 hour: best if you often take a while to approve changes')}</option>
         </select>
       </label>
 
-      <h4>Speed</h4>
+      <h4>{t('Speed')}</h4>
       <label className="check">
         <input type="checkbox" checked={settings.fastMode} onChange={(e) => void save({ fastMode: e.target.checked })} />
         <span>
-          Fast mode: noticeably faster output on supported models, at a higher price per token (on a Claude plan it draws on extra usage). Also in the prompt
-          bar; applies to a running task immediately.
+          {t(
+            'Fast mode: noticeably faster output on supported models, at a higher price per token (on a Claude plan it draws on extra usage). Also in the prompt bar; applies to a running task immediately.',
+          )}
         </span>
       </label>
-      <p className="muted">Effort (thinking depth) is in the prompt bar too: lower effort answers faster and uses fewer tokens.</p>
+      <p className="muted">{t('Effort (thinking depth) is in the prompt bar too: lower effort answers faster and uses fewer tokens.')}</p>
 
-      <h4>Message queue</h4>
+      <h4>{t('Message queue')}</h4>
       <label className="check">
         <input type="checkbox" checked={settings.sendQueuedTogether} onChange={(e) => void save({ sendQueuedTogether: e.target.checked })} />
         <span>
-          Send queued messages together. Messages you type while the agent works go out as one message when it finishes: one request instead of one per message.
-          Turn off to send them one at a time, each after the previous reply.
+          {t(
+            'Send queued messages together. Messages you type while the agent works go out as one message when it finishes: one request instead of one per message. Turn off to send them one at a time, each after the previous reply.',
+          )}
         </span>
       </label>
     </>
@@ -560,14 +583,15 @@ function SpeedSection({ settings, save, models }: { settings: Settings; save: (p
 function LimitsSection({ settings, save, spentToday }: { settings: Settings; save: (p: Partial<Settings>) => Promise<void>; spentToday: number }) {
   return (
     <>
-      <h4>Local spending limits (estimates)</h4>
+      <h4>{t('Local spending limits (estimates)')}</h4>
       <Callout tone="warn">
-        These limits are local estimates computed from token usage the SDK reports. They are not your billing balance. Retries, prompt caching, price changes,
-        parallel work and other apps using the same organization all affect what is actually charged. The organization's real spend limit is set in the Console.
+        {t(
+          "These limits are local estimates computed from token usage the SDK reports. They are not your billing balance. Retries, prompt caching, price changes, parallel work and other apps using the same organization all affect what is actually charged. The organization's real spend limit is set in the Console.",
+        )}
       </Callout>
       <div className="grid2">
         <NumberField
-          label="Max estimated spend per task (USD)"
+          label={t('Max estimated spend per task (USD)')}
           value={settings.perTaskBudgetUsd}
           min={0.01}
           max={100}
@@ -575,34 +599,34 @@ function LimitsSection({ settings, save, spentToday }: { settings: Settings; sav
           onCommit={(n) => void save({ perTaskBudgetUsd: n })}
         />
         <NumberField
-          label="Max estimated spend per day (USD)"
+          label={t('Max estimated spend per day (USD)')}
           value={settings.dailyBudgetUsd}
           min={0.01}
           max={500}
           step={0.5}
           onCommit={(n) => void save({ dailyBudgetUsd: n })}
-          hint={`Today so far: ${formatUsd(spentToday)} (estimate)`}
+          hint={t('Today so far: {cost} (estimate)', { cost: formatUsd(spentToday) })}
         />
         <NumberField
-          label="Max agent turns per task"
+          label={t('Max agent turns per task')}
           value={settings.maxTurns}
           min={1}
           max={1000}
           step={10}
           onCommit={(n) => void save({ maxTurns: n })}
-          hint="Each tool call and reply is a turn. Local Ollama models can use a high limit freely."
+          hint={t('Each tool call and reply is a turn. Local Ollama models can use a high limit freely.')}
         />
         <NumberField
-          label="Tasks working at the same time"
+          label={t('Tasks working at the same time')}
           value={settings.maxRunningTasks}
           min={1}
           max={8}
           step={1}
           onCommit={(n) => void save({ maxRunningTasks: n })}
-          hint="Each working task is its own agent process (a few hundred MB of memory). The daily spend limit covers all of them together."
+          hint={t('Each working task is its own agent process (a few hundred MB of memory). The daily spend limit covers all of them together.')}
         />
         <NumberField
-          label="Max output tokens per request"
+          label={t('Max output tokens per request')}
           value={settings.maxOutputTokens}
           min={1024}
           max={128000}
@@ -616,11 +640,11 @@ function LimitsSection({ settings, save, spentToday }: { settings: Settings; sav
           checked={settings.confirmTaskBudgetAboveUsd !== null}
           onChange={(e) => void save({ confirmTaskBudgetAboveUsd: e.target.checked ? 2 : null })}
         />
-        <span>Ask for confirmation before starting a task whose budget is at or above a threshold</span>
+        <span>{t('Ask for confirmation before starting a task whose budget is at or above a threshold')}</span>
       </label>
       {settings.confirmTaskBudgetAboveUsd !== null && (
         <NumberField
-          label="Confirmation threshold (USD)"
+          label={t('Confirmation threshold (USD)')}
           value={settings.confirmTaskBudgetAboveUsd}
           min={0}
           max={100}
@@ -635,30 +659,36 @@ function LimitsSection({ settings, save, spentToday }: { settings: Settings; sav
 function SafetySection({ settings, save, sandbox }: { settings: Settings; save: (p: Partial<Settings>) => Promise<void>; sandbox: InitData['sandbox'] }) {
   return (
     <>
-      <h4>Agent behaviour</h4>
+      <h4>{t('Agent behaviour')}</h4>
       <label className="field">
-        Mode
+        {t('Mode')}
         <select className="select" value={settings.agentMode} onChange={(e) => void save({ agentMode: e.target.value as AgentMode })}>
           {MODES.map((m) => (
             <option key={m.id} value={m.id}>
-              {MODE_LABEL[m.id]}: {m.hint}
+              {t(MODE_LABEL[m.id])}: {t(m.hint)}
             </option>
           ))}
         </select>
-        <span className="muted">Used for new sessions. The mode button under the prompt box changes it too (Shift+Tab cycles).</span>
+        <span className="muted">{t('Used for new sessions. The mode button under the prompt box changes it too (Shift+Tab cycles).')}</span>
       </label>
       <label className="check">
         <input type="checkbox" checked={settings.checkpointBeforeTasks} onChange={(e) => void save({ checkpointBeforeTasks: e.target.checked })} />
-        <span>Create a local Git checkpoint before each task (a private ref; does not change branches, the index or your files).</span>
+        <span>{t('Create a local Git checkpoint before each task (a private ref; does not change branches, the index or your files).')}</span>
       </label>
       <label className="check">
         <input type="checkbox" checked={settings.fullAccess} onChange={(e) => void save({ fullAccess: e.target.checked })} />
         <span>
-          <strong>Full access (like Claude Code)</strong>: no sandbox, so builds, installs, other repos and the network just work; the agent can read outside
-          the project, search or fetch the web, and run background jobs (emulators, dev servers). In Auto, ordinary work runs without asking: other folders,{' '}
-          <code>git config</code> and remotes, global installs, long builds (up to an hour). Risky commands (force-push, history rewrites,{' '}
-          <code>git reset --hard</code>, deleting outside the project, uploads, <code>sudo</code>, <code>ssh</code>) and edits outside the project ask you, from
-          VOID Portal too. Your keys, keyrings, <code>~/.claude</code>, Workshop&apos;s own credentials and disk tools stay blocked. Applies to new sessions.
+          {tx(
+            "{title}: no sandbox, so builds, installs, other repos and the network just work; the agent can read outside the project, search or fetch the web, and run background jobs (emulators, dev servers). In Auto, ordinary work runs without asking: other folders, {gitConfig} and remotes, global installs, long builds (up to an hour). Risky commands (force-push, history rewrites, {reset}, deleting outside the project, uploads, {sudo}, {ssh}) and edits outside the project ask you, from VOID Portal too. Your keys, keyrings, {claudeDir}, Workshop's own credentials and disk tools stay blocked. Applies to new sessions.",
+            {
+              title: <strong>{t('Full access (like Claude Code)')}</strong>,
+              gitConfig: <code>git config</code>,
+              reset: <code>git reset --hard</code>,
+              sudo: <code>sudo</code>,
+              ssh: <code>ssh</code>,
+              claudeDir: <code>~/.claude</code>,
+            },
+          )}
         </span>
       </label>
       {settings.fullAccess && (
@@ -666,11 +696,20 @@ function SafetySection({ settings, save, sandbox }: { settings: Settings; save: 
           <label className="check">
             <input type="checkbox" checked={settings.autoPublish} onChange={(e) => void save({ autoPublish: e.target.checked })} />
             <span>
-              <strong>Auto also pushes and publishes</strong>: <code>git push</code>, <code>gh</code>, <code>wrangler</code> and release scripts run without
-              asking in Auto (force-pushes and deletions still ask). Off: each one asks first.
+              {tx(
+                '{title}: {push}, {gh}, {wrangler} and release scripts run without asking in Auto (force-pushes and deletions still ask). Off: each one asks first.',
+                {
+                  title: <strong>{t('Auto also pushes and publishes')}</strong>,
+                  push: <code>git push</code>,
+                  gh: <code>gh</code>,
+                  wrangler: <code>wrangler</code>,
+                },
+              )}
             </span>
           </label>
-          <Callout tone="warn">Commands run with your full user permissions. The sandbox and publish options below are ignored while this is on.</Callout>
+          <Callout tone="warn">
+            {t('Commands run with your full user permissions. The sandbox and publish options below are ignored while this is on.')}
+          </Callout>
         </>
       )}
       <label className="check">
@@ -681,32 +720,47 @@ function SafetySection({ settings, save, sandbox }: { settings: Settings; save: 
           onChange={(e) => void save({ sandboxCommands: e.target.checked })}
         />
         <span>
-          Run agent shell commands in the bubblewrap sandbox: writes only inside the project, no network unless you allow domains in Project access.{' '}
-          {!sandbox.available && <span className="muted">(missing: {sandbox.missing.join(', ')})</span>}
+          {t('Run agent shell commands in the bubblewrap sandbox: writes only inside the project, no network unless you allow domains in Project access.')}{' '}
+          {!sandbox.available && <span className="muted">{t('(missing: {list})', { list: sandbox.missing.join(', ') })}</span>}
         </span>
       </label>
-      {!settings.sandboxCommands && <Callout tone="warn">Without the sandbox, approved commands run with your full user permissions.</Callout>}
+      {!settings.sandboxCommands && <Callout tone="warn">{t('Without the sandbox, approved commands run with your full user permissions.')}</Callout>}
       <label className="check">
         <input type="checkbox" checked={settings.gradleBuilds} onChange={(e) => void save({ gradleBuilds: e.target.checked })} />
         <span>
-          Gradle / Android builds: sandboxed commands may write <code>~/.gradle</code>, <code>~/.android</code>, <code>~/.m2</code> and <code>~/.kotlin</code>{' '}
-          and download from the Gradle, Maven Central and Google repositories. Applies to new sessions.
+          {tx(
+            'Gradle / Android builds: sandboxed commands may write {dirs} and download from the Gradle, Maven Central and Google repositories. Applies to new sessions.',
+            {
+              dirs: (
+                <>
+                  <code>~/.gradle</code>, <code>~/.android</code>, <code>~/.m2</code>, <code>~/.kotlin</code>
+                </>
+              ),
+            },
+          )}
         </span>
       </label>
       <label className="check">
         <input type="checkbox" checked={settings.allowPublishCommands} onChange={(e) => void save({ allowPublishCommands: e.target.checked })} />
         <span>
-          Allow GitHub, push and release commands with approval: <code>gh</code>, <code>git push</code>, <code>wrangler</code> and project{' '}
-          <code>release.sh</code> scripts. They always ask (even in Auto, and from VOID Portal) and run outside the sandbox with your logins. Force-pushes,
-          deletions and <code>gh auth</code> stay blocked. Applies to new sessions.
+          {tx(
+            'Allow GitHub, push and release commands with approval: {gh}, {push}, {wrangler} and project {release} scripts. They always ask (even in Auto, and from VOID Portal) and run outside the sandbox with your logins. Force-pushes, deletions and {auth} stay blocked. Applies to new sessions.',
+            {
+              gh: <code>gh</code>,
+              push: <code>git push</code>,
+              wrangler: <code>wrangler</code>,
+              release: <code>release.sh</code>,
+              auth: <code>gh auth</code>,
+            },
+          )}
         </span>
       </label>
       {settings.allowPublishCommands && (
-        <Callout tone="warn">Approving one of these publishes for real: read the exact command before you tap Run once.</Callout>
+        <Callout tone="warn">{t('Approving one of these publishes for real: read the exact command before you tap Run once.')}</Callout>
       )}
       <div className="grid2">
         <NumberField
-          label="Command timeout (seconds)"
+          label={t('Command timeout (seconds)')}
           value={settings.commandTimeoutSec}
           min={5}
           max={3600}
@@ -714,7 +768,7 @@ function SafetySection({ settings, save, sandbox }: { settings: Settings; save: 
           onCommit={(n) => void save({ commandTimeoutSec: n })}
         />
         <NumberField
-          label="Command output limit (KB)"
+          label={t('Command output limit (KB)')}
           value={settings.commandOutputLimitKb}
           min={16}
           max={4096}
@@ -722,12 +776,12 @@ function SafetySection({ settings, save, sandbox }: { settings: Settings; save: 
           onCommit={(n) => void save({ commandOutputLimitKb: n })}
         />
       </div>
-      <h4>Always enforced</h4>
+      <h4>{t('Always enforced')}</h4>
       <p>
-        Every file write and every shell command needs your approval, one action at a time. Privilege escalation, recursive deletion of broad targets, pushes,
-        history rewrites, publishing, credential and keyring access, raw network tools and attempts to touch VOID Workshop's own settings are refused outright
-        (an admin dev session opens Workshop's own source, logs and database; see Admin). Paths are canonicalised, so <code>..</code> and symlinks cannot escape
-        the project.
+        {tx(
+          "Every file write and every shell command needs your approval, one action at a time. Privilege escalation, recursive deletion of broad targets, pushes, history rewrites, publishing, credential and keyring access, raw network tools and attempts to touch VOID Workshop's own settings are refused outright (an admin dev session opens Workshop's own source, logs and database; see Admin). Paths are canonicalised, so {dots} and symlinks cannot escape the project.",
+          { dots: <code>..</code> },
+        )}
       </p>
     </>
   );
@@ -744,7 +798,7 @@ function ProjectSection({
 }) {
   const [paths, setPaths] = useState((project?.permissions.extraPaths ?? []).join('\n'));
   const [domains, setDomains] = useState((project?.permissions.networkDomains ?? []).join('\n'));
-  if (!project) return <p>Open a project to configure its access.</p>;
+  if (!project) return <p>{t('Open a project to configure its access.')}</p>;
   const saveIt = async () => {
     try {
       const p = await call<ProjectPermissions>('project.setPermissions', {
@@ -761,32 +815,32 @@ function ProjectSection({
         },
       });
       onPermissions(p);
-      toast('info', 'Project access updated. Applies to the next agent session.');
+      toast('info', t('Project access updated. Applies to the next agent session.'));
     } catch (err) {
       toast('error', errorText(err));
     }
   };
   return (
     <>
-      <h4>Access for {project.name}</h4>
+      <h4>{t('Access for {name}', { name: project.name })}</h4>
       <p className="mono">{project.root}</p>
       <label className="field">
-        Extra directories the agent may read and edit (one absolute path per line). Leave empty unless the task genuinely needs a sibling directory.
+        {t('Extra directories the agent may read and edit (one absolute path per line). Leave empty unless the task genuinely needs a sibling directory.')}
         <textarea
           className="textarea mono"
           rows={3}
           value={paths}
           onChange={(e) => setPaths(e.target.value)}
-          placeholder="/home/you/Documents/Projects/shared-lib"
+          placeholder={t('/home/you/Documents/Projects/shared-lib')}
         />
       </label>
       <label className="field">
-        Network domains sandboxed commands may reach (one per line), e.g. registry.npmjs.org for npm install. Empty means no network.
-        <textarea className="textarea mono" rows={3} value={domains} onChange={(e) => setDomains(e.target.value)} placeholder="registry.npmjs.org" />
+        {t('Network domains sandboxed commands may reach (one per line), e.g. registry.npmjs.org for npm install. Empty means no network.')}
+        <textarea className="textarea mono" rows={3} value={domains} onChange={(e) => setDomains(e.target.value)} placeholder={t('registry.npmjs.org')} />
       </label>
       <div>
         <button className="btn primary" onClick={() => void saveIt()}>
-          Save access
+          {t('Save access')}
         </button>
       </div>
       <AlwaysAllowedCommands root={project.root} toast={toast} />
@@ -809,13 +863,15 @@ function AlwaysAllowedCommands({ root, toast }: { root: string; toast: (t: 'info
   };
   return (
     <>
-      <h4>Always-allowed commands</h4>
+      <h4>{t('Always-allowed commands')}</h4>
       <p className="muted">
-        Chosen with <b>Always allow</b> in a command approval. Only the exact same command runs without asking; blocked commands stay blocked, and publishing
-        commands always ask.
+        {tx(
+          'Chosen with {button} in a command approval. Only the exact same command runs without asking; blocked commands stay blocked, and publishing commands always ask.',
+          { button: <b>{t('Always allow')}</b> },
+        )}
       </p>
       {commands === null ? null : commands.length === 0 ? (
-        <p className="muted">None yet.</p>
+        <p className="muted">{t('None yet.')}</p>
       ) : (
         <ul className="always-allowed">
           {commands.map((c) => (
@@ -823,7 +879,7 @@ function AlwaysAllowedCommands({ root, toast }: { root: string; toast: (t: 'info
               <code className="mono">{c}</code>
               <span className="spacer" />
               <button className="btn" onClick={() => void forget(c)}>
-                Remove
+                {t('Remove')}
               </button>
             </li>
           ))}
@@ -837,10 +893,11 @@ function BillingSection({ init, onBillingCleared }: { init: InitData; onBillingC
   const [blocked, setBlocked] = useState(init.billingBlocked);
   return (
     <>
-      <h4>What VOID Workshop can and cannot see</h4>
+      <h4>{t('What VOID Workshop can and cannot see')}</h4>
       <Callout tone="warn">
-        Console billing data is not available to this app. There is no supported API for an individual API key to read your organization's remaining credit, so
-        VOID Workshop never shows a "balance". It shows local estimates only. Check the real numbers on the Console Billing and Usage pages.
+        {t(
+          'Console billing data is not available to this app. There is no supported API for an individual API key to read your organization\'s remaining credit, so VOID Workshop never shows a "balance". It shows local estimates only. Check the real numbers on the Console Billing and Usage pages.',
+        )}
       </Callout>
       {blocked && (
         <>
@@ -855,39 +912,42 @@ function BillingSection({ init, onBillingCleared }: { init: InitData; onBillingC
                 });
               }}
             >
-              I checked the Console. Allow requests again
+              {t('I checked the Console. Allow requests again')}
             </button>
           </div>
         </>
       )}
-      <h4>Three different limits</h4>
+      <h4>{t('Three different limits')}</h4>
       <p>
-        <b>1. Local app limits</b> (Spending limits section): per-task and per-day estimates plus turn and token caps. VOID Workshop stops itself when they are
-        reached. They protect against runaway tasks but are estimates.
+        <b>{t('1. Local app limits')}</b>{' '}
+        {t(
+          '(Spending limits section): per-task and per-day estimates plus turn and token caps. VOID Workshop stops itself when they are reached. They protect against runaway tasks but are estimates.',
+        )}
       </p>
       <p>
-        <b>2. Workspace / organization spend limits</b> (Console → Limits): enforced by Anthropic. Create a dedicated workspace for VOID Workshop, set its
-        monthly spend limit as low as practical, and use a key from that workspace. When the limit is hit, the API refuses requests and the app stops with a
-        clear message.
+        <b>{t('2. Workspace / organization spend limits')}</b>{' '}
+        {t(
+          '(Console → Limits): enforced by Anthropic. Create a dedicated workspace for VOID Workshop, set its monthly spend limit as low as practical, and use a key from that workspace. When the limit is hit, the API refuses requests and the app stops with a clear message.',
+        )}
       </p>
       <p>
-        <b>3. Monthly promotional API credits</b> (for example credits included with a Claude plan): applied by Anthropic to the linked Console organization and
-        shared with all other API usage in that organization. Unused credit typically expires at the end of the period; confirm the exact terms in the Console.
-        When credit runs out, Anthropic either bills your payment method or refuses requests, depending on your billing setup. VOID Workshop never buys credits,
-        enables auto-reload, or switches billing source.
+        <b>{t('3. Monthly promotional API credits')}</b>{' '}
+        {t(
+          '(for example credits included with a Claude plan): applied by Anthropic to the linked Console organization and shared with all other API usage in that organization. Unused credit typically expires at the end of the period; confirm the exact terms in the Console. When credit runs out, Anthropic either bills your payment method or refuses requests, depending on your billing setup. VOID Workshop never buys credits, enables auto-reload, or switches billing source.',
+        )}
       </p>
-      <Callout tone="info">Keep auto-reload off in Console Billing if you want requests to stop when the included credit is used up.</Callout>
+      <Callout tone="info">{t('Keep auto-reload off in Console Billing if you want requests to stop when the included credit is used up.')}</Callout>
       <div className="kv">
-        <span className="k">Billing</span>
+        <span className="k">{t('Billing')}</span>
         <CopyLink url={CONSOLE.billing} />
-        <span className="k">Spend limits</span>
+        <span className="k">{t('Spend limits')}</span>
         <CopyLink url={CONSOLE.limits} />
-        <span className="k">Usage</span>
+        <span className="k">{t('Usage')}</span>
         <CopyLink url={CONSOLE.usage} />
-        <span className="k">Workspaces</span>
+        <span className="k">{t('Workspaces')}</span>
         <CopyLink url={CONSOLE.workspaces} />
       </div>
-      <p className="muted">Local data (task history, estimates, logs) is stored in {init.dataDir}.</p>
+      <p className="muted">{t('Local data (task history, estimates, logs) is stored in {path}.', { path: init.dataDir })}</p>
     </>
   );
 }

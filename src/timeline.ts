@@ -1,10 +1,11 @@
 import type { AgentMode, PlanItem, TaskEvent } from './types';
+import { msg, t, tn } from './i18n';
 
 export const MODE_LABEL: Record<AgentMode, string> = {
-  ask: 'Ask before edits',
-  'auto-edit': 'Edit automatically',
-  auto: 'Auto',
-  plan: 'Plan mode',
+  ask: msg('Ask before edits'),
+  'auto-edit': msg('Edit automatically'),
+  auto: msg('Auto'),
+  plan: msg('Plan mode'),
 };
 
 export type TimelineItem =
@@ -30,10 +31,10 @@ let seq = 0;
 const k = () => `i${++seq}`;
 
 const RETRY_TEXT: Record<string, string> = {
-  rate_limit: 'Rate limited by the API',
-  overloaded: 'The API is overloaded',
-  server_error: 'API server error',
-  unknown: 'Network or API problem',
+  rate_limit: msg('Rate limited by the API'),
+  overloaded: msg('The API is overloaded'),
+  server_error: msg('API server error'),
+  unknown: msg('Network or API problem'),
 };
 
 /** Fold one event (persisted kind or live event name) into the timeline. */
@@ -98,15 +99,25 @@ export function applyEvent(state: TimelineState, kind: string, p: Record<string,
         type: 'notice',
         key: k(),
         level: p.state === 'stopped-budget' || p.state === 'stopped-limit' ? 'warn' : 'error',
-        text: String(p.message ?? 'Stopped'),
+        text: String(p.message ?? t('Stopped')),
       });
     case 'compact':
-      return push({ type: 'notice', key: k(), level: 'info', text: 'Compacting the conversation to save tokens.' });
+      return push({ type: 'notice', key: k(), level: 'info', text: t('Compacting the conversation to save tokens.') });
     case 'auth.switched':
-      return push({ type: 'notice', key: k(), level: 'warn', text: `Switched to ${p.to === 'subscription' ? 'your Claude plan' : 'your API key'}.` });
+      return push({
+        type: 'notice',
+        key: k(),
+        level: 'warn',
+        text: p.to === 'subscription' ? t('Switched to your Claude plan.') : t('Switched to your API key.'),
+      });
     case 'policy.denied':
     case 'agent.policyDenied':
-      return push({ type: 'notice', key: k(), level: 'warn', text: `Blocked ${String(p.tool ?? 'tool')}: ${String(p.reason ?? '')}` });
+      return push({
+        type: 'notice',
+        key: k(),
+        level: 'warn',
+        text: t('Blocked {tool}: {reason}', { tool: String(p.tool ?? 'tool'), reason: String(p.reason ?? '') }),
+      });
     case 'approval.resolved':
       if (!p.summary) return state;
       return push({ type: 'approval', key: k(), summary: String(p.summary), decision: String(p.decision ?? ''), kind: String(p.kind ?? ''), auto: !!p.auto });
@@ -114,54 +125,70 @@ export function applyEvent(state: TimelineState, kind: string, p: Record<string,
       return push({ type: 'approval', key: k(), summary: String(p.summary ?? ''), decision: 'allow', kind: String(p.kind ?? ''), auto: true });
     case 'mode':
     case 'agent.mode':
-      return push({ type: 'notice', key: k(), level: 'info', text: `Mode: ${MODE_LABEL[p.mode as AgentMode] ?? String(p.mode)}` });
+      return push({
+        type: 'notice',
+        key: k(),
+        level: 'info',
+        text: t('Mode: {mode}', { mode: MODE_LABEL[p.mode as AgentMode] ? t(MODE_LABEL[p.mode as AgentMode]) : String(p.mode) }),
+      });
     case 'model':
     case 'agent.model':
-      return push({ type: 'notice', key: k(), level: 'info', text: `Model switched to ${String(p.model)}` });
+      return push({ type: 'notice', key: k(), level: 'info', text: t('Model switched to {model}', { model: String(p.model) }) });
     case 'retry':
     case 'agent.retry': {
       const err = String(p.error ?? 'unknown');
-      const status = p.status === null || p.status === undefined ? 'no response' : `HTTP ${String(p.status)}`;
-      return push({ type: 'retry', key: k(), text: `${RETRY_TEXT[err] ?? err} (${status}); retrying${p.attempt ? `, attempt ${String(p.attempt)}` : ''}…` });
+      const status = p.status === null || p.status === undefined ? t('no response') : `HTTP ${String(p.status)}`;
+      const reason = RETRY_TEXT[err] ? t(RETRY_TEXT[err]) : err;
+      const text = p.attempt
+        ? t('{reason} ({status}); retrying, attempt {attempt}…', { reason, status, attempt: String(p.attempt) })
+        : t('{reason} ({status}); retrying…', { reason, status });
+      return push({ type: 'retry', key: k(), text });
     }
     case 'result': {
-      const t = (p.tokens ?? {}) as Record<string, number>;
+      const tokens = (p.tokens ?? {}) as Record<string, number>;
       return push({
         type: 'usage',
         key: k(),
         deltaUsd: Number(p.deltaUsd ?? 0),
         totalUsd: Number(p.totalUsd ?? 0),
-        input: t.input ?? 0,
-        output: t.output ?? 0,
-        cacheRead: t.cacheRead ?? 0,
-        cacheWrite: t.cacheWrite ?? 0,
+        input: tokens.input ?? 0,
+        output: tokens.output ?? 0,
+        cacheRead: tokens.cacheRead ?? 0,
+        cacheWrite: tokens.cacheWrite ?? 0,
         costBasis: String(p.costBasis ?? 'list'),
       });
     }
     case 'usage.updated': {
-      const t = (p.tokens ?? {}) as Record<string, number>;
+      const tokens = (p.tokens ?? {}) as Record<string, number>;
       return push({
         type: 'usage',
         key: k(),
         deltaUsd: Number(p.deltaUsd ?? 0),
         totalUsd: Number(p.taskCostUsd ?? 0),
-        input: t.input ?? 0,
-        output: t.output ?? 0,
-        cacheRead: t.cacheRead ?? 0,
-        cacheWrite: t.cacheWrite ?? 0,
+        input: tokens.input ?? 0,
+        output: tokens.output ?? 0,
+        cacheRead: tokens.cacheRead ?? 0,
+        cacheWrite: tokens.cacheWrite ?? 0,
         costBasis: String(p.costBasis ?? 'list'),
       });
     }
     case 'checkpoint':
       return p.ref
-        ? push({ type: 'notice', key: k(), level: 'info', text: `Local checkpoint saved at ${String(p.ref)} (no branch or working-tree change).` })
+        ? push({
+            type: 'notice',
+            key: k(),
+            level: 'info',
+            text: t('Local checkpoint saved at {ref} (no branch or working-tree change).', { ref: String(p.ref) }),
+          })
         : state;
     case 'git.commit':
       return push({
         type: 'notice',
         key: k(),
         level: 'info',
-        text: `Committed ${String((p.paths as string[] | undefined)?.length ?? 0)} file(s) as ${String(p.sha ?? '').slice(0, 10)}.`,
+        text: tn((p.paths as string[] | undefined)?.length ?? 0, 'Committed {n} file as {sha}.', 'Committed {n} files as {sha}.', {
+          sha: String(p.sha ?? '').slice(0, 10),
+        }),
       });
     case 'auth':
     case 'agent.auth':
@@ -171,10 +198,15 @@ export function applyEvent(state: TimelineState, kind: string, p: Record<string,
         level: 'info',
         text:
           p.auth === 'subscription'
-            ? `Using your Claude plan${p.subscriptionType ? ` (${String(p.subscriptionType)})` : ''}. No API key is loaded.`
+            ? p.subscriptionType
+              ? t('Using your Claude plan ({plan}). No API key is loaded.', { plan: String(p.subscriptionType) })
+              : t('Using your Claude plan. No API key is loaded.')
             : p.auth === 'ollama' || p.apiProvider === 'ollama'
-              ? 'Using the local Ollama server. No API key is loaded.'
-              : `Authenticated with your Console API key (source: ${String(p.apiKeySource)}, provider: ${String(p.apiProvider)}).`,
+              ? t('Using the local Ollama server. No API key is loaded.')
+              : t('Authenticated with your Console API key (source: {source}, provider: {provider}).', {
+                  source: String(p.apiKeySource),
+                  provider: String(p.apiProvider),
+                }),
       });
     default:
       return state;

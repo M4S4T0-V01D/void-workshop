@@ -14,6 +14,7 @@ import type {
 } from '../types';
 import { CloudflareConnect, GithubConnect } from './settings/ServiceSections';
 import { Callout, timeAgo } from './common';
+import { msg, t } from '../i18n';
 
 /** Sign-in changes in Settings tell the open panels to load again. */
 export const SERVICES_CHANGED = 'void-services-changed';
@@ -48,7 +49,11 @@ function useServicesChanged(reload: () => void) {
 function MoveButton({ side, onMove }: { side: Side; onMove: () => void }) {
   const to = side === 'right' ? 'left' : 'right';
   return (
-    <button className="icon-btn" title={`Move GitHub and Cloudflare to the ${to} panel`} onClick={onMove}>
+    <button
+      className="icon-btn"
+      title={to === 'left' ? t('Move GitHub and Cloudflare to the left panel') : t('Move GitHub and Cloudflare to the right panel')}
+      onClick={onMove}
+    >
       {to === 'left' ? <ArrowLeftToLine size={14} /> : <ArrowRightToLine size={14} />}
     </button>
   );
@@ -60,17 +65,17 @@ function SignInPrompt({ what, problem, onOpenSettings, children }: { what: strin
       {problem ? <Callout tone="bad">{problem}</Callout> : <p className="muted">{what}</p>}
       {children}
       <button className="link small" onClick={onOpenSettings}>
-        More in Settings → GitHub &amp; Cloudflare
+        {t('More in Settings → GitHub & Cloudflare')}
       </button>
     </div>
   );
 }
 
 const KINDS: Array<[GithubListKind, string]> = [
-  ['pulls', 'Pull requests'],
-  ['issues', 'Issues'],
-  ['runs', 'Actions'],
-  ['releases', 'Releases'],
+  ['pulls', msg('Pull requests')],
+  ['issues', msg('Issues')],
+  ['runs', msg('Actions')],
+  ['releases', msg('Releases')],
 ];
 
 export function GithubPanel({
@@ -143,12 +148,12 @@ export function GithubPanel({
           {repo.fullName}
         </button>
       ) : (
-        <b>GitHub</b>
+        <b>{t('GitHub')}</b>
       )}
       {repo?.private && <Lock size={11} className="muted" />}
       <span className="spacer" />
       {status?.login && <span className="muted">{status.login}</span>}
-      <button className="icon-btn" title="Refresh" onClick={reload}>
+      <button className="icon-btn" title={t('Refresh')} onClick={reload}>
         <RefreshCw size={13} />
       </button>
       <MoveButton side={side} onMove={onMove} />
@@ -156,20 +161,20 @@ export function GithubPanel({
   );
 
   let body;
-  if (!status) body = error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">Loading…</div>;
+  if (!status) body = error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">{t('Loading…')}</div>;
   else if (!status.configured || status.problem)
     body = (
       <SignInPrompt
-        what="Sign in to GitHub to see this project's pull requests, issues and Actions runs here."
+        what={t("Sign in to GitHub to see this project's pull requests, issues and Actions runs here.")}
         problem={status.problem}
         onOpenSettings={onOpenSettings}
       >
         <GithubConnect compact settings={settings} save={save} toast={toast} pending={status.pending} />
       </SignInPrompt>
     );
-  else if (!root) body = <div className="empty-small">Open a project.</div>;
-  else if (repo === undefined) body = <div className="empty-small">Loading…</div>;
-  else if (repo === null) body = <div className="empty-small">This project has no GitHub remote (git remote -v).</div>;
+  else if (!root) body = <div className="empty-small">{t('Open a project.')}</div>;
+  else if (repo === undefined) body = <div className="empty-small">{t('Loading…')}</div>;
+  else if (repo === null) body = <div className="empty-small">{t('This project has no GitHub remote (git remote -v).')}</div>;
   else
     body = (
       <>
@@ -177,21 +182,21 @@ export function GithubPanel({
           <div className="seg">
             {KINDS.map(([k, label]) => (
               <button key={k} className={kind === k ? 'active' : ''} onClick={() => setKind(k)}>
-                {label}
+                {t(label)}
               </button>
             ))}
           </div>
           {(kind === 'pulls' || kind === 'issues') && (
             <select value={state} onChange={(e) => setState(e.target.value as typeof state)}>
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
-              <option value="all">All</option>
+              <option value="open">{t('Open')}</option>
+              <option value="closed">{t('Closed')}</option>
+              <option value="all">{t('All')}</option>
             </select>
           )}
         </div>
         {error && <Callout tone="bad">{error}</Callout>}
-        {!items && !error && <div className="empty-small">Loading…</div>}
-        {items?.length === 0 && <div className="empty-small">Nothing here.</div>}
+        {!items && !error && <div className="empty-small">{t('Loading…')}</div>}
+        {items?.length === 0 && <div className="empty-small">{t('Nothing here.')}</div>}
         <div className="service-list">
           {items?.map((it) => {
             const openable = (kind === 'pulls' || kind === 'issues') && it.number !== null;
@@ -199,7 +204,7 @@ export function GithubPanel({
               <button
                 key={it.id}
                 className="service-row"
-                title={openable ? 'Open in a tab' : 'Open on GitHub'}
+                title={openable ? t('Open in a tab') : t('Open on GitHub')}
                 onClick={() => (openable ? onOpenItem(it.number!, it.title) : openExternal(it.htmlUrl, toast))}
               >
                 <span className="title">
@@ -236,11 +241,11 @@ function stateTone(state: string) {
 }
 
 const CF_SECTIONS: Array<[keyof Omit<CloudflareResources, 'accountId'>, string]> = [
-  ['workers', 'Workers'],
-  ['pages', 'Pages'],
-  ['r2', 'R2 buckets'],
-  ['d1', 'D1 databases'],
-  ['kv', 'KV namespaces'],
+  ['workers', msg('Workers')],
+  ['pages', msg('Pages')],
+  ['r2', msg('R2 buckets')],
+  ['d1', msg('D1 databases')],
+  ['kv', msg('KV namespaces')],
 ];
 
 const ACCOUNT_KEY = 'void.cloudflare.account';
@@ -302,14 +307,14 @@ export function CloudflarePanel({
     });
 
   let body;
-  if (!status) body = error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">Loading…</div>;
+  if (!status) body = error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">{t('Loading…')}</div>;
   else if (!status.configured || status.problem)
     body = (
-      <SignInPrompt what="Add a Cloudflare API token to see Workers, Pages, R2, D1 and KV here." problem={status.problem} onOpenSettings={onOpenSettings}>
+      <SignInPrompt what={t('Add a Cloudflare API token to see Workers, Pages, R2, D1 and KV here.')} problem={status.problem} onOpenSettings={onOpenSettings}>
         <CloudflareConnect compact toast={toast} />
       </SignInPrompt>
     );
-  else if (!accountId) body = <div className="empty-small">This token can't see any account.</div>;
+  else if (!accountId) body = <div className="empty-small">{t("This token can't see any account.")}</div>;
   else
     body = (
       <>
@@ -331,12 +336,12 @@ export function CloudflarePanel({
           </div>
         )}
         {error && <Callout tone="bad">{error}</Callout>}
-        {!res && !error && <div className="empty-small">Loading…</div>}
+        {!res && !error && <div className="empty-small">{t('Loading…')}</div>}
         {res &&
           CF_SECTIONS.map(([k, label]) => (
             <CfGroup
               key={k}
-              label={label}
+              label={t(label)}
               section={res[k]}
               open={!closed.has(k)}
               onToggle={() => toggle(k)}
@@ -352,10 +357,10 @@ export function CloudflarePanel({
     <div className="service-panel">
       <div className="service-head">
         <Cloud size={14} />
-        <b>Cloudflare</b>
+        <b>{t('Cloudflare')}</b>
         {accounts.length === 1 && <span className="muted">{accounts[0]?.name}</span>}
         <span className="spacer" />
-        <button className="icon-btn" title="Refresh" onClick={reload}>
+        <button className="icon-btn" title={t('Refresh')} onClick={reload}>
           <RefreshCw size={13} />
         </button>
         <MoveButton side={side} onMove={onMove} />
@@ -389,7 +394,7 @@ function CfGroup({
         <span className="count">{section.error ? '!' : section.items.length}</span>
       </button>
       {open && section.error && <p className="muted service-note">{section.error}</p>}
-      {open && !section.error && section.items.length === 0 && <p className="muted service-note">None.</p>}
+      {open && !section.error && section.items.length === 0 && <p className="muted service-note">{t('None.')}</p>}
       {open &&
         section.items.map((r) => (
           <div
@@ -397,7 +402,7 @@ function CfGroup({
             className="service-row"
             role="button"
             tabIndex={0}
-            title={openable ? 'Open in a tab' : 'Open in the Cloudflare dashboard'}
+            title={openable ? t('Open in a tab') : t('Open in the Cloudflare dashboard')}
             onClick={() => onClick(r)}
             onKeyDown={(e) => e.key === 'Enter' && onClick(r)}
           >
@@ -408,7 +413,7 @@ function CfGroup({
               {openable && r.url && (
                 <button
                   className="icon-btn"
-                  title="Open in the Cloudflare dashboard"
+                  title={t('Open in the Cloudflare dashboard')}
                   onClick={(e) => {
                     e.stopPropagation();
                     onDash(r);

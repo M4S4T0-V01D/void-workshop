@@ -3,6 +3,7 @@ import { call, errorText } from '../../api';
 import type { AdminStatus } from '../../types';
 import { Callout, timeAgo } from '../common';
 import type { WindowMethod } from '../../rpcMethods';
+import { locale, t, tx } from '../../i18n';
 
 export function AdminSection({
   status,
@@ -42,11 +43,11 @@ export function AdminSection({
     <>
       <div className="grid2">
         <label className="field">
-          New password
+          {t('New password')}
           <input className="input" type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} />
         </label>
         <label className="field">
-          Repeat it
+          {t('Repeat it')}
           <input className="input" type="password" autoComplete="new-password" value={repeat} onChange={(e) => setRepeat(e.target.value)} />
         </label>
       </div>
@@ -58,49 +59,64 @@ export function AdminSection({
         >
           {label}
         </button>
-        <span className="muted">{next && repeat && next !== repeat ? 'The two passwords differ.' : 'At least 6 characters.'}</span>
+        <span className="muted">{next && repeat && next !== repeat ? t('The two passwords differ.') : t('At least 6 characters.')}</span>
       </div>
     </>
   );
 
   return (
     <>
-      <h4>Admin dev session</h4>
+      <h4>{t('Admin dev session')}</h4>
       <p>
-        With your admin password the agent may work on VOID Workshop and VOID Portal themselves: their source
-        {status.sourceDir && (
-          <>
-            {' '}
-            (<code>{status.sourceDir}</code>)
-          </>
+        {tx(
+          "With your admin password the agent may work on VOID Workshop and VOID Portal themselves: their source{folder}, Workshop's logs and database, full access with Auto publishing, and installing a new build and restarting into it (the task then continues on its own). Start and end it here or in VOID Portal. Ending it puts everything back to normal and stops tasks still working in it. Your keys, Claude sign-in, phone pairings and this password stay out of the agent's reach either way.",
+          {
+            folder: status.sourceDir ? (
+              <>
+                {' '}
+                (<code>{status.sourceDir}</code>)
+              </>
+            ) : (
+              ''
+            ),
+          },
         )}
-        , Workshop&apos;s logs and database, full access with Auto publishing, and installing a new build and restarting into it (the task then continues on its
-        own). Start and end it here or in VOID Portal. Ending it puts everything back to normal and stops tasks still working in it. Your keys, Claude sign-in,
-        phone pairings and this password stay out of the agent&apos;s reach either way.
       </p>
       {!status.sourceDir && (
         <Callout tone="warn">
-          The VOID Workshop source folder was not found. Open it as a project once (or install from it with <code>./scripts/install.sh</code>) so admin sessions
-          know where to work.
+          {tx(
+            'The VOID Workshop source folder was not found. Open it as a project once (or install from it with {script}) so admin sessions know where to work.',
+            {
+              script: <code>./scripts/install.sh</code>,
+            },
+          )}
         </Callout>
       )}
-      {status.lockedUntil && <Callout tone="warn">Too many wrong passwords: locked until {new Date(status.lockedUntil).toLocaleTimeString()}.</Callout>}
+      {status.lockedUntil && (
+        <Callout tone="warn">
+          {t('Too many wrong passwords: locked until {time}.', { time: new Date(status.lockedUntil).toLocaleTimeString(locale()) })}
+        </Callout>
+      )}
       {error && <Callout tone="bad">{error}</Callout>}
 
       {!status.passwordSet ? (
         <>
-          <p className="muted">Set the admin password first. VOID Portal can change it later, but not set the first one.</p>
-          {newPassword('Set admin password', {}, 'Admin password set.')}
+          <p className="muted">{t('Set the admin password first. VOID Portal can change it later, but not set the first one.')}</p>
+          {newPassword(t('Set admin password'), {}, t('Admin password set.'))}
         </>
       ) : status.active ? (
         <>
           <Callout tone="warn">
-            Admin session running since {status.since ? timeAgo(status.since) : '—'}, started{' '}
-            {status.by === 'phone' ? `from ${status.device ?? 'a phone'}` : 'on this PC'}.
+            {status.by === 'phone'
+              ? t('Admin session running since {when}, started from {device}.', {
+                  when: status.since ? timeAgo(status.since) : '—',
+                  device: status.device ?? t('a phone'),
+                })
+              : t('Admin session running since {when}, started on this PC.', { when: status.since ? timeAgo(status.since) : '—' })}
           </Callout>
           <div className="row">
-            <button className="btn danger" disabled={busy} onClick={() => void run('admin.end', {}, 'Admin session ended.')}>
-              End admin session
+            <button className="btn danger" disabled={busy} onClick={() => void run('admin.end', {}, t('Admin session ended.'))}>
+              {t('End admin session')}
             </button>
           </div>
         </>
@@ -109,51 +125,51 @@ export function AdminSection({
           className="row"
           onSubmit={(e) => {
             e.preventDefault();
-            if (password) void run('admin.start', { password }, 'Admin session started.');
+            if (password) void run('admin.start', { password }, t('Admin session started.'));
           }}
         >
           <input
             className="input"
             type="password"
             autoComplete="current-password"
-            placeholder="Admin password"
+            placeholder={t('Admin password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={{ flex: 1 }}
           />
           <button className="btn primary" type="submit" disabled={busy || !password}>
-            Start admin session
+            {t('Start admin session')}
           </button>
         </form>
       )}
 
       {status.passwordSet && (
         <>
-          <h4>Password</h4>
+          <h4>{t('Password')}</h4>
           {!changing ? (
             <div className="row">
               <button className="btn" onClick={() => setChanging(true)}>
-                Change password…
+                {t('Change password…')}
               </button>
             </div>
           ) : (
             <>
               <label className="field">
-                Current password
+                {t('Current password')}
                 <input className="input" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} />
               </label>
-              {newPassword('Change password', { current }, 'Admin password changed.')}
+              {newPassword(t('Change password'), { current }, t('Admin password changed.'))}
               <div className="row">
                 <button
                   className="btn danger small"
                   disabled={busy || !current}
-                  title="Removes the password and ends a running admin session"
-                  onClick={() => void run('admin.clearPassword', { current }, 'Admin password removed.')}
+                  title={t('Removes the password and ends a running admin session')}
+                  onClick={() => void run('admin.clearPassword', { current }, t('Admin password removed.'))}
                 >
-                  Remove password
+                  {t('Remove password')}
                 </button>
                 <button className="btn ghost small" onClick={() => setChanging(false)}>
-                  Cancel
+                  {t('Cancel')}
                 </button>
               </div>
             </>

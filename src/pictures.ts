@@ -1,3 +1,5 @@
+import { t } from './i18n';
+
 /**
  * Pictures pasted or dropped into the prompt box. The shell takes at most 256 KB of parameters per call,
  * so each one is scaled down and re-encoded until it fits; smaller pictures also cost the model fewer tokens.
@@ -43,5 +45,5 @@ export async function preparePicture(file: Blob): Promise<string> {
     }
     edge = Math.round(edge * 0.75);
   }
-  throw new Error('That picture is too big to send, even scaled down.');
+  throw new Error(t('That picture is too big to send, even scaled down.'));
 }

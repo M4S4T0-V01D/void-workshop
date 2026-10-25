@@ -38,12 +38,13 @@ import { AUTH_NAME, authProblem, effectiveAuth } from '../account';
 import { call, errorText } from '../api';
 import type { WindowMethod } from '../rpcMethods';
 import { loadImage } from '../imageCache';
+import { t, tn, useLanguage } from '../i18n';
 
 function ToolLine({ item }: { item: Extract<TimelineItem, { type: 'tool' }> }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <div className={`tool-line ${item.status}`} onClick={() => setOpen(!open)} title="Show tool output">
+      <div className={`tool-line ${item.status}`} onClick={() => setOpen(!open)} title={t('Show tool output')}>
         {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
         {item.status === 'running' ? (
           <Loader2 size={12} className="spin" />
@@ -54,7 +55,7 @@ function ToolLine({ item }: { item: Extract<TimelineItem, { type: 'tool' }> }) {
         )}
         <span className="summary">{item.summary}</span>
       </div>
-      {open && <pre className="tool-output mono">{item.result ?? (item.status === 'running' ? 'Running…' : '(no output)')}</pre>}
+      {open && <pre className="tool-output mono">{item.result ?? (item.status === 'running' ? t('Running…') : t('(no output)'))}</pre>}
     </>
   );
 }
@@ -84,7 +85,7 @@ async function copyImage(url: string): Promise<void> {
     const canvas = document.createElement('canvas');
     [canvas.width, canvas.height] = [bmp.width, bmp.height];
     canvas.getContext('2d')!.drawImage(bmp, 0, 0);
-    blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('Could not convert the picture'))), 'image/png'));
+    blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error(t('Could not convert the picture')))), 'image/png'));
   }
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
@@ -100,18 +101,18 @@ function ExportButtons({ taskId }: { taskId: string }) {
   const run = (save: boolean) =>
     call<{ markdown: string; path?: string }>('task.export', { taskId, save })
       .then(async (r) => {
-        if (r.path) return `Saved to ${r.path}`;
+        if (r.path) return t('Saved to {path}', { path: r.path });
         await navigator.clipboard.writeText(r.markdown);
-        return 'Copied as Markdown.';
+        return t('Copied as Markdown.');
       })
       .then(setNote, (err) => setNote(errorText(err)));
   return (
     <>
       {note && <span className="muted">{note}</span>}
-      <button className="btn small ghost" onClick={() => void run(false)} title="Copy the conversation as Markdown">
+      <button className="btn small ghost" onClick={() => void run(false)} title={t('Copy the conversation as Markdown')}>
         <ClipboardCopy size={13} />
       </button>
-      <button className="btn small ghost" onClick={() => void run(true)} title="Save the conversation as Markdown in your Downloads folder">
+      <button className="btn small ghost" onClick={() => void run(true)} title={t('Save the conversation as Markdown in your Downloads folder')}>
         <FileDown size={13} />
       </button>
     </>
@@ -137,20 +138,20 @@ export function ImageLightbox({ url, name, taskId, imageId, onClose }: { url: st
         <span className="mono">{name}</span>
         {note && <span className="muted">{note}</span>}
         <span className="spacer grow" />
-        <button className="btn small" onClick={() => setActual(!actual)} title="Switch between fit to window and actual size">
-          {actual ? <ZoomOut size={13} /> : <ZoomIn size={13} />} {actual ? 'Fit' : 'Actual size'}
+        <button className="btn small" onClick={() => setActual(!actual)} title={t('Switch between fit to window and actual size')}>
+          {actual ? <ZoomOut size={13} /> : <ZoomIn size={13} />} {actual ? t('Fit') : t('Actual size')}
         </button>
-        <button className="btn small" onClick={act(() => copyImage(url).then(() => 'Copied to the clipboard.'))}>
-          <Copy size={13} /> Copy
+        <button className="btn small" onClick={act(() => copyImage(url).then(() => t('Copied to the clipboard.')))}>
+          <Copy size={13} /> {t('Copy')}
         </button>
         <button
           className="btn small"
-          onClick={act(() => call<{ path: string }>('task.saveImage', { taskId, imageId, name }).then((r) => `Saved to ${r.path}`))}
-          title="Save a copy in your Downloads folder"
+          onClick={act(() => call<{ path: string }>('task.saveImage', { taskId, imageId, name }).then((r) => t('Saved to {path}', { path: r.path })))}
+          title={t('Save a copy in your Downloads folder')}
         >
-          <Download size={13} /> Save
+          <Download size={13} /> {t('Save')}
         </button>
-        <button className="btn small ghost" onClick={onClose} title="Close (Esc)">
+        <button className="btn small ghost" onClick={onClose} title={t('Close (Esc)')}>
           <X size={13} />
         </button>
       </div>
@@ -194,7 +195,7 @@ export function ImageCard({ taskId, item }: { taskId: string; item: Extract<Time
       {error ? (
         <div className="muted">{error}</div>
       ) : url ? (
-        <img src={url} alt={item.name} onClick={() => setBig(true)} title="Click to see it full size" />
+        <img src={url} alt={item.name} onClick={() => setBig(true)} title={t('Click to see it full size')} />
       ) : (
         <Loader2 size={14} className="spin" />
       )}
@@ -223,18 +224,18 @@ function QueuePanel({
       <div className="queue-head">
         <ListOrdered size={14} />
         <span className="grow">
-          {queue.length} queued · {running ? 'sent when the agent finishes' : 'paused'}
+          {tn(queue.length, '{n} queued', '{n} queued')} · {running ? t('sent when the agent finishes') : t('paused')}
         </span>
-        <label className="check small" title="One message (one request) instead of one per queued message">
-          <input type="checkbox" checked={together} onChange={(e) => onTogether(e.target.checked)} /> Send together
+        <label className="check small" title={t('One message (one request) instead of one per queued message')}>
+          <input type="checkbox" checked={together} onChange={(e) => onTogether(e.target.checked)} /> {t('Send together')}
         </label>
         {!running && (
           <button className="btn small primary" onClick={() => onAction('task.queue.flush', {})}>
-            <Send size={12} /> Send {together && queue.length > 1 ? 'all' : 'next'}
+            <Send size={12} /> {together && queue.length > 1 ? t('Send all') : t('Send next')}
           </button>
         )}
         <button className="btn small ghost" onClick={() => onAction('task.queue.remove', {})}>
-          Clear
+          {t('Clear')}
         </button>
       </div>
       {queue.map((q) =>
@@ -262,15 +263,15 @@ function QueuePanel({
             </span>
             <button
               className="icon-btn"
-              title={running ? 'Send now: interrupts the current step and sends this next' : 'Send this now'}
+              title={running ? t('Send now: interrupts the current step and sends this next') : t('Send this now')}
               onClick={() => onAction('task.queue.sendNow', { id: q.id })}
             >
               <Zap size={13} />
             </button>
-            <button className="icon-btn" title="Edit" onClick={() => setEditing({ id: q.id, text: q.text })}>
+            <button className="icon-btn" title={t('Edit')} onClick={() => setEditing({ id: q.id, text: q.text })}>
               <Pencil size={13} />
             </button>
-            <button className="icon-btn" title="Remove" onClick={() => onAction('task.queue.remove', { id: q.id })}>
+            <button className="icon-btn" title={t('Remove')} onClick={() => onAction('task.queue.remove', { id: q.id })}>
               <X size={13} />
             </button>
           </div>
@@ -282,6 +283,7 @@ function QueuePanel({
 
 /** Items never change once pushed (tool lines are replaced), so memo keeps streaming from re-rendering the history. */
 const Item = memo(function Item({ item, taskId }: { item: TimelineItem; taskId: string | null }) {
+  useLanguage();
   switch (item.type) {
     case 'image':
       return taskId ? <ImageCard taskId={taskId} item={item} /> : null;
@@ -289,7 +291,7 @@ const Item = memo(function Item({ item, taskId }: { item: TimelineItem; taskId: 
       return (
         <div className="msg user">
           <div className="who">
-            <User size={12} /> You
+            <User size={12} /> {t('You')}
           </div>
           <div className="bubble">{item.text}</div>
         </div>
@@ -298,7 +300,7 @@ const Item = memo(function Item({ item, taskId }: { item: TimelineItem; taskId: 
       return (
         <div className="msg assistant">
           <div className="who">
-            <Bot size={12} /> Agent
+            <Bot size={12} /> {t('Agent')}
           </div>
           <div className="bubble">{item.text}</div>
         </div>
@@ -309,7 +311,7 @@ const Item = memo(function Item({ item, taskId }: { item: TimelineItem; taskId: 
       return (
         <div className="plan-card">
           <h4>
-            <ClipboardList size={15} /> Proposed plan
+            <ClipboardList size={15} /> {t('Proposed plan')}
           </h4>
           <div className="body">{item.text}</div>
         </div>
@@ -333,30 +335,38 @@ const Item = memo(function Item({ item, taskId }: { item: TimelineItem; taskId: 
         <div className="notice">
           {item.decision === 'allow' ? <CheckCheck size={14} color="var(--success)" /> : <XCircle size={14} color="var(--danger)" />}
           <span>
-            {item.auto ? 'Auto-approved' : item.decision === 'allow' ? 'Approved' : 'Denied'}: {item.summary}
+            {item.auto
+              ? t('Auto-approved: {summary}', { summary: item.summary })
+              : item.decision === 'allow'
+                ? t('Approved: {summary}', { summary: item.summary })
+                : t('Denied: {summary}', { summary: item.summary })}
           </span>
         </div>
       );
     case 'usage':
       return (
-        <div className="usage-line" title="Estimate from SDK-reported token usage and its built-in price table. Not a billing statement.">
+        <div className="usage-line" title={t('Estimate from SDK-reported token usage and its built-in price table. Not a billing statement.')}>
           {item.costBasis === 'subscription' ? (
-            <span>Claude plan</span>
+            <span>{t('Claude plan')}</span>
           ) : (
             <>
-              <span>turn ≈ {formatUsd(item.deltaUsd)}</span>
-              <span>task ≈ {formatUsd(item.totalUsd)}</span>
+              <span>{t('turn ≈ {cost}', { cost: formatUsd(item.deltaUsd) })}</span>
+              <span>{t('task ≈ {cost}', { cost: formatUsd(item.totalUsd) })}</span>
             </>
           )}
           <span>
-            {formatTokens(item.input)} in / {formatTokens(item.output)} out / {formatTokens(item.cacheRead)} cached
+            {t('{input} in / {output} out / {cached} cached', {
+              input: formatTokens(item.input),
+              output: formatTokens(item.output),
+              cached: formatTokens(item.cacheRead),
+            })}
           </span>
           {item.input + item.cacheRead + item.cacheWrite > 0 && (
-            <span title="Share of input read from the prompt cache (cheaper and faster). Low values mean the cache expired or the context changed.">
-              {Math.round((item.cacheRead / (item.input + item.cacheRead + item.cacheWrite)) * 100)}% cache hits
+            <span title={t('Share of input read from the prompt cache (cheaper and faster). Low values mean the cache expired or the context changed.')}>
+              {t('{percent}% cache hits', { percent: Math.round((item.cacheRead / (item.input + item.cacheRead + item.cacheWrite)) * 100) })}
             </span>
           )}
-          {item.costBasis === 'unknown' && <span style={{ color: 'var(--warning)' }}>price unknown for this model</span>}
+          {item.costBasis === 'unknown' && <span style={{ color: 'var(--warning)' }}>{t('price unknown for this model')}</span>}
         </div>
       );
   }
@@ -418,27 +428,27 @@ export function Conversation({
     return (
       <div className="empty">
         <img className="logo" src={logo} alt="" />
-        <h2>VOID Workshop</h2>
-        <p>A local, approval-first coding agent. You pick the project, it proposes a plan, you approve each change.</p>
+        <h2>{t('VOID Workshop')}</h2>
+        <p>{t('A local, approval-first coding agent. You pick the project, it proposes a plan, you approve each change.')}</p>
         <div className="steps">
           <div>
-            <span className="n">1</span> Sign in with your Claude plan or add a Console API key, then choose a model in Settings.
+            <span className="n">1</span> {t('Sign in with your Claude plan or add a Console API key, then choose a model in Settings.')}
           </div>
           <div>
-            <span className="n">2</span> Open a project folder (the agent can only touch that folder).
+            <span className="n">2</span> {t('Open a project folder (the agent can only touch that folder).')}
           </div>
           <div>
-            <span className="n">3</span> Describe a task, review the plan, approve edits and commands.
+            <span className="n">3</span> {t('Describe a task, review the plan, approve edits and commands.')}
           </div>
         </div>
         <div className="row">
           {init.settings.provider === 'anthropic' && !init.auth.configured && !init.subscription?.signedIn && (
             <button className="btn" onClick={() => onOpenSettings('key')}>
-              Sign in or add API key
+              {t('Sign in or add API key')}
             </button>
           )}
           <button className="btn primary" onClick={onOpenProject}>
-            <FolderOpen size={14} /> Open project
+            <FolderOpen size={14} /> {t('Open project')}
           </button>
         </div>
       </div>
@@ -453,14 +463,14 @@ export function Conversation({
   if (eff && !eff.auth) {
     const billing = init.settings.anthropicAuth === 'api-key' && !!init.billingBlocked;
     blockers.push({
-      text: eff.problem ?? 'No account is usable.',
+      text: eff.problem ?? t('No account is usable.'),
       action: () => onOpenSettings(billing ? 'billing' : 'key'),
-      label: billing ? 'Details' : 'Settings',
+      label: billing ? t('Details') : t('Settings'),
     });
-  } else if (!init.settings.model) blockers.push({ text: 'No model selected.', action: () => onOpenSettings('model'), label: 'Choose model' });
+  } else if (!init.settings.model) blockers.push({ text: t('No model selected.'), action: () => onOpenSettings('model'), label: t('Choose model') });
   const billed = eff?.auth === 'api-key';
   const remainingToday = init.settings.dailyBudgetUsd - init.spentTodayUsd;
-  if (billed && remainingToday <= 0) blockers.push({ text: 'Daily estimated spend limit reached.' });
+  if (billed && remainingToday <= 0) blockers.push({ text: t('Daily estimated spend limit reached.') });
 
   const sub = init.subscription;
   const account: AccountSwitch | null = anthropic
@@ -471,9 +481,9 @@ export function Conversation({
           const problem = authProblem(init, id);
           const ok =
             id === 'subscription'
-              ? `Signed in${sub?.email ? ` as ${sub.email}` : ''}${sub?.subscriptionType ? ` · ${sub.subscriptionType}` : ''}`
-              : 'Console key, billed per token';
-          return { id, label: AUTH_NAME[id], sub: problem ?? ok, usable: !problem };
+              ? `${sub?.email ? t('Signed in as {email}', { email: sub.email }) : t('Signed in')}${sub?.subscriptionType ? ` · ${sub.subscriptionType}` : ''}`
+              : t('Console key, billed per token');
+          return { id, label: t(AUTH_NAME[id]), sub: problem ?? ok, usable: !problem };
         }),
         onChange: onAccountChange,
         onManage: () => onOpenSettings('key'),
@@ -495,40 +505,45 @@ export function Conversation({
           <StateBadge state={task.state} />
           <span className="muted">{task.model}</span>
           <span className="spacer grow" />
-          <span className="muted" title="Estimated from SDK token usage; not a billing statement">
-            {formatUsd(task.cost_usd)} est. of {formatUsd(init.settings.perTaskBudgetUsd)}
+          <span className="muted" title={t('Estimated from SDK token usage; not a billing statement')}>
+            {t('{cost} est. of {budget}', { cost: formatUsd(task.cost_usd), budget: formatUsd(init.settings.perTaskBudgetUsd) })}
           </span>
           <ExportButtons taskId={task.id} />
           {ACTIVE.includes(task.state) && (
             <button className="btn danger small" onClick={onCancel}>
-              <CircleStop size={13} /> Stop
+              <CircleStop size={13} /> {t('Stop')}
             </button>
           )}
           {(task.state === 'idle' || task.state === 'interrupted' || task.state === 'stopped-budget' || task.state === 'stopped-limit') && (
-            <button className="btn small" onClick={onFinish} title="Mark the task done and end its session">
-              <CheckCheck size={13} /> Finish
+            <button className="btn small" onClick={onFinish} title={t('Mark the task done and end its session')}>
+              <CheckCheck size={13} /> {t('Finish')}
             </button>
           )}
         </div>
       )}
       <div className="convo" ref={scroller}>
-        {loading && <div className="empty-small">Loading task…</div>}
+        {loading && <div className="empty-small">{t('Loading task…')}</div>}
         {!task && !loading && (
           <div className="empty">
             <Sparkles size={34} color="var(--accent)" />
-            <h2>What should we build in {project.name}?</h2>
+            <h2>{t('What should we build in {name}?', { name: project.name })}</h2>
             <p>
-              Describe what you want in plain English. Pick how much the agent may do on its own with the mode button below (Shift+Tab cycles): ask before
-              edits, edit automatically, auto, or plan first.
+              {t(
+                'Describe what you want in your own words. Pick how much the agent may do on its own with the mode button below (Shift+Tab cycles): ask before edits, edit automatically, auto, or plan first.',
+              )}
             </p>
             {project.git.isRepo && project.git.dirty && (
               <Callout tone="warn">
-                You have {project.git.files.length} uncommitted change(s). A local checkpoint is saved before each task, but consider committing first.
+                {tn(
+                  project.git.files.length,
+                  'You have {n} uncommitted change. A local checkpoint is saved before each task, but consider committing first.',
+                  'You have {n} uncommitted changes. A local checkpoint is saved before each task, but consider committing first.',
+                )}
               </Callout>
             )}
             {!project.git.isRepo && (
               <Callout tone="warn">
-                This folder is not a Git repository. Changes can still be reviewed and rejected per file, but there is no Git history to fall back on.
+                {t('This folder is not a Git repository. Changes can still be reviewed and rejected per file, but there is no Git history to fall back on.')}
               </Callout>
             )}
           </div>
@@ -539,14 +554,14 @@ export function Conversation({
         {timeline.streaming && (
           <div className="msg assistant">
             <div className="who">
-              <Bot size={12} /> Agent
+              <Bot size={12} /> {t('Agent')}
             </div>
             <div className="bubble streaming">{timeline.streaming}</div>
           </div>
         )}
         {running && !timeline.streaming && (
           <div className="notice">
-            <Loader2 size={14} className="spin" /> <span>{task?.state === 'planning' ? 'Exploring the project and drafting a plan…' : 'Working…'}</span>
+            <Loader2 size={14} className="spin" /> <span>{task?.state === 'planning' ? t('Exploring the project and drafting a plan…') : t('Working…')}</span>
           </div>
         )}
         {task?.error && !ACTIVE.includes(task.state) && task.state !== 'idle' && (
@@ -559,15 +574,15 @@ export function Conversation({
       {awaitingPlan && (
         <div className="plan-actions">
           <ClipboardList size={16} color="var(--accent)" />
-          <span className="grow">Approve the plan and choose how to continue, or reply below to revise it.</span>
-          <button className="btn small" onClick={() => onApprovePlan('ask')} title="Approve every change and command">
-            <Hand size={13} /> Ask before edits
+          <span className="grow">{t('Approve the plan and choose how to continue, or reply below to revise it.')}</span>
+          <button className="btn small" onClick={() => onApprovePlan('ask')} title={t('Approve every change and command')}>
+            <Hand size={13} /> {t('Ask before edits')}
           </button>
-          <button className="btn small" onClick={() => onApprovePlan('auto-edit')} title="File changes apply without asking; commands ask">
-            <FilePen size={13} /> Edit automatically
+          <button className="btn small" onClick={() => onApprovePlan('auto-edit')} title={t('File changes apply without asking; commands ask')}>
+            <FilePen size={13} /> {t('Edit automatically')}
           </button>
-          <button className="btn primary small" onClick={() => onApprovePlan('auto')} title="Changes and sandboxed commands run without asking">
-            <Zap size={13} /> Auto
+          <button className="btn primary small" onClick={() => onApprovePlan('auto')} title={t('Changes and sandboxed commands run without asking')}>
+            <Zap size={13} /> {t('Auto')}
           </button>
         </div>
       )}
@@ -590,7 +605,7 @@ export function Conversation({
             task?.state === 'stopped-budget' ||
             task?.state === 'stopped-limit' ||
             task?.state === 'stopped-billing' ||
-            task?.state === 'failed') && <span className="hint">Sending resumes this session.</span>}
+            task?.state === 'failed') && <span className="hint">{t('Sending resumes this session.')}</span>}
         {queue.length > 0 && !isNewTask && (
           <QueuePanel
             queue={queue}
@@ -625,20 +640,22 @@ export function Conversation({
           blocked={blockers.length > 0}
           placeholder={
             isNewTask
-              ? 'Describe a task, e.g. "Add input validation to the signup form and a test for it"'
+              ? t('Describe a task, e.g. "Add input validation to the signup form and a test for it"')
               : awaitingPlan && mode === 'plan'
-                ? 'Ask for changes to the plan…'
+                ? t('Ask for changes to the plan…')
                 : running
-                  ? 'Queue a message: it is sent when the agent finishes…'
-                  : 'Reply or ask for something else…'
+                  ? t('Queue a message: it is sent when the agent finishes…')
+                  : t('Reply or ask for something else…')
           }
           hint={`${
             init.settings.provider === 'ollama'
-              ? 'Ollama (local, free)'
+              ? t('Ollama (local, free)')
               : !billed
-                ? 'Plan usage'
-                : `≤ ${formatUsd(Math.max(0, Math.min(init.settings.perTaskBudgetUsd - (isNewTask ? 0 : (task?.cost_usd ?? 0)), remainingToday)))} est.`
-          } · ${init.settings.maxTurns} turns`}
+                ? t('Plan usage')
+                : t('≤ {cost} est.', {
+                    cost: formatUsd(Math.max(0, Math.min(init.settings.perTaskBudgetUsd - (isNewTask ? 0 : (task?.cost_usd ?? 0)), remainingToday))),
+                  })
+          } · ${tn(init.settings.maxTurns, '{n} turn', '{n} turns')}`}
           onSubmit={submit}
           onStop={onCancel}
         />

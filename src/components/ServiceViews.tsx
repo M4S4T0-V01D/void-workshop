@@ -5,6 +5,7 @@ import type { EditorSettings, GithubComment, GithubItem, ServiceView, WorkerDeta
 import { CodeEditor } from './CodeEditor';
 import { Callout, DiffView, timeAgo } from './common';
 import { openExternal } from './ServicePanels';
+import { t } from '../i18n';
 
 type ToastFn = (t: 'info' | 'warn' | 'error', m: string) => void;
 
@@ -14,7 +15,7 @@ const dash = (accountId: string, name: string) => `https://dash.cloudflare.com/$
 /** The pane behind a service tab in the editor area. */
 export function ServiceViewPane({ view, root, settings, toast }: { view: ServiceView; root: string | null; settings: EditorSettings; toast: ToastFn }) {
   if (view.kind === 'gh-item')
-    return root ? <GithubItemPane root={root} number={view.number} toast={toast} /> : <div className="empty-small">Open the project.</div>;
+    return root ? <GithubItemPane root={root} number={view.number} toast={toast} /> : <div className="empty-small">{t('Open the project.')}</div>;
   return <WorkerPane accountId={view.accountId} name={view.name} settings={settings} toast={toast} />;
 }
 
@@ -40,13 +41,18 @@ function GithubItemPane({ root, number, toast }: { root: string; number: number;
       setDraft('');
       setItem((it) => (it ? { ...it, comments: [...it.comments, c] } : it));
     } catch (err) {
-      toast('error', `Comment not posted: ${errorText(err)}`);
+      toast('error', t('Comment not posted: {error}', { error: errorText(err) }));
     } finally {
       setSending(false);
     }
   };
 
-  if (!item) return <div className="service-view">{error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">Loading #{number}…</div>}</div>;
+  if (!item)
+    return (
+      <div className="service-view">
+        {error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">{t('Loading #{number}…', { number })}</div>}
+      </div>
+    );
   const state = item.merged ? 'merged' : item.draft ? 'draft' : item.state;
   const general = item.comments.filter((c) => !c.path);
   const review = item.comments.filter((c) => c.path);
@@ -55,14 +61,14 @@ function GithubItemPane({ root, number, toast }: { root: string; number: number;
     <>
       <div className="editor-bar">
         <span className="path">
-          {item.kind === 'pull' ? 'Pull request' : 'Issue'} #{item.number}
+          {item.kind === 'pull' ? t('Pull request #{number}', { number: item.number }) : t('Issue #{number}', { number: item.number })}
         </span>
         <span className="spacer" />
-        <button className="btn small ghost" onClick={load} title="Reload">
+        <button className="btn small ghost" onClick={load} title={t('Reload')}>
           <RefreshCw size={13} />
         </button>
         <button className="btn small" onClick={() => openExternal(item.htmlUrl, toast)}>
-          <ExternalLink size={13} /> Open on GitHub
+          <ExternalLink size={13} /> {t('Open on GitHub')}
         </button>
       </div>
       <div className="service-view">
@@ -71,7 +77,7 @@ function GithubItemPane({ root, number, toast }: { root: string; number: number;
         <div className="row meta-line">
           <span className={`chip ${state === 'open' ? 'ok' : state === 'merged' ? 'accent' : ''}`}>{state}</span>
           {item.author && <b>{item.author}</b>}
-          <span className="muted">opened {ago(item.createdAt)}</span>
+          <span className="muted">{t('opened {time}', { time: ago(item.createdAt) })}</span>
           {item.head && (
             <span className="mono muted row">
               <GitMerge size={12} /> {item.head} → {item.base}
@@ -84,13 +90,13 @@ function GithubItemPane({ root, number, toast }: { root: string; number: number;
           ))}
         </div>
         <div className="gh-comment">
-          <div className="gh-text">{item.body || <span className="muted">No description.</span>}</div>
+          <div className="gh-text">{item.body || <span className="muted">{t('No description.')}</span>}</div>
         </div>
 
         {item.files && (
           <>
             <button className="service-group-head" onClick={() => setShowFiles((v) => !v)}>
-              Files changed <span className="count">{item.files.length}</span>
+              {t('Files changed')} <span className="count">{item.files.length}</span>
               <span className="muted">
                 +{item.files.reduce((n, f) => n + f.additions, 0)} −{item.files.reduce((n, f) => n + f.deletions, 0)}
               </span>
@@ -105,29 +111,29 @@ function GithubItemPane({ root, number, toast }: { root: string; number: number;
                   {f.patch ? (
                     <DiffView diff={`--- a/${f.filename}\n+++ b/${f.filename}\n${f.patch}`} maxHeight={480} />
                   ) : (
-                    <p className="muted">No text diff (binary or too large).</p>
+                    <p className="muted">{t('No text diff (binary or too large).')}</p>
                   )}
                 </details>
               ))}
           </>
         )}
 
-        {review.length > 0 && <h4>Review comments</h4>}
+        {review.length > 0 && <h4>{t('Review comments')}</h4>}
         {review.map((c) => (
           <Comment key={c.id} c={c} />
         ))}
-        <h4>Conversation</h4>
-        {general.length === 0 && <p className="muted">No comments yet.</p>}
+        <h4>{t('Conversation')}</h4>
+        {general.length === 0 && <p className="muted">{t('No comments yet.')}</p>}
         {general.map((c) => (
           <Comment key={c.id} c={c} />
         ))}
 
         <div className="gh-reply">
-          <textarea rows={4} placeholder="Leave a comment (posted to GitHub as you)" value={draft} onChange={(e) => setDraft(e.target.value)} />
+          <textarea rows={4} placeholder={t('Leave a comment (posted to GitHub as you)')} value={draft} onChange={(e) => setDraft(e.target.value)} />
           <div className="row">
             <span className="spacer" />
             <button className="btn primary" disabled={!draft.trim() || sending} onClick={() => void send()}>
-              {sending ? <Loader2 size={14} className="spin" /> : <Send size={14} />} Comment
+              {sending ? <Loader2 size={14} className="spin" /> : <Send size={14} />} {t('Comment')}
             </button>
           </div>
         </div>
@@ -167,7 +173,7 @@ function WorkerPane({ accountId, name, settings, toast }: { accountId: string; n
   return (
     <>
       <div className="editor-bar">
-        <span className="path">Worker {name}</span>
+        <span className="path">{t('Worker {name}', { name })}</span>
         {w && w.modules.length > 1 && (
           <select value={mod} onChange={(e) => setMod(Number(e.target.value))}>
             {w.modules.map((x, i) => (
@@ -178,17 +184,18 @@ function WorkerPane({ accountId, name, settings, toast }: { accountId: string; n
           </select>
         )}
         <span className="spacer" />
-        <span className="muted">Read-only (deployed code)</span>
+        <span className="muted">{t('Read-only (deployed code)')}</span>
         <button className="btn small" onClick={() => openExternal(dash(accountId, name), toast)}>
-          <ExternalLink size={13} /> Dashboard
+          <ExternalLink size={13} /> {t('Dashboard')}
         </button>
       </div>
       {error && <Callout tone="bad">{error}</Callout>}
-      {!w && !error && <div className="empty-small">Loading {name}…</div>}
+      {!w && !error && <div className="empty-small">{t('Loading {name}…', { name })}</div>}
       {w && w.deployments.length > 0 && (
         <details className="worker-deploys">
           <summary>
-            Deployments <span className="count">{w.deployments.length}</span> <span className="muted">latest {ago(w.deployments[0]!.createdOn)}</span>
+            {t('Deployments')} <span className="count">{w.deployments.length}</span>{' '}
+            <span className="muted">{t('latest {time}', { time: ago(w.deployments[0]!.createdOn) })}</span>
           </summary>
           {w.deployments.map((d) => (
             <div key={d.id} className="row">
@@ -203,7 +210,7 @@ function WorkerPane({ accountId, name, settings, toast }: { accountId: string; n
       {m &&
         (m.content === null ? (
           <div className="empty-small">
-            {m.name} is {m.contentType} ({Math.round(m.size / 1024)} KB) and is not shown.
+            {t('{name} is {type} ({size} KB) and is not shown.', { name: m.name, type: m.contentType, size: Math.round(m.size / 1024) })}
           </div>
         ) : (
           <CodeEditor key={m.name} rel={m.name} initial={m.content} readOnly settings={settings} onDirty={() => {}} onSave={() => {}} handle={() => {}} />

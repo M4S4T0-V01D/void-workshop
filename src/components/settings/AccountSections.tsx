@@ -4,6 +4,7 @@ import { call, errorText, onSidecarEvent, openLoginUrl } from '../../api';
 import type { InitData, KeyStatus, ModelEntry, Settings, SubscriptionStatus, VerifyResult } from '../../types';
 import { Callout, timeAgo } from '../common';
 import type { WindowMethod } from '../../rpcMethods';
+import { t, tn, tx } from '../../i18n';
 
 export const CONSOLE = {
   keys: 'https://platform.claude.com/settings/keys',
@@ -20,7 +21,7 @@ export function CopyLink({ url }: { url: string }) {
       <code>{url}</code>
       <button
         className="icon-btn"
-        title="Copy link"
+        title={t('Copy link')}
         onClick={() => {
           void navigator.clipboard.writeText(url).then(() => {
             setCopied(true);
@@ -30,7 +31,7 @@ export function CopyLink({ url }: { url: string }) {
       >
         <Copy size={13} />
       </button>
-      {copied && <span className="muted">copied</span>}
+      {copied && <span className="muted">{t('copied')}</span>}
     </span>
   );
 }
@@ -65,7 +66,7 @@ export function SubscriptionSection({
       setManualUrl(typeof p.manualUrl === 'string' ? p.manualUrl : null);
       // Open each new link once (the same event repeats when the fallback link becomes known).
       setUrl((prev) => {
-        if (prev !== u) void openLoginUrl(u).catch((err) => toast('warn', `${errorText(err)} Open the link below yourself.`));
+        if (prev !== u) void openLoginUrl(u).catch((err) => toast('warn', `${errorText(err)} ${t('Open the link below yourself.')}`));
         return u;
       });
     });
@@ -89,26 +90,28 @@ export function SubscriptionSection({
     }
   };
 
-  const who = status?.signedIn ? `${status.email ?? 'Signed in'}${status.subscriptionType ? ` · ${status.subscriptionType} plan` : ''}` : 'Not signed in';
+  const who = status?.signedIn
+    ? `${status.email ?? t('Signed in')}${status.subscriptionType ? ` · ${t('{plan} plan', { plan: status.subscriptionType })}` : ''}`
+    : t('Not signed in');
   const limit = init.planLimited && init.planLimited.until > Date.now() ? init.planLimited : null;
 
   return (
     <>
-      <h4>Claude plan (Pro / Max)</h4>
+      <h4>{t('Claude plan (Pro / Max)')}</h4>
       <p>
-        Sign in with your Claude account to use your plan's usage instead of API credit. The sign-in runs in the Claude Code runtime that ships with VOID
-        Workshop and is kept in VOID Workshop's own data folder, separate from your normal Claude Code login. This window never sees the tokens. Approvals, the
-        sandbox and the turn limit apply the same way; the dollar limits only apply to the API key.
+        {t(
+          "Sign in with your Claude account to use your plan's usage instead of API credit. The sign-in runs in the Claude Code runtime that ships with VOID Workshop and is kept in VOID Workshop's own data folder, separate from your normal Claude Code login. This window never sees the tokens. Approvals, the sandbox and the turn limit apply the same way; the dollar limits only apply to the API key.",
+        )}
       </p>
       <div className="kv">
-        <span className="k">Status</span>
+        <span className="k">{t('Status')}</span>
         <span className="row">
           <span className={`dot ${status?.signedIn ? (limit ? 'warn' : 'ok') : 'bad'}`} />
           {who}
         </span>
         {limit && (
           <>
-            <span className="k">Usage</span>
+            <span className="k">{t('Usage')}</span>
             <span className="row">
               {limit.message}
               <button
@@ -119,7 +122,7 @@ export function SubscriptionSection({
                     .catch((err) => toast('error', errorText(err)))
                 }
               >
-                Try the plan again now
+                {t('Try the plan again now')}
               </button>
             </span>
           </>
@@ -128,54 +131,56 @@ export function SubscriptionSection({
       <div className="row" style={{ marginTop: 10 }}>
         {busy === 'login' ? (
           <button className="btn" onClick={() => void call('auth.subscriptionLoginCancel')}>
-            Cancel sign-in
+            {t('Cancel sign-in')}
           </button>
         ) : (
           <button
             className={`btn ${status?.signedIn ? '' : 'primary'}`}
             disabled={!!busy}
             onClick={() =>
-              void run('login', 'auth.subscriptionLogin', (s) => (s.signedIn ? `Signed in to your Claude plan${s.email ? ` as ${s.email}` : ''}.` : null))
+              void run('login', 'auth.subscriptionLogin', (s) =>
+                s.signedIn ? (s.email ? t('Signed in to your Claude plan as {email}.', { email: s.email }) : t('Signed in to your Claude plan.')) : null,
+              )
             }
           >
-            <LogIn size={14} /> {status?.signedIn ? 'Sign in again' : 'Sign in with Claude'}
+            <LogIn size={14} /> {status?.signedIn ? t('Sign in again') : t('Sign in with Claude')}
           </button>
         )}
         <button className="btn" disabled={!!busy} onClick={() => void run('check', 'auth.subscriptionStatus', () => null)}>
-          <RefreshCw size={14} className={busy === 'check' ? 'spin' : ''} /> Check
+          <RefreshCw size={14} className={busy === 'check' ? 'spin' : ''} /> {t('Check')}
         </button>
         {status?.signedIn && (
           <button
             className="btn danger"
             disabled={!!busy}
-            onClick={() => void run('logout', 'auth.subscriptionLogout', () => 'Signed out of your Claude plan.')}
+            onClick={() => void run('logout', 'auth.subscriptionLogout', () => t('Signed out of your Claude plan.'))}
           >
-            <LogOut size={14} /> Sign out
+            <LogOut size={14} /> {t('Sign out')}
           </button>
         )}
       </div>
       {busy === 'login' && (
         <Callout tone="info">
-          Finish signing in in your browser; this updates by itself when you are done.
+          {t('Finish signing in in your browser; this updates by itself when you are done.')}
           {url && (
             <>
               {' '}
-              If no browser tab opened:{' '}
+              {t('If no browser tab opened:')}{' '}
               <button className="btn small" onClick={() => void openLoginUrl(url).catch((err) => toast('error', errorText(err)))}>
-                <ExternalLink size={13} /> Open again
+                <ExternalLink size={13} /> {t('Open again')}
               </button>
               <CopyLink url={url} />
             </>
           )}
           <div style={{ marginTop: 8 }}>
-            If the page says <i>Paste this into Claude Code</i>, paste that code here:
+            {tx('If the page says {quote}, paste that code here:', { quote: <i>Paste this into Claude Code</i> })}
             <div className="row" style={{ marginTop: 6 }}>
               <input
                 className="input mono"
                 type="password"
                 autoComplete="off"
                 value={code}
-                placeholder="Authentication code"
+                placeholder={t('Authentication code')}
                 onChange={(e) => setCode(e.target.value)}
                 style={{ flex: 1 }}
               />
@@ -188,7 +193,7 @@ export function SubscriptionSection({
                     .catch((err) => toast('error', errorText(err)))
                 }
               >
-                Submit code
+                {t('Submit code')}
               </button>
             </div>
             {manualUrl && manualUrl !== url && (
@@ -197,36 +202,39 @@ export function SubscriptionSection({
                 style={{ marginTop: 6 }}
                 onClick={() => void openLoginUrl(manualUrl).catch((err) => toast('error', errorText(err)))}
               >
-                <ExternalLink size={13} /> Sign in with a code instead
+                <ExternalLink size={13} /> {t('Sign in with a code instead')}
               </button>
             )}
           </div>
         </Callout>
       )}
 
-      <h4>Which account pays</h4>
+      <h4>{t('Which account pays')}</h4>
       <div className="row wrap">
         <label className="check">
           <input type="radio" checked={settings.anthropicAuth === 'subscription'} onChange={() => void save({ anthropicAuth: 'subscription' })} />
           <span>
-            Claude plan <span className="muted">(your subscription's usage limits)</span>
+            {t('Claude plan')} <span className="muted">{t("(your subscription's usage limits)")}</span>
           </span>
         </label>
         <label className="check">
           <input type="radio" checked={settings.anthropicAuth === 'api-key'} onChange={() => void save({ anthropicAuth: 'api-key' })} />
           <span>
-            API key <span className="muted">(Console credit, billed per token)</span>
+            {t('API key')} <span className="muted">{t('(Console credit, billed per token)')}</span>
           </span>
         </label>
       </div>
       <label className="check">
         <input type="checkbox" checked={settings.authFallback} onChange={(e) => void save({ authFallback: e.target.checked })} />
         <span>
-          Switch when one runs out. When the Claude plan hits its usage limit, the task continues with the API key (spending limits still apply); when the API
-          key runs out of credit, it continues with the plan. It switches back once the plan's limit resets.
+          {t(
+            "Switch when one runs out. When the Claude plan hits its usage limit, the task continues with the API key (spending limits still apply); when the API key runs out of credit, it continues with the plan. It switches back once the plan's limit resets.",
+          )}
         </span>
       </label>
-      <p className="muted">You can also switch from the account button under the prompt box. A running conversation carries over to the other account.</p>
+      <p className="muted">
+        {t('You can also switch from the account button under the prompt box. A running conversation carries over to the other account.')}
+      </p>
     </>
   );
 }
@@ -255,8 +263,8 @@ export function KeySection({
       setVerify(res);
       if (res.ok && res.models) {
         onModels(res.models, res);
-        toast('info', `Key verified. ${res.models.length} models available to this key.`);
-      } else toast('error', res.message ?? 'Verification failed');
+        toast('info', tn(res.models.length, 'Key verified. {n} model available to this key.', 'Key verified. {n} models available to this key.'));
+      } else toast('error', res.message ?? t('Verification failed'));
     } catch (err) {
       toast('error', errorText(err));
     } finally {
@@ -271,7 +279,7 @@ export function KeySection({
       setKey('');
       setStatus(s);
       onAuth(s);
-      toast('info', 'Key stored. Verifying with the Models API (free)…');
+      toast('info', t('Key stored. Verifying with the Models API (free)…'));
       await runVerify();
     } catch (err) {
       toast('error', errorText(err));
@@ -287,7 +295,7 @@ export function KeySection({
       setStatus(s);
       onAuth(s);
       setVerify(null);
-      toast('info', 'Key removed from this computer.');
+      toast('info', t('Key removed from this computer.'));
     } catch (err) {
       toast('error', errorText(err));
     } finally {
@@ -297,47 +305,54 @@ export function KeySection({
 
   return (
     <>
-      <h4>Anthropic Console API key</h4>
+      <h4>{t('Anthropic Console API key')}</h4>
       <p>
-        Used when <b>API key</b> is selected above (or as the fallback). The key is never sent to local providers such as Ollama and is not loaded while the
-        Claude plan is in use. The key stays in the backend; this window never displays it.
+        {tx(
+          'Used when {account} is selected above (or as the fallback). The key is never sent to local providers such as Ollama and is not loaded while the Claude plan is in use. The key stays in the backend; this window never displays it.',
+          { account: <b>{t('API key')}</b> },
+        )}
       </p>
       <div className="kv">
-        <span className="k">Status</span>
+        <span className="k">{t('Status')}</span>
         <span className="row">
           <span className={`dot ${status.configured && status.formatOk ? 'ok' : status.configured ? 'warn' : 'bad'}`} />
-          {status.configured ? (status.formatOk ? 'Key stored' : 'Stored key is invalid') : 'No key configured'}
+          {status.configured ? (status.formatOk ? t('Key stored') : t('Stored key is invalid')) : t('No key configured')}
         </span>
-        <span className="k">Stored in</span>
+        <span className="k">{t('Stored in')}</span>
         <span>
           {status.backend === 'secret-service'
-            ? 'Desktop Secret Service (KWallet / GNOME Keyring)'
+            ? t('Desktop Secret Service (KWallet / GNOME Keyring)')
             : status.backend === 'file'
-              ? 'Owner-only key file (0600)'
+              ? t('Owner-only key file (0600)')
               : '—'}
         </span>
-        <span className="k">Fingerprint</span>
-        <span className="mono">{status.fingerprint ? `${status.fingerprint} (SHA-256 prefix, not the key)` : '—'}</span>
-        <span className="k">Last check</span>
+        <span className="k">{t('Fingerprint')}</span>
+        <span className="mono">{status.fingerprint ? t('{fingerprint} (SHA-256 prefix, not the key)', { fingerprint: status.fingerprint }) : '—'}</span>
+        <span className="k">{t('Last check')}</span>
         <span>
-          {verify ? (verify.ok ? `OK ${timeAgo(verify.checkedAt)}` : `${verify.message ?? 'Failed'} (${timeAgo(verify.checkedAt)})`) : 'Not verified yet'}
+          {verify
+            ? verify.ok
+              ? t('OK {when}', { when: timeAgo(verify.checkedAt) })
+              : `${verify.message ?? t('Failed')} (${timeAgo(verify.checkedAt)})`
+            : t('Not verified yet')}
         </span>
       </div>
       {status.problem && <Callout tone="bad">{status.problem}</Callout>}
 
-      <h4>{status.configured ? 'Replace the key' : 'Add a key'}</h4>
+      <h4>{status.configured ? t('Replace the key') : t('Add a key')}</h4>
       <Callout tone="info">
-        Create a dedicated workspace and key for this app in the Console, and paste the key here (not into a chat). Recommended: workspace spend limit as low as
-        practical, no auto-reload.
+        {t(
+          'Create a dedicated workspace and key for this app in the Console, and paste the key here (not into a chat). Recommended: workspace spend limit as low as practical, no auto-reload.',
+        )}
       </Callout>
       <label className="field">
-        API key
+        {t('API key')}
         <input
           className="input mono"
           type="password"
           autoComplete="off"
           spellCheck={false}
-          placeholder="sk-ant-…"
+          placeholder={t('sk-ant-…')}
           value={key}
           onChange={(e) => setKey(e.target.value)}
         />
@@ -346,32 +361,34 @@ export function KeySection({
         <label className="check">
           <input type="radio" checked={backend === 'secret-service'} disabled={!status.secretServiceAvailable} onChange={() => setBackend('secret-service')} />
           <span>
-            Desktop Secret Service <span className="muted">{status.secretServiceAvailable ? '(recommended)' : '(not available)'}</span>
+            {t('Desktop Secret Service')} <span className="muted">{status.secretServiceAvailable ? t('(recommended)') : t('(not available)')}</span>
           </span>
         </label>
         <label className="check">
           <input type="radio" checked={backend === 'file'} onChange={() => setBackend('file')} />
           <span>
-            Owner-only file <span className="muted">(headless setups)</span>
+            {t('Owner-only file')} <span className="muted">{t('(headless setups)')}</span>
           </span>
         </label>
       </div>
       <div className="row">
         <button className="btn primary" disabled={!key.trim() || !!busy} onClick={() => void store()}>
-          <KeyRound size={14} /> Save key
+          <KeyRound size={14} /> {t('Save key')}
         </button>
         <button className="btn" disabled={!status.configured || !!busy} onClick={() => void runVerify()}>
-          <RefreshCw size={14} className={busy === 'verify' ? 'spin' : ''} /> Verify (free)
+          <RefreshCw size={14} className={busy === 'verify' ? 'spin' : ''} /> {t('Verify (free)')}
         </button>
         <span className="spacer grow" />
         <button className="btn danger" disabled={!status.configured || !!busy} onClick={() => void remove()}>
-          <Trash2 size={14} /> Remove key
+          <Trash2 size={14} /> {t('Remove key')}
         </button>
       </div>
-      <h4>If a key is compromised</h4>
+      <h4>{t('If a key is compromised')}</h4>
       <p>
-        1. Disable or delete it in the Console (Settings → API keys). 2. Create a new key in the same workspace. 3. Click <b>Remove key</b>, then save the new
-        key here. Revoking in the Console is what stops the old key from working; removing it here only deletes the local copy.
+        {tx(
+          '1. Disable or delete it in the Console (Settings → API keys). 2. Create a new key in the same workspace. 3. Click {button}, then save the new key here. Revoking in the Console is what stops the old key from working; removing it here only deletes the local copy.',
+          { button: <b>{t('Remove key')}</b> },
+        )}
       </p>
       <CopyLink url={CONSOLE.keys} />
     </>

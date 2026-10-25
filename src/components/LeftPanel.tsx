@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight, File, FileLock2, Folder, FolderOpen, History
 import { call, errorText } from '../api';
 import type { DirEntry, Project, Task } from '../types';
 import { StateBadge, formatUsd, timeAgo } from './common';
+import { t } from '../i18n';
 
 function TreeNode({
   project,
@@ -56,11 +57,11 @@ function TreeNode({
         onClick={() => void toggle()}
         title={
           entry.sensitive
-            ? `Sensitive: ${entry.sensitive}`
+            ? t('Sensitive: {reason}', { reason: entry.sensitive })
             : entry.artifact
-              ? 'Build/dependency directory (excluded from automatic context)'
+              ? t('Build/dependency directory (excluded from automatic context)')
               : entry.outside
-                ? 'Points outside the project'
+                ? t('Points outside the project')
                 : entry.rel
         }
       >
@@ -105,16 +106,16 @@ export function FileTree({
   return (
     <>
       <div className="panel-header">
-        <span>Files</span>
+        <span>{t('Files')}</span>
         <span className="spacer" />
-        <button className="icon-btn" title="Refresh" onClick={() => void load()}>
+        <button className="icon-btn" title={t('Refresh')} onClick={() => void load()}>
           <RefreshCw size={13} />
         </button>
       </div>
       <div className="panel-body tree">
         {error && <div className="empty-small">{error}</div>}
-        {!entries && !error && <div className="empty-small">Loading…</div>}
-        {entries?.length === 0 && <div className="empty-small">This folder is empty.</div>}
+        {!entries && !error && <div className="empty-small">{t('Loading…')}</div>}
+        {entries?.length === 0 && <div className="empty-small">{t('This folder is empty.')}</div>}
         {entries?.map((e) => (
           <TreeNode key={e.rel} project={project} entry={e} depth={0} onOpen={onOpen} selected={selected} />
         ))}
@@ -152,7 +153,7 @@ export function TaskList({ root, tasks, activeId, onSelect }: { root: string; ta
     <>
       <div className="panel-header">
         <History size={13} />
-        <span>Sessions</span>
+        <span>{t('Sessions')}</span>
         <span className="spacer" />
         <span className="task-search">
           <Search size={12} />
@@ -160,12 +161,12 @@ export function TaskList({ root, tasks, activeId, onSelect }: { root: string; ta
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Escape' && setQuery('')}
-            placeholder="Search"
-            aria-label="Search sessions"
+            placeholder={t('Search')}
+            aria-label={t('Search sessions')}
             spellCheck={false}
           />
           {query && (
-            <button className="icon-btn" onClick={() => setQuery('')} aria-label="Clear search">
+            <button className="icon-btn" onClick={() => setQuery('')} aria-label={t('Clear search')}>
               <X size={11} />
             </button>
           )}
@@ -173,18 +174,18 @@ export function TaskList({ root, tasks, activeId, onSelect }: { root: string; ta
       </div>
       <div className="panel-body">
         {error && <div className="empty-small">{error}</div>}
-        {!hits && tasks.length === 0 && <div className="empty-small">No sessions yet for this project.</div>}
-        {hits?.length === 0 && <div className="empty-small">No sessions mention “{q}”.</div>}
-        {rows.map(({ task: t, snippet }) => (
-          <div key={t.id} className={`task-row ${t.id === activeId ? 'selected' : ''}`} onClick={() => onSelect(t.id)}>
-            <span className="title" title={t.prompt}>
-              {t.title}
+        {!hits && tasks.length === 0 && <div className="empty-small">{t('No sessions yet for this project.')}</div>}
+        {hits?.length === 0 && <div className="empty-small">{t('No sessions mention “{query}”.', { query: q })}</div>}
+        {rows.map(({ task, snippet }) => (
+          <div key={task.id} className={`task-row ${task.id === activeId ? 'selected' : ''}`} onClick={() => onSelect(task.id)}>
+            <span className="title" title={task.prompt}>
+              {task.title}
             </span>
             {snippet && <span className="snippet">{snippet}</span>}
             <span className="meta">
-              <StateBadge state={t.state} />
-              <span>{formatUsd(t.cost_usd)} est.</span>
-              <span>{timeAgo(t.created_at)}</span>
+              <StateBadge state={task.state} />
+              <span>{t('{cost} est.', { cost: formatUsd(task.cost_usd) })}</span>
+              <span>{timeAgo(task.created_at)}</span>
             </span>
           </div>
         ))}
