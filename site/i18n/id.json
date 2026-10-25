@@ -97,6 +97,7 @@
   "relayAfter": "Lalu masukkan <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> di <b>Settings → VOID Portal (phone) → Relay</b>. Kehilangan kode pairing atau ponsel? Lepaskan pairing perangkat di tempat yang sama dan kuncinya tidak akan berfungsi lagi. Panduan lengkap ada di <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a> (dalam bahasa Inggris).",
   "themesTitle": "Sesuaikan sesuka Anda",
   "themesSub": "Tujuh tema bawaan, editor warna langsung dengan peringatan kontras, dan impor/ekspor JSON untuk berbagi tema.",
+  "themesTry": "Klik sebuah tema untuk mencobanya di halaman ini.",
   "themesAlt": "Editor tema di dialog pengaturan",
   "installTitle": "Instal di Linux",
   "installSub": "Dibangun dari sumber dalam beberapa menit dan diinstal hanya untuk pengguna Anda. Tanpa root, tanpa file sistem.",

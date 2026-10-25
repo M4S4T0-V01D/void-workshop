@@ -84,6 +84,44 @@
     </script>
     <link rel="icon" type="image/svg+xml" href="../logo.svg" />
     <link rel="stylesheet" href="../style.css" />
+    <script>
+      // The theme buttons under "Make it yours" recolour this page with the app's built-in palettes (src/themes.ts).
+      // Applied here in <head> so a remembered pick doesn't flash the default colours first.
+      (() => {
+        const T = {
+          nebula: ['#0e0814', '#170d22', '#22142f', '#3a2350', '#f5e8ff', '#b394c8', '#ff5fd2', '#4df5d1', '#5ee6a0', '#ffd166', '#ff6b6b'],
+          abyss: ['#05080f', '#0a101c', '#111a2b', '#1e2b45', '#dce8ff', '#7f93b8', '#5b8cff', '#00e0ff', '#2fd6a0', '#f5c451', '#ff5577'],
+          phosphor: ['#060a06', '#0b120b', '#111c11', '#1f331f', '#c9ffcf', '#79a77f', '#39ff6a', '#ffb000', '#39ff6a', '#ffb000', '#ff4f4f'],
+          ember: ['#0f0a0a', '#181010', '#221616', '#3a2424', '#ffece4', '#c49a8c', '#ff7a3d', '#c77dff', '#5ad38b', '#ffcc4d', '#ff4d6d'],
+          daylight: ['#f6f5fb', '#ffffff', '#eeebf8', '#d6d1ea', '#1c1830', '#5d5878', '#7a3cff', '#0090b8', '#16a35f', '#b7791f', '#d23a5a', 'light'],
+          'high-contrast': ['#000000', '#0a0a0a', '#161616', '#5a5a5a', '#ffffff', '#d0d0d0', '#d48cff', '#00ffff', '#00ff7f', '#ffd400', '#ff4d4d'],
+        };
+        const VARS = ['bg', 'panel', 'panel-alt', 'border', 'text', 'dim', 'accent', 'accent2', 'ok', 'warn', 'danger'];
+        const root = document.documentElement;
+        const apply = (id) => {
+          const t = T[id];
+          VARS.forEach((v, i) => (t ? root.style.setProperty(`--${v}`, t[i]) : root.style.removeProperty(`--${v}`)));
+          root.classList.toggle('light', !!t && t[11] === 'light');
+          root.dataset.theme = t ? id : 'void';
+          document.querySelector('meta[name="theme-color"]').content = t ? t[0] : '#0b0a12';
+          document.querySelectorAll('.theme[data-theme]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.theme === root.dataset.theme)));
+        };
+        try {
+          apply(localStorage.getItem('vw-theme'));
+        } catch {
+          apply(null);
+        }
+        document.addEventListener('click', (e) => {
+          const b = e.target.closest && e.target.closest('.theme[data-theme]');
+          if (!b) return;
+          apply(b.dataset.theme);
+          try {
+            localStorage.setItem('vw-theme', b.dataset.theme);
+          } catch {}
+        });
+        document.addEventListener('DOMContentLoaded', () => apply(root.dataset.theme));
+      })();
+    </script>
   </head>
   <body>
     <nav>
@@ -256,14 +294,15 @@
       <div class="wrap">
         <h2>Настройте под себя</h2>
         <p class="sub">Семь встроенных тем, редактор цветов в реальном времени с предупреждениями о контрасте и импорт/экспорт JSON, чтобы делиться темами.</p>
-        <div class="themes">
-          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
-          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
-          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
-          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
-          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
-          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
-          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        <p class="theme-hint">Нажмите на тему, чтобы примерить её на этой странице.</p>
+        <div class="themes" role="group" aria-label="Нажмите на тему, чтобы примерить её на этой странице.">
+          <button type="button" class="theme" data-theme="void" aria-pressed="false" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</button>
+          <button type="button" class="theme" data-theme="nebula" aria-pressed="false" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</button>
+          <button type="button" class="theme" data-theme="abyss" aria-pressed="false" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</button>
+          <button type="button" class="theme" data-theme="phosphor" aria-pressed="false" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</button>
+          <button type="button" class="theme" data-theme="ember" aria-pressed="false" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</button>
+          <button type="button" class="theme" data-theme="daylight" aria-pressed="false" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</button>
+          <button type="button" class="theme" data-theme="high-contrast" aria-pressed="false" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</button>
         </div>
         <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="../screenshots/themes.png" alt="Редактор тем в окне настроек" loading="lazy" /></div>
       </div>

@@ -97,6 +97,7 @@
   "relayAfter": "Ardından <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> adresini <b>Settings → VOID Portal (phone) → Relay</b> alanına girin. Eşleştirme kodunu veya telefonu mu kaybettiniz? Aynı yerden cihazın eşleştirmesini kaldırın; anahtarı artık çalışmaz. Tam kılavuz <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a> dosyasında (İngilizce).",
   "themesTitle": "Size göre olsun",
   "themesSub": "Yedi yerleşik tema, kontrast uyarılı canlı renk düzenleyici ve temaları paylaşmak için JSON içe/dışa aktarma.",
+  "themesTry": "Bu sayfada denemek için bir temaya tıklayın.",
   "themesAlt": "Ayarlar penceresindeki tema düzenleyici",
   "installTitle": "Linux'a kurulum",
   "installSub": "Kaynaktan birkaç dakikada derlenir ve yalnızca kendi kullanıcınız için kurulur. root yok, sistem dosyası yok.",

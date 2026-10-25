@@ -97,6 +97,7 @@
   "relayAfter": "次に <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> を <b>Settings → VOID Portal (phone) → Relay</b> に入力します。ペアリングコードやスマホをなくしたら、同じ場所でそのデバイスのペアリングを解除すれば、そのキーは使えなくなります。詳しいガイドは <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a>（英語）にあります。",
   "themesTitle": "自分好みに",
   "themesSub": "7 つの内蔵テーマ、コントラスト警告付きのライブカラーエディタ、テーマを共有できる JSON のインポート/エクスポート。",
+  "themesTry": "テーマをクリックすると、このページで試せます。",
   "themesAlt": "設定ダイアログのテーマエディタ",
   "installTitle": "Linux にインストール",
   "installSub": "ソースから数分でビルドし、自分のユーザーにだけインストールします。root もシステムファイルも不要です。",

@@ -97,6 +97,7 @@
   "relayAfter": "Затем введите <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> в <b>Settings → VOID Portal (phone) → Relay</b>. Потеряли код сопряжения или телефон? Отвяжите устройство там же, и его ключ перестанет работать. Полное руководство — в <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a> (на английском).",
   "themesTitle": "Настройте под себя",
   "themesSub": "Семь встроенных тем, редактор цветов в реальном времени с предупреждениями о контрасте и импорт/экспорт JSON, чтобы делиться темами.",
+  "themesTry": "Нажмите на тему, чтобы примерить её на этой странице.",
   "themesAlt": "Редактор тем в окне настроек",
   "installTitle": "Установка на Linux",
   "installSub": "Собирается из исходников за несколько минут и устанавливается только для вашего пользователя. Без root и без системных файлов.",

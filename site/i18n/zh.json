@@ -97,6 +97,7 @@
   "relayAfter": "然后将 <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> 填入 <b>Settings → VOID Portal (phone) → Relay</b>。弄丢了配对码或手机？在同一位置取消配对该设备，它的密钥就会失效。完整指南见 <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a>（英文）。",
   "themesTitle": "打造属于你的风格",
   "themesSub": "七款内置主题、带对比度警告的实时配色编辑器，以及 JSON 导入/导出，方便分享主题。",
+  "themesTry": "点击一个主题，即可在本页试用。",
   "themesAlt": "设置对话框中的主题编辑器",
   "installTitle": "在 Linux 上安装",
   "installSub": "几分钟内从源代码构建，仅为当前用户安装。无需 root，不改动系统文件。",

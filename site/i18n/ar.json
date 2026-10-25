@@ -97,6 +97,7 @@
   "relayAfter": "ثم أدخل <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> في <b>Settings → VOID Portal (phone) → Relay</b>. هل فقدت رمز الاقتران أو هاتفك؟ ألغِ اقتران الجهاز من المكان نفسه فيتوقف مفتاحه عن العمل. الدليل الكامل في <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a> (بالإنجليزية).",
   "themesTitle": "اجعله على ذوقك",
   "themesSub": "سبع سمات مدمجة، ومحرر ألوان مباشر مع تحذيرات التباين، واستيراد/تصدير JSON لمشاركة السمات.",
+  "themesTry": "انقر على سمة لتجربتها على هذه الصفحة.",
   "themesAlt": "محرر السمات في نافذة الإعدادات",
   "installTitle": "التثبيت على Linux",
   "installSub": "يُبنى من المصدر في دقائق ويُثبَّت لمستخدمك فقط. بلا root وبلا ملفات نظام.",

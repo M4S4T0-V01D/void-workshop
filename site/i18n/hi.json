@@ -97,6 +97,7 @@
   "relayAfter": "फिर <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> को <b>Settings → VOID Portal (phone) → Relay</b> में डालें। पेयरिंग कोड या फ़ोन खो गया? उसी जगह से डिवाइस को अनपेयर करें और उसकी कुंजी काम करना बंद कर देगी। पूरी गाइड <a href=\"https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay\">remote/README.md</a> (अंग्रेज़ी में) में है।",
   "themesTitle": "इसे अपना बनाएँ",
   "themesSub": "सात बिल्ट-इन थीम, कंट्रास्ट चेतावनियों के साथ लाइव रंग एडिटर, और थीम साझा करने के लिए JSON इंपोर्ट/एक्सपोर्ट।",
+  "themesTry": "इस पेज पर आज़माने के लिए किसी थीम पर क्लिक करें।",
   "themesAlt": "सेटिंग डायलॉग में थीम एडिटर",
   "installTitle": "Linux पर इंस्टॉल करें",
   "installSub": "सोर्स से कुछ ही मिनटों में बनता है और सिर्फ़ आपके यूज़र के लिए इंस्टॉल होता है। न root, न सिस्टम फ़ाइलें।",
