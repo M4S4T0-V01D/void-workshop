@@ -216,6 +216,8 @@ export interface Settings {
   sendQueuedTogether: boolean;
   runInBackground: boolean;
   startAtLogin: boolean;
+  githubClientId: string;
+  servicesPanel: 'right' | 'left';
 }
 
 export interface PortalDevice {
@@ -459,3 +461,112 @@ export interface RpcError {
   code: string;
   message: string;
 }
+
+// GitHub and Cloudflare panels (sidecar/src/github.ts, cloudflare.ts). Tokens never reach the window.
+export interface GithubDeviceCode {
+  userCode: string;
+  verificationUri: string;
+  expiresAt: number;
+}
+
+export interface GithubStatus {
+  configured: boolean;
+  login: string | null;
+  name: string | null;
+  scopes: string[];
+  fingerprint: string | null;
+  backend: 'secret-service' | 'file' | null;
+  problem: string | null;
+  pending: GithubDeviceCode | null;
+}
+
+export interface GithubRepo {
+  owner: string;
+  name: string;
+  fullName: string;
+  private: boolean;
+  defaultBranch: string;
+  description: string | null;
+  htmlUrl: string;
+  openIssues: number;
+}
+
+export type GithubListKind = 'pulls' | 'issues' | 'runs' | 'releases';
+
+export interface GithubListEntry {
+  id: number;
+  number: number | null;
+  title: string;
+  state: string;
+  author: string | null;
+  updatedAt: string;
+  htmlUrl: string;
+  detail: string | null;
+  draft?: boolean;
+}
+
+export interface GithubComment {
+  id: number;
+  author: string | null;
+  body: string;
+  createdAt: string;
+  path?: string | null;
+}
+
+export interface GithubItem {
+  kind: 'pull' | 'issue';
+  number: number;
+  title: string;
+  state: string;
+  author: string | null;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+  htmlUrl: string;
+  labels: string[];
+  comments: GithubComment[];
+  head?: string;
+  base?: string;
+  draft?: boolean;
+  merged?: boolean;
+  files?: { filename: string; status: string; additions: number; deletions: number; patch: string | null }[];
+}
+
+export interface CloudflareStatus {
+  configured: boolean;
+  accounts: { id: string; name: string }[];
+  tokenStatus: string | null;
+  expiresOn: string | null;
+  fingerprint: string | null;
+  backend: 'secret-service' | 'file' | null;
+  problem: string | null;
+}
+
+export interface CfResource {
+  id: string;
+  name: string;
+  detail: string | null;
+  updatedAt: string | null;
+  url: string | null;
+}
+
+export type CfSection = { items: CfResource[]; error: string | null };
+
+export interface CloudflareResources {
+  accountId: string;
+  workers: CfSection;
+  pages: CfSection;
+  r2: CfSection;
+  d1: CfSection;
+  kv: CfSection;
+}
+
+export interface WorkerDetail {
+  accountId: string;
+  name: string;
+  modules: { name: string; contentType: string; content: string | null; size: number }[];
+  deployments: { id: string; createdOn: string; source: string | null; message: string | null; versions: string[] }[];
+}
+
+/** Editor tabs that show a service item instead of a file. */
+export type ServiceView = { kind: 'gh-item'; number: number; title?: string } | { kind: 'cf-worker'; accountId: string; name: string };

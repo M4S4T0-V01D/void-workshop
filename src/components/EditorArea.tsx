@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from 'react';
 import { createTwoFilesPatch } from 'diff';
-import { Circle, FileCode2, MessagesSquare, Save, X } from 'lucide-react';
+import { Circle, Cloud, FileCode2, MessagesSquare, Save, X } from 'lucide-react';
 import { call, errorText } from '../api';
-import type { EditorSettings, FileView, SaveResult } from '../types';
+import type { EditorSettings, FileView, SaveResult, ServiceView } from '../types';
 import { CodeEditor, type CodeEditorHandle } from './CodeEditor';
 import { Callout, ConfirmDialog, DiffView, Modal, type Toast } from './common';
+import { GithubMark } from './ServicePanels';
+import { ServiceViewPane } from './ServiceViews';
 
 export const DEFAULT_EDITOR: EditorSettings = { fontSize: 13, tabSize: 2, wordWrap: false };
 
@@ -32,11 +34,22 @@ export interface EditorAreaHandle {
   open(rel: string): void;
   /** Files may have changed on disk (agent edits, a rejected change); look at the open tabs again. */
   checkDisk(): void;
+  /** A pull request, issue or Worker in a tab of its own. */
+  openView(view: ServiceView): void;
+}
+
+/** A service tab; GitHub items belong to the project, Workers (root null) show in every project. */
+interface ViewTab {
+  key: string;
+  root: string | null;
+  view: ServiceView;
+  title: string;
 }
 
 const CHAT = 'chat';
 const tabKey = (root: string, rel: string) => `${root}\0${rel}`;
 const baseName = (rel: string) => rel.split('/').pop() ?? rel;
+const viewKey = (root: string | null, v: ServiceView) => (v.kind === 'gh-item' ? `${root}\0view:gh:${v.number}` : `view:cf:${v.accountId}/${v.name}`);
 const isNotFound = (err: unknown) => (err as { code?: string } | null)?.code === 'not_found';
 
 /** The center area: the conversation plus a tab per open file. Tabs stay mounted (undo history, scroll) across project switches. */
@@ -61,6 +74,7 @@ export function EditorArea({
   const [confirmClose, setConfirmClose] = useState<string | null>(null);
   const [confirmSave, setConfirmSave] = useState<string | null>(null);
   const [diffFor, setDiffFor] = useState<string | null>(null);
+  const [views, setViews] = useState<ViewTab[]>([]);
   const tabsRef = useRef<Tab[]>([]);
   tabsRef.current = tabs;
   const editors = useRef(new Map<string, CodeEditorHandle>());
@@ -68,7 +82,9 @@ export function EditorArea({
   const editorSettings = settings ?? DEFAULT_EDITOR;
 
   const visible = tabs.filter((t) => t.root === root);
-  const current = visible.some((t) => t.key === active) ? active : CHAT;
+  const visibleViews = views.filter((v) => v.root === null || v.root === root);
+  const allVisible = [...visible.map((t) => t.key), ...visibleViews.map((v) => v.key)];
+  const current = allVisible.includes(active) ? active : CHAT;
   const currentTab = visible.find((t) => t.key === current) ?? null;
 
   useEffect(() => onActiveFile(currentTab?.rel ?? null), [currentTab?.rel, onActiveFile]);
@@ -155,6 +171,14 @@ export function EditorArea({
         }
         void read(rel, false);
       },
+      openView: (view) => {
+        const projectRoot = view.kind === 'gh-item' ? root : null;
+        if (view.kind === 'gh-item' && !projectRoot) return;
+        const key = viewKey(projectRoot, view);
+        const title = view.kind === 'gh-item' ? `#${view.number}${view.title ? ` ${view.title}` : ''}` : view.name;
+        setViews((vs) => (vs.some((v) => v.key === key) ? vs : [...vs, { key, root: projectRoot, view, title }]));
+        setActive(key);
+      },
       checkDisk: () => {
         window.clearTimeout(checkTimer.current);
         checkTimer.current = window.setTimeout(checkAll, 300);
@@ -176,11 +200,16 @@ export function EditorArea({
   };
 
   const close = (key: string, force = false) => {
+    if (views.some((v) => v.key === key)) {
+      const idx = allVisible.indexOf(key);
+      if (current === key) setActive(allVisible[idx + 1] ?? allVisible[idx - 1] ?? CHAT);
+      return setViews((vs) => vs.filter((v) => v.key !== key));
+    }
     const tab = tabsRef.current.find((t) => t.key === key);
     if (!tab) return;
     if (tab.dirty && !force) return setConfirmClose(key);
-    const idx = visible.findIndex((t) => t.key === key);
-    if (current === key) setActive(visible[idx + 1]?.key ?? visible[idx - 1]?.key ?? CHAT);
+    const idx = allVisible.indexOf(key);
+    if (current === key) setActive(allVisible[idx + 1] ?? allVisible[idx - 1] ?? CHAT);
     editors.current.delete(key);
     setTabs((ts) => ts.filter((t) => t.key !== key));
   };
@@ -238,7 +267,7 @@ export function EditorArea({
 
   return (
     <>
-      {visible.length > 0 && (
+      {allVisible.length > 0 && (
         <div className="tabs editor-tabs" role="tablist">
           <button role="tab" aria-selected={current === CHAT} className={`tab ${current === CHAT ? 'active' : ''}`} onClick={() => activate(CHAT)}>
             <MessagesSquare size={13} /> Conversation
@@ -265,6 +294,30 @@ export function EditorArea({
                 }}
               >
                 {t.dirty ? <Circle size={9} fill="currentColor" /> : <X size={12} />}
+              </button>
+            </div>
+          ))}
+          {visibleViews.map((v) => (
+            <div
+              key={v.key}
+              role="tab"
+              aria-selected={current === v.key}
+              className={`tab file-tab ${current === v.key ? 'active' : ''}`}
+              title={v.title}
+              onClick={() => activate(v.key)}
+              onAuxClick={(e) => e.button === 1 && close(v.key)}
+            >
+              {v.view.kind === 'gh-item' ? <GithubMark size={12} /> : <Cloud size={13} />}
+              <span className="name">{v.title}</span>
+              <button
+                className="icon-btn tab-close"
+                aria-label={`Close ${v.title}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  close(v.key);
+                }}
+              >
+                <X size={12} />
               </button>
             </div>
           ))}
@@ -317,6 +370,11 @@ export function EditorArea({
               if (h) editors.current.set(t.key, h);
             }}
           />
+        </div>
+      ))}
+      {views.map((v) => (
+        <div key={v.key} className="center-pane editor-pane" hidden={current !== v.key}>
+          <ServiceViewPane view={v.view} root={v.root} settings={editorSettings} toast={toast} />
         </div>
       ))}
 

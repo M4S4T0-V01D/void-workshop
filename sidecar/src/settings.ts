@@ -171,6 +171,8 @@ export const SavedLayoutSchema = z.object({
 });
 export type SavedLayout = z.infer<typeof SavedLayoutSchema>;
 
+export const SERVICE_PANELS = ['right', 'left'] as const;
+
 /** With the token saver on, the conversation compacts by this size (unless the cap is lower already). */
 export const TOKEN_SAVER_CONTEXT = 120_000;
 /** Characters of a shell command's output the agent keeps in its context (the runtime's BASH_MAX_OUTPUT_LENGTH). */
@@ -237,6 +239,13 @@ export const SettingsSchema = z.object({
   runInBackground: z.boolean(),
   /** Start hidden in the tray at login (writes an XDG autostart entry). */
   startAtLogin: z.boolean(),
+  /** Client ID of the user's GitHub OAuth App (device flow enabled) for "Sign in with GitHub". Not a secret. */
+  githubClientId: z
+    .string()
+    .max(64)
+    .regex(/^[A-Za-z0-9._-]*$/, 'A GitHub client ID has only letters, digits, dots, dashes and underscores.'),
+  /** Which side panel holds the GitHub and Cloudflare tabs. */
+  servicesPanel: z.enum(SERVICE_PANELS),
 });
 export type Settings = z.infer<typeof SettingsSchema>;
 
@@ -275,6 +284,8 @@ export const DEFAULT_SETTINGS: Settings = {
   sendQueuedTogether: true,
   runInBackground: false,
   startAtLogin: false,
+  githubClientId: '',
+  servicesPanel: 'right',
 };
 
 export const SettingsPatchSchema = SettingsSchema.partial();

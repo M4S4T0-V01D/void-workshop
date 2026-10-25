@@ -6,6 +6,7 @@ import {
   FolderLock,
   KeyRound,
   Palette,
+  Plug,
   RefreshCw,
   Shield,
   ShieldAlert,
@@ -36,11 +37,14 @@ import { CONSOLE, CopyLink, KeySection, SubscriptionSection } from './settings/A
 import { AdminSection } from './settings/AdminSection';
 import { AppearanceSection } from './settings/AppearanceSection';
 import { UpdateSection } from './settings/UpdateSection';
+import { CloudflareSection, GithubSection, ServicesPlacement } from './settings/ServiceSections';
 
-export type SettingsSection = 'key' | 'model' | 'speed' | 'portal' | 'limits' | 'safety' | 'admin' | 'project' | 'appearance' | 'billing' | 'updates';
+export type SettingsSection =
+  'key' | 'accounts' | 'model' | 'speed' | 'portal' | 'limits' | 'safety' | 'admin' | 'project' | 'appearance' | 'billing' | 'updates';
 
 const SECTIONS: Array<[SettingsSection, string, typeof KeyRound]> = [
   ['key', 'Sign-in & API key', KeyRound],
+  ['accounts', 'GitHub & Cloudflare', Plug],
   ['model', 'Provider & model', Sparkles],
   ['speed', 'Speed & tokens', Gauge],
   ['portal', 'VOID Portal (phone)', Smartphone],
@@ -109,6 +113,13 @@ export function SettingsDialog({
           ))}
         </nav>
         <section>
+          {section === 'accounts' && (
+            <>
+              <GithubSection settings={settings} save={save} toast={toast} />
+              <CloudflareSection toast={toast} />
+              <ServicesPlacement settings={settings} save={save} />
+            </>
+          )}
           {section === 'key' && (
             <SubscriptionSection
               init={init}

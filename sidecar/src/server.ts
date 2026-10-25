@@ -28,6 +28,8 @@ import { dayKey } from './budget.js';
 import { PLAN_USAGE_FLAG, PlanUsageWatcher, type PlanUsage } from './planUsage.js';
 import { Updater } from './updater.js';
 import { UPDATE_PUBLIC_KEY } from './updateKey.js';
+import { GithubService, ServiceError } from './github.js';
+import { CloudflareService } from './cloudflare.js';
 
 const UPDATE_PENDING_FLAG = 'update.pending';
 const UPDATE_RESULT_FLAG = 'update.last';
@@ -47,9 +49,13 @@ const MAX_WINDOW_CHUNK = 4 * 1024 * 1024;
 const Root = z.object({ root: z.string().min(1).max(4096) });
 const TaskId = z.object({ taskId: z.string().uuid() });
 const Mode = z.enum(AGENT_MODES);
-const ImageIds = z.array(z.string().regex(/^[A-Za-z0-9_-]{1,64}$/)).max(MAX_ATTACHMENTS).optional();
+const ImageIds = z
+  .array(z.string().regex(/^[A-Za-z0-9_-]{1,64}$/))
+  .max(MAX_ATTACHMENTS)
+  .optional();
 const Origin = z.enum(['desktop', 'phone']).default('desktop');
 const Password = z.string().min(1).max(MAX_PASSWORD);
+const CfAccount = z.object({ accountId: z.string().regex(/^[a-f0-9]{32}$/) });
 /** A restart's task is continued only this soon after it was asked for. */
 const RESUME_WITHIN_MS = 30 * 60_000;
 
@@ -78,6 +84,8 @@ export class Server implements RemoteHost {
   readonly remote: RemoteBridge;
   readonly admin: AdminStore;
   readonly updater: Updater;
+  readonly github: GithubService;
+  readonly cloudflare: CloudflareService;
   private updating = false;
   private sourceCache: { dir: string | null; at: number } | null = null;
   /** Every event goes to the window and to paired phones. */
@@ -99,6 +107,8 @@ export class Server implements RemoteHost {
       /** Tests pin their own update key and server. */
       updateKey?: string | null;
       updateFetch?: typeof fetch;
+      /** Tests answer GitHub and Cloudflare calls themselves. */
+      serviceFetch?: typeof fetch;
     } = {},
   ) {
     this.downloadsDir = opts.downloadsDir ?? path.join(os.homedir(), 'Downloads');
@@ -114,6 +124,13 @@ export class Server implements RemoteHost {
     const interrupted = this.store.markInterruptedTasks();
     if (interrupted) log.info(`marked ${interrupted} task(s) as interrupted after restart`);
     this.keys = new KeyStore(paths.keyFile);
+    const credentials = path.dirname(paths.keyFile);
+    this.github = new GithubService(
+      path.join(credentials, 'github-token'),
+      (status, error) => this.emit('github.changed', { status, error: error ?? null }),
+      opts.serviceFetch,
+    );
+    this.cloudflare = new CloudflareService(path.join(credentials, 'cloudflare-api-token'), opts.serviceFetch);
     this.preimages = new PreimageStore(paths.preimageDir, this.store);
     this.admin = new AdminStore(path.join(paths.configDir, 'credentials', 'admin.json'), () => this.workshopSource());
     this.agents = new AgentManager({
@@ -224,7 +241,8 @@ export class Server implements RemoteHost {
 
   /** Download and check the newest signed release, then hand it to the shell's restart helper to install. */
   private async installUpdate(): Promise<{ version: string }> {
-    if (this.env.VOID_WORKSHOP_SHELL_RESTART !== '1') throw new RpcError('unsupported', 'This VOID Workshop build cannot restart itself; update from source with ./scripts/install.sh.');
+    if (this.env.VOID_WORKSHOP_SHELL_RESTART !== '1')
+      throw new RpcError('unsupported', 'This VOID Workshop build cannot restart itself; update from source with ./scripts/install.sh.');
     if (this.updating) throw new RpcError('busy', 'An update is already being prepared.');
     if (this.agents.workingCount) throw new RpcError('busy', 'Tasks are still working. Update once they finish or stop them.');
     this.updating = true;
@@ -566,6 +584,35 @@ export class Server implements RemoteHost {
       if (wasActive) log.info('admin: session ended');
       return wasActive ? this.adminChanged(status) : status;
     },
+    'github.status': async () => this.github.status(),
+    'github.login': async () => this.github.startLogin(this.store.getSettings().githubClientId),
+    'github.loginCancel': async () => ({ ok: this.github.cancelLogin() }),
+    'github.setToken': async (p) => this.github.setToken(z.object({ token: z.string().min(1).max(500) }).parse(p).token),
+    'github.logout': async () => this.github.logout(),
+    'github.repo': async (p) => this.github.repo(this.policy(Root.parse(p).root).root),
+    'github.list': async (p) => {
+      const { root, kind, state } = Root.extend({
+        kind: z.enum(['pulls', 'issues', 'runs', 'releases']),
+        state: z.enum(['open', 'closed', 'all']).default('open'),
+      }).parse(p);
+      return this.github.list(this.policy(root).root, kind, state);
+    },
+    'github.item': async (p) => {
+      const { root, number } = Root.extend({ number: z.number().int().min(1).max(1e9) }).parse(p);
+      return this.github.item(this.policy(root).root, number);
+    },
+    'github.comment': async (p) => {
+      const { root, number, body } = Root.extend({ number: z.number().int().min(1).max(1e9), body: z.string().trim().min(1).max(65_000) }).parse(p);
+      return this.github.comment(this.policy(root).root, number, body);
+    },
+    'cloudflare.status': async () => this.cloudflare.status(),
+    'cloudflare.setToken': async (p) => this.cloudflare.setToken(z.object({ token: z.string().min(1).max(500) }).parse(p).token),
+    'cloudflare.logout': async () => this.cloudflare.logout(),
+    'cloudflare.resources': async (p) => this.cloudflare.resources(CfAccount.parse(p).accountId),
+    'cloudflare.worker': async (p) => {
+      const { accountId, name } = CfAccount.extend({ name: z.string().regex(/^[A-Za-z0-9_-]{1,100}$/) }).parse(p);
+      return this.cloudflare.worker(accountId, name);
+    },
     'billing.acknowledge': async () => {
       this.store.setFlag('billingBlocked', null);
       return { ok: true };
@@ -635,7 +682,10 @@ export class Server implements RemoteHost {
       const { root, rel, content, baseHash, allowSensitive } = Root.extend({
         rel: z.string().min(1).max(4096),
         content: z.string(),
-        baseHash: z.string().regex(/^[0-9a-f]{64}$/).nullable(),
+        baseHash: z
+          .string()
+          .regex(/^[0-9a-f]{64}$/)
+          .nullable(),
         allowSensitive: z.boolean().default(false),
       }).parse(p);
       try {
@@ -739,7 +789,9 @@ export class Server implements RemoteHost {
     },
     /** Desktop only: a copy of a kept image in the Downloads folder (a new file, never an overwrite). */
     'task.saveImage': async (p) => {
-      const { taskId, imageId, name } = TaskId.extend({ imageId: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/), name: z.string().max(200).default('image') }).parse(p);
+      const { taskId, imageId, name } = TaskId.extend({ imageId: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/), name: z.string().max(200).default('image') }).parse(
+        p,
+      );
       const file = this.agents.images.saveCopy(taskId, imageId, this.downloadsDir, name);
       if (!file) throw new RpcError('not-found', 'That image is no longer kept (images are kept for 30 days).');
       return { path: file };
@@ -773,7 +825,14 @@ export class Server implements RemoteHost {
     },
     /** A picture shared from the phone; it waits (a day at most) until task.start or task.send takes it with imageIds. */
     'image.upload': async (p) => {
-      const { data } = z.object({ data: z.string().min(1).max(Math.ceil((MAX_UPLOAD_BYTES * 4) / 3) + 4) }).parse(p);
+      const { data } = z
+        .object({
+          data: z
+            .string()
+            .min(1)
+            .max(Math.ceil((MAX_UPLOAD_BYTES * 4) / 3) + 4),
+        })
+        .parse(p);
       const buf = Buffer.from(data, 'base64');
       if (buf.length > MAX_UPLOAD_BYTES) throw new RpcError('too-big', 'That picture is too big to send.');
       const img = this.agents.images.save(UPLOADS, buf);
@@ -1018,6 +1077,7 @@ export class Server implements RemoteHost {
 export function errorPayload(err: unknown): { code: string; message: string } {
   if (err instanceof RpcError || err instanceof AgentError || err instanceof AdminError) return { code: err.code, message: err.message };
   if (err instanceof KeyFormatError) return { code: 'bad-key', message: err.message };
+  if (err instanceof ServiceError) return { code: err.code, message: redactValue(err.message).slice(0, 500) };
   if (err instanceof z.ZodError)
     return {
       code: 'invalid-params',

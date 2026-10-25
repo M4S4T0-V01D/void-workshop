@@ -131,6 +131,24 @@ fn open_login_url(url: String) -> Result<(), String> {
         .map_err(|e| format!("Could not open the browser: {e}"))
 }
 
+/// Opens a GitHub or Cloudflare page (device sign-in, token page, a PR) in the browser; nothing else.
+#[tauri::command]
+fn open_service_url(url: String) -> Result<(), String> {
+    if !policy::is_service_url(&url) {
+        return Err("Only github.com and dash.cloudflare.com pages can be opened.".into());
+    }
+    std::process::Command::new("xdg-open")
+        .arg(&url)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .spawn()
+        .map(|mut child| {
+            std::thread::spawn(move || child.wait());
+        })
+        .map_err(|e| format!("Could not open the browser: {e}"))
+}
+
 #[tauri::command]
 fn startup_error(state: tauri::State<'_, AppState>) -> Option<String> {
     state.start_error.lock().ok().and_then(|e| e.clone())
@@ -198,6 +216,7 @@ pub fn run() {
             sidecar_restart,
             pick_project_dir,
             open_login_url,
+            open_service_url,
             set_background_mode,
             startup_error
         ])

@@ -4,6 +4,7 @@ import {
   ArrowLeftRight,
   Check,
   ChevronDown,
+  Cloud,
   FolderOpen,
   LayoutTemplate,
   Paintbrush,
@@ -43,6 +44,7 @@ import { Conversation } from './components/Conversation';
 import { FileTree, TaskList } from './components/LeftPanel';
 import { EditorArea, type EditorAreaHandle } from './components/EditorArea';
 import { RightPanel } from './components/RightPanel';
+import { CloudflarePanel, GithubMark, GithubPanel } from './components/ServicePanels';
 import { BottomPanel } from './components/BottomPanel';
 import { StatusBar } from './components/StatusBar';
 import { ApprovalDialog, CommandConfirmDialog } from './components/ApprovalDialog';
@@ -89,6 +91,8 @@ export default function App() {
   const editorRef = useRef<EditorAreaHandle>(null);
   /** The file in the front editor tab, highlighted in the tree. */
   const [openFile, setOpenFile] = useState<string | null>(null);
+  /** What the left panel shows while the GitHub and Cloudflare panels are placed there. */
+  const [leftTab, setLeftTab] = useState<'files' | 'github' | 'cloudflare'>('files');
 
   const activeRef = useRef<string | null>(null);
   const projectRef = useRef<Project | null>(null);
@@ -528,6 +532,34 @@ export default function App() {
     );
   }
 
+  const servicesSide = init.settings.servicesPanel ?? 'right';
+  const moveServices = () => {
+    setLeftTab('files');
+    void saveSettings({ servicesPanel: servicesSide === 'right' ? 'left' : 'right' });
+  };
+  const services = {
+    github: (
+      <GithubPanel
+        root={project?.root ?? null}
+        side={servicesSide}
+        onMove={moveServices}
+        onOpenItem={(number, title) => editorRef.current?.openView({ kind: 'gh-item', number, title })}
+        onOpenSettings={() => setSettingsOpen('accounts')}
+        toast={toast}
+      />
+    ),
+    cloudflare: (
+      <CloudflarePanel
+        side={servicesSide}
+        onMove={moveServices}
+        onOpenWorker={(accountId, name) => editorRef.current?.openView({ kind: 'cf-worker', accountId, name })}
+        onOpenSettings={() => setSettingsOpen('accounts')}
+        toast={toast}
+      />
+    ),
+  };
+  const leftView = servicesSide === 'left' ? leftTab : 'files';
+
   return (
     <div className={`app ${appClasses(ui.layout)} ${init.admin.active ? 'admin-mode' : ''}`}>
       <header className="topbar">
@@ -693,7 +725,22 @@ export default function App() {
       </header>
 
       <aside className="left panel" ref={leftRef}>
-        {project ? (
+        {servicesSide === 'left' && (
+          <div className="tabs">
+            <button className={`tab ${leftView === 'files' ? 'active' : ''}`} onClick={() => setLeftTab('files')}>
+              Files
+            </button>
+            <button className={`tab ${leftView === 'github' ? 'active' : ''}`} onClick={() => setLeftTab('github')}>
+              <GithubMark /> GitHub
+            </button>
+            <button className={`tab ${leftView === 'cloudflare' ? 'active' : ''}`} onClick={() => setLeftTab('cloudflare')}>
+              <Cloud size={13} /> Cloudflare
+            </button>
+          </div>
+        )}
+        {leftView !== 'files' ? (
+          <div className="panel-body">{services[leftView]}</div>
+        ) : project ? (
           <>
             <div style={{ flex: '0 0 var(--left-split, 60%)', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
               <FileTree project={project} refreshKey={treeKey} selected={openFile} onOpen={(rel) => editorRef.current?.open(rel)} />
@@ -828,6 +875,7 @@ export default function App() {
             }
           }}
           onRefreshGit={() => void refreshGit()}
+          services={servicesSide === 'right' ? services : undefined}
         />
       </aside>
 

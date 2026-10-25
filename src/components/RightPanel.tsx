@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Check, ChevronDown, ChevronRight, Circle, CircleDot, GitBranch, GitCommitHorizontal, History, Loader2, RefreshCw, Undo2 } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
+import { Check, ChevronDown, Cloud, ChevronRight, Circle, CircleDot, GitBranch, GitCommitHorizontal, History, Loader2, RefreshCw, Undo2 } from 'lucide-react';
 import type { GitStatus, PlanItem, Project, ReviewEntry, Task } from '../types';
 import { Callout, ChangeBadge, ConfirmDialog, DiffView, changeLegend } from './common';
+import { GithubMark } from './ServicePanels';
 
-type Tab = 'plan' | 'changes' | 'git';
+type Tab = 'plan' | 'changes' | 'git' | 'github' | 'cloudflare';
 
 export function RightPanel({
   project,
@@ -17,6 +18,7 @@ export function RightPanel({
   onCommit,
   onCheckpoint,
   onRefreshGit,
+  services,
 }: {
   project: Project | null;
   task: Task | null;
@@ -29,8 +31,11 @@ export function RightPanel({
   onCommit: (paths: string[], message: string) => Promise<boolean>;
   onCheckpoint: () => Promise<void>;
   onRefreshGit: () => void;
+  /** The GitHub and Cloudflare panels, when they are placed here. */
+  services?: { github: ReactNode; cloudflare: ReactNode };
 }) {
-  const [tab, setTab] = useState<Tab>('plan');
+  const [picked, setTab] = useState<Tab>('plan');
+  const tab: Tab = !services && (picked === 'github' || picked === 'cloudflare') ? 'plan' : picked;
   const visiblePlan = plan.filter((p) => p.status !== 'deleted');
   const pendingReview = review.filter((r) => !['accepted', 'rejected', 'committed'].includes(r.status)).length;
   return (
@@ -45,6 +50,16 @@ export function RightPanel({
         <button className={`tab ${tab === 'git' ? 'active' : ''}`} onClick={() => setTab('git')}>
           Git {git?.dirty && <span className="count">{git.files.length}</span>}
         </button>
+        {services && (
+          <>
+            <button className={`tab ${tab === 'github' ? 'active' : ''}`} onClick={() => setTab('github')} title="GitHub">
+              <GithubMark /> GitHub
+            </button>
+            <button className={`tab ${tab === 'cloudflare' ? 'active' : ''}`} onClick={() => setTab('cloudflare')} title="Cloudflare">
+              <Cloud size={13} /> Cloudflare
+            </button>
+          </>
+        )}
       </div>
       <div className="panel-body">
         {tab === 'plan' && <PlanTab plan={visiblePlan} task={task} />}
@@ -52,6 +67,8 @@ export function RightPanel({
           <ChangesTab task={task} review={review} git={git} onRefresh={onRefreshReview} onAccept={onAccept} onReject={onReject} onCommit={onCommit} />
         )}
         {tab === 'git' && <GitTab project={project} git={git} onCheckpoint={onCheckpoint} onRefresh={onRefreshGit} />}
+        {tab === 'github' && services?.github}
+        {tab === 'cloudflare' && services?.cloudflare}
       </div>
     </>
   );

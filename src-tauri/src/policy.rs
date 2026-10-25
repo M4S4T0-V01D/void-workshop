@@ -32,6 +32,20 @@ pub const ALLOWED_METHODS: &[&str] = &[
     "admin.clearPassword",
     "admin.start",
     "admin.end",
+    "github.status",
+    "github.login",
+    "github.loginCancel",
+    "github.setToken",
+    "github.logout",
+    "github.repo",
+    "github.list",
+    "github.item",
+    "github.comment",
+    "cloudflare.status",
+    "cloudflare.setToken",
+    "cloudflare.logout",
+    "cloudflare.resources",
+    "cloudflare.worker",
     "billing.acknowledge",
     "usage.summary",
     "plan.usage",
@@ -184,6 +198,12 @@ pub fn is_login_url(url: &str) -> bool {
     host_ok && url.contains("/oauth/authorize?") && url.len() < 4000 && url.chars().all(|c| c.is_ascii_graphic())
 }
 
+/// Pages the window may open in the browser for GitHub and Cloudflare: their own https sites only.
+pub fn is_service_url(url: &str) -> bool {
+    let host_ok = ["https://github.com/", "https://dash.cloudflare.com/"].iter().any(|p| url.starts_with(p));
+    host_ok && url.len() < 2000 && url.chars().all(|c| c.is_ascii_graphic()) && !url.contains("..") && !url.contains('@')
+}
+
 /// True when the process runs with root privileges (real or effective).
 pub fn running_as_root() -> bool {
     // SAFETY: getuid/geteuid have no preconditions and cannot fail.
@@ -256,6 +276,19 @@ mod tests {
         assert!(!is_login_url("https://claude.com/settings"));
         assert!(!is_login_url("https://claude.com/oauth/authorize?x y"));
         assert!(!is_login_url("file:///etc/passwd#https://claude.com/oauth/authorize?"));
+    }
+
+    #[test]
+    fn service_urls_are_github_and_cloudflare_only() {
+        assert!(is_service_url("https://github.com/login/device"));
+        assert!(is_service_url("https://github.com/o/r/pull/3"));
+        assert!(is_service_url("https://dash.cloudflare.com/profile/api-tokens"));
+        assert!(!is_service_url("https://github.com.evil.example/"));
+        assert!(!is_service_url("https://github.com@evil.example/"));
+        assert!(!is_service_url("http://github.com/x"));
+        assert!(!is_service_url("https://gist.github.com/x"));
+        assert!(!is_service_url("https://github.com/a b"));
+        assert!(!is_service_url("javascript:alert(1)//https://github.com/"));
     }
 
     #[test]

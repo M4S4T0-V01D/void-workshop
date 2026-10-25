@@ -12,7 +12,12 @@ import crypto from 'node:crypto';
 
 export type KeyBackend = 'secret-service' | 'file';
 
-const ATTRS = ['service', 'void-workshop', 'account', 'anthropic-api-key'];
+/** What one stored secret is: its keyring entry, its label and how a pasted value is checked. */
+export interface SecretSpec {
+  account: string;
+  label: string;
+  validate: (raw: string) => string;
+}
 
 export class KeyFormatError extends Error {}
 
@@ -98,11 +103,22 @@ export interface KeyStatus {
   problem: string | null;
 }
 
+export const ANTHROPIC_SECRET: SecretSpec = { account: 'anthropic-api-key', label: 'VOID Workshop: Anthropic API key', validate: validateApiKeyFormat };
+
 export class KeyStore {
+  private readonly attrs: string[];
+  private readonly validate: (raw: string) => string;
+  private readonly label: string;
+
   constructor(
     private readonly keyFile: string,
     private readonly mode: 'auto' | KeyBackend = (process.env.VOID_WORKSHOP_KEY_BACKEND as 'auto' | KeyBackend) || 'auto',
-  ) {}
+    spec: SecretSpec = ANTHROPIC_SECRET,
+  ) {
+    this.attrs = ['service', 'void-workshop', 'account', spec.account];
+    this.validate = spec.validate;
+    this.label = spec.label;
+  }
 
   async secretServiceAvailable(): Promise<boolean> {
     if (this.mode === 'file') return false;
@@ -113,10 +129,10 @@ export class KeyStore {
   }
 
   async store(rawKey: string, backend: KeyBackend): Promise<KeyStatus> {
-    const key = validateApiKeyFormat(rawKey);
+    const key = this.validate(rawKey);
     if (backend === 'secret-service') {
       if (!(await this.secretServiceAvailable())) throw new Error('The desktop Secret Service is not available. Use the file backend for headless setups.');
-      const r = await run('secret-tool', ['store', '--label=VOID Workshop: Anthropic API key', ...ATTRS], key);
+      const r = await run('secret-tool', ['store', `--label=${this.label}`, ...this.attrs], key);
       if (r.code !== 0) throw new Error(`Secret Service refused to store the key (${r.stderr.trim().slice(0, 200) || `exit ${r.code}`}).`);
       // Avoid two competing copies.
       this.removeFile();
@@ -127,13 +143,13 @@ export class KeyStore {
       fs.writeFileSync(tmp, key, { mode: 0o600, flag: 'w' });
       fs.chmodSync(tmp, 0o600);
       fs.renameSync(tmp, this.keyFile);
-      if (this.mode !== 'file') await run('secret-tool', ['clear', ...ATTRS]).catch(() => undefined);
+      if (this.mode !== 'file') await run('secret-tool', ['clear', ...this.attrs]).catch(() => undefined);
     }
     return this.status();
   }
 
   async remove(): Promise<KeyStatus> {
-    if (this.mode !== 'file') await run('secret-tool', ['clear', ...ATTRS]);
+    if (this.mode !== 'file') await run('secret-tool', ['clear', ...this.attrs]);
     this.removeFile();
     return this.status();
   }
@@ -149,7 +165,7 @@ export class KeyStore {
   /** Read the key for an outgoing API call. Callers must not log or forward it. */
   async read(): Promise<{ key: string; backend: KeyBackend } | null> {
     if (this.mode !== 'file') {
-      const r = await run('secret-tool', ['lookup', ...ATTRS], undefined, 15_000);
+      const r = await run('secret-tool', ['lookup', ...this.attrs], undefined, 15_000);
       if (r.code === 0 && r.stdout.trim()) return { key: r.stdout.trim(), backend: 'secret-service' };
     }
     if (this.mode !== 'secret-service' && fs.existsSync(this.keyFile)) {
@@ -169,7 +185,7 @@ export class KeyStore {
       let formatOk = true;
       let problem: string | null = null;
       try {
-        validateApiKeyFormat(found.key);
+        this.validate(found.key);
       } catch (err) {
         formatOk = false;
         problem = (err as Error).message;

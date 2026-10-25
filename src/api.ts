@@ -56,6 +56,8 @@ export function onSidecarExit(handler: (code: number | null) => void): Promise<U
 export const pickProjectDir = () => invoke<string | null>('pick_project_dir');
 /** Opens Claude's sign-in page in the browser; the shell refuses any other URL. */
 export const openLoginUrl = (url: string) => invoke<void>('open_login_url', { url });
+/** Opens a github.com or dash.cloudflare.com page in the browser; the shell refuses any other URL. */
+export const openServiceUrl = (url: string) => invoke<void>('open_service_url', { url });
 /** Closing the window hides it to the tray instead of quitting (for VOID Portal). */
 export const setBackgroundMode = (on: boolean) => invoke<void>('set_background_mode', { on });
 export const restartSidecar = () => invoke<void>('sidecar_restart');
