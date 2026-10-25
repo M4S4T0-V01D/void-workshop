@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="zh-Hans" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID Workshop：开源、审批优先的 Linux AI 编程助手，配有 VOID Portal 手机遥控</title>
+    <meta name="description" content="VOID Workshop 是一款基于 Claude Agent SDK 的免费开源 Linux 桌面编程智能体。可使用你的 Claude 订阅、API 密钥或本地 Ollama 模型；每次写入前先审阅 diff，每条命令都需你批准。借助 VOID Portal，可在 Android 手机上端到端加密地远程操控。" />
+    <meta name="keywords" content="AI 编程助手, AI 编程智能体, Claude Agent SDK, Claude Code 替代品, Linux 桌面应用, 本地 AI 编程, Ollama, 代码审查, 审批, Android 遥控, Tauri" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="en" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="es" href="https://m4s4t0-v01d.github.io/void-workshop/es/" />
+    <link rel="alternate" hreflang="ar" href="https://m4s4t0-v01d.github.io/void-workshop/ar/" />
+    <link rel="alternate" hreflang="pt" href="https://m4s4t0-v01d.github.io/void-workshop/pt/" />
+    <link rel="alternate" hreflang="fr" href="https://m4s4t0-v01d.github.io/void-workshop/fr/" />
+    <link rel="alternate" hreflang="ja" href="https://m4s4t0-v01d.github.io/void-workshop/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="de" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="id" href="https://m4s4t0-v01d.github.io/void-workshop/id/" />
+    <link rel="alternate" hreflang="ko" href="https://m4s4t0-v01d.github.io/void-workshop/ko/" />
+    <link rel="alternate" hreflang="tr" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="hi" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="id_ID" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+    <meta property="og:locale:alternate" content="hi_IN" />
+    <meta property="og:title" content="VOID Workshop：你的代码，你的密钥，你来批准" />
+    <meta property="og:description" content="开源、审批优先的 Linux AI 编程工作区，另有端到端加密的 Android 遥控应用 VOID Portal。作者 M4S4T0-V01D。" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="VOID Workshop 窗口：文件树、智能体对话、计划与更改面板、终端和状态栏" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VOID Workshop：你的代码，你的密钥，你来批准" />
+    <meta name="twitter:description" content="开源、审批优先的 Linux AI 编程工作区，另有端到端加密的 Android 遥控应用 VOID Portal。作者 M4S4T0-V01D。" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/zh/",
+            "inLanguage": "zh-Hans",
+            "description": "基于 Claude Agent SDK 的本地、审批优先 Linux AI 编程工作区：每次写入前展示 diff，每条命令前请求批准，并设有花费上限。",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/zh/#portal",
+            "inLanguage": "zh-Hans",
+            "description": "VOID Workshop 的 Android 遥控应用：启动任务、批准更改和命令、接收通知，通过你自己的中继端到端加密。",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="./"><img src="../logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">工作方式</a>
+          <a href="#safety" class="hide-sm">安全</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">中继</a>
+          <a href="#install" class="hide-xs">安装</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
+        </div>
+        <details class="lang">
+          <summary aria-label="语言"><span aria-hidden="true">🌐</span> 简体中文</summary>
+          <div class="menu">
+            <a href="../" hreflang="en" lang="en" data-lang="en">English<span>EN</span></a>
+            <a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang="zh" aria-current="page">简体中文<span>ZH</span></a>
+            <a href="../es/" hreflang="es" lang="es" data-lang="es">Español<span>ES</span></a>
+            <a href="../ar/" hreflang="ar" lang="ar" data-lang="ar">العربية<span>AR</span></a>
+            <a href="../pt/" hreflang="pt" lang="pt" data-lang="pt">Português<span>PT</span></a>
+            <a href="../fr/" hreflang="fr" lang="fr" data-lang="fr">Français<span>FR</span></a>
+            <a href="../ja/" hreflang="ja" lang="ja" data-lang="ja">日本語<span>JA</span></a>
+            <a href="../ru/" hreflang="ru" lang="ru" data-lang="ru">Русский<span>RU</span></a>
+            <a href="../de/" hreflang="de" lang="de" data-lang="de">Deutsch<span>DE</span></a>
+            <a href="../id/" hreflang="id" lang="id" data-lang="id">Bahasa Indonesia<span>ID</span></a>
+            <a href="../ko/" hreflang="ko" lang="ko" data-lang="ko">한국어<span>KO</span></a>
+            <a href="../tr/" hreflang="tr" lang="tr" data-lang="tr">Türkçe<span>TR</span></a>
+            <a href="../hi/" hreflang="hi" lang="hi" data-lang="hi">हिन्दी<span>HI</span></a>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="../logo.svg" alt="VOID Workshop 标志" />
+        <h1>你的代码。你的密钥。<br /><span class="grad">你来批准。</span></h1>
+        <p class="lead">VOID Workshop 是一款基于 Claude Agent SDK 的免费开源 Linux 桌面编程智能体。它在动手前先做计划，每次写入前展示 diff，每条命令前先征求同意，并在达到你设定的预算时停下。可使用你的 Claude 订阅、API 密钥或本地 Ollama 模型，还能用 VOID Portal 在手机上操控它。</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">在 Linux 上安装</a>
+          <a class="btn" href="#portal">获取 VOID Portal</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">查看源代码</a>
+        </div>
+        <div class="shot"><img src="../screenshots/workspace.png" alt="VOID Workshop 窗口：文件树、智能体对话、计划与更改面板、终端和状态栏" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>智能体主导，人来批准</h2>
+        <p class="sub">用日常语言描述你的需求。智能体负责跑腿，每一处更改都由你做主。</p>
+        <div class="flow">
+          <div><b>选择项目</b><span>智能体只能看到该文件夹，以及你明确添加的目录。</span></div>
+          <div><b>描述任务</b><span>用日常语言即可。后续消息会延续同一会话。</span></div>
+          <div><b>审阅计划</b><span>先进行只读探索。在你批准前不会修改任何内容。</span></div>
+          <div><b>逐项批准</b><span>每次写入都有 diff；每条命令都列出命令、文件夹和理由。</span></div>
+          <div><b>检查并保留</b><span>逐个文件接受或拒绝，运行测试，在你决定时提交。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>清楚看到将要改变什么</h2>
+          <p class="sub" style="margin-bottom: 18px">每次编辑在写入前都以统一 diff 呈现。如果你在考虑期间文件在磁盘上发生了变化，该编辑会被拒绝，你自己的工作绝不会被悄悄覆盖。</p>
+          <ul class="checks">
+            <li><b>提议 → 已应用 → 已测试 → 已提交：</b>每个文件的状态一目了然。</li>
+            <li><b>逐文件接受 / 拒绝</b>，拒绝时恢复原始内容。</li>
+            <li><b>本地 Git 检查点</b>，绝不触碰你的分支或暂存区。</li>
+            <li><b>只有你点击 Commit 才会提交。</b>从不推送。</li>
+          </ul>
+        </div>
+        <img src="../screenshots/review.png" alt="审批对话框，显示拟议文件更改的统一 diff" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>以“模型不可信”为前提打造</h2>
+        <p class="sub">模型输出和仓库内容都被视为不可信输入。审批只是第一道防线，而非唯一一道。</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>每个操作都需批准</h3><p>确切的命令、工作目录、智能体给出的理由，以及命令会做什么（读取、写入、网络、git、安装）。批准从不被记住。</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>Bubblewrap 沙箱</h3><p>智能体的命令只能在项目内写入，除非你允许特定域名，否则无法访问网络。</p></div>
+          <div class="card"><span class="icon">✕</span><h3>硬性拦截</h3><p>sudo、大范围的 <code>rm -rf</code>、推送、改写历史、发布、上传、SSH、访问密钥环以及试图修改应用自身配置的操作，一律直接拒绝。</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>路径规范化</h3><p><code>..</code>、符号链接和 <code>~</code> 都无法逃出项目。SSH 密钥、云凭据、浏览器配置文件和密钥环始终禁止访问。</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>机密始终保密</h3><p><code>.env</code>、私钥和凭据文件需要明确批准。日志、历史和界面中都会做脱敏处理。</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>绝不以 root 运行，无遥测</h3><p>拒绝以 root 身份运行。没有作者服务器、代理或分析：数据只会发往你选择的模型提供商，以及（使用 VOID Portal 时）你自己部署的中继。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>用订阅或用密钥。数字如实呈现。</h2>
+          <p class="sub" style="margin-bottom: 18px">使用你的 Claude 订阅，或存放在桌面密钥环中的 Anthropic Console API 密钥，一键切换。VOID Workshop 在发出任何请求前都会先确认凭据来源。</p>
+          <ul class="checks">
+            <li><b>单任务和每日上限</b>（默认：1 美元和 3 美元），另有轮次和输出 token 上限。</li>
+            <li><b>额度用尽即停止</b>，绝不购买额度或切换计费方式。</li>
+            <li><b>模型列表来自 Models API</b>，按你的密钥获取；没有任何硬编码。</li>
+            <li><b>可配合 Console 工作区的花费上限</b>，实现硬性封顶。</li>
+          </ul>
+        </div>
+        <div class="note"><b>是估算，不是余额。</b>费用数字根据 Agent SDK 报告的 token 用量估算。重试、缓存、价格变动以及你组织内的其他用量都会影响实际账单，而且没有任何 API 能让应用读取你的剩余额度。VOID Workshop 会在状态栏中注明这一点，并提供 Console Billing 的链接。</div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="../screenshots/editor-nebula.png" alt="Nebula 主题下的内置代码编辑器，语法颜色源自主题" loading="lazy" />
+        <div>
+          <h2>真正的编辑器，用你的配色</h2>
+          <p class="sub" style="margin-bottom: 18px">在内置的 CodeMirror 编辑器中打开任意项目文件，自己快速修改，其余交给智能体。语法高亮由你的主题生成，因此每个主题（包括你自制的）都有相配的颜色。</p>
+          <ul class="checks">
+            <li><b>标签页、搜索和保存</b>，当智能体或其他程序修改了磁盘上的文件时会发出提醒。</li>
+            <li><b>多光标</b>，切换项目时保留撤销历史。</li>
+            <li><b>敏感文件会先询问</b>，再打开或保存。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>VOID Portal：<span class="grad">把手机变成遥控器</span></h2>
+        <p class="sub">Android 配套应用。随时随地启动任务和排队，批准更改和命令（可直接在通知中操作），切换模型、模式和账户，并在任务完成、需要你处理或电脑离线时收到提醒。</p>
+        <p class="wire">手机 ──<b>wss</b>──► 你的中继 ◄──<b>wss</b>── 电脑<br />└──── 端到端加密，AES-256-GCM ────┘</p>
+        <ul class="checks">
+          <li><b>扫码配对。</b>密钥只存在于二维码中；中继永远看不到它、你的提示词或你的代码。</li>
+          <li><b>家中不暴露任何端口。</b>两端都是主动向外连接，无需开放端口或端口转发。</li>
+          <li><b>与桌面端规则一致。</b>被拦截的命令依旧被拦截；有风险的命令仍需你批准。</li>
+          <li><b>主题与电脑保持一致</b>，支持 Material You，应用图标也会随之变色。</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="../screenshots/portal-home.png" alt="VOID Portal 主屏幕：电脑在线、进行中的任务和一个待批准请求" loading="lazy" /><figcaption>电脑状态、任务、待你处理的事项</figcaption></figure>
+          <figure><img src="../screenshots/portal-approval.png" alt="在手机上查看 diff 并批准文件更改" loading="lazy" /><figcaption>查看完整 diff 后批准</figcaption></figure>
+          <figure><img src="../screenshots/portal-task.png" alt="VOID Portal 中的任务对话" loading="lazy" /><figcaption>跟进并回复任务</figcaption></figure>
+          <figure><img src="../screenshots/portal-settings.png" alt="VOID Portal 设置和主题选择器" loading="lazy" /><figcaption>电脑设置和主题</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>五分钟部署你自己的中继</h2>
+        <p class="sub">没有共享中继：每个人都在免费的 Cloudflare 账户上部署自己的中继，你的流量绝不会经过别人的服务器。免费的 Workers 套餐对个人来说绰绰有余。</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>Cloudflare 账户</b><span>免费注册并选择一个 <code>workers.dev</code> 子域名。</span></div>
+          <div><b>部署 Worker</b><span><code>wrangler deploy</code>（在 <code>remote/relay</code> 中运行）。</span></div>
+          <div><b>检查</b><span>冒烟测试会对你的中继运行 18 项检查。</span></div>
+          <div><b>让 Workshop 指向它</b><span>Settings → VOID Portal (phone) → Relay。</span></div>
+          <div><b>配对手机</b><span>点击配对手机，然后在应用中扫描二维码。</span></div>
+        </div>
+        <pre><span class="c"># 在你克隆的仓库中</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># 在浏览器中授权 wrangler，只需一次</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># 可选：VOID Portal 应用内更新（或删除 wrangler.toml 中的 [[r2_buckets]] 块）</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">然后将 <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> 填入 <b>Settings → VOID Portal (phone) → Relay</b>。弄丢了配对码或手机？在同一位置取消配对该设备，它的密钥就会失效。完整指南见 <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay">remote/README.md</a>（英文）。</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>打造属于你的风格</h2>
+        <p class="sub">七款内置主题、带对比度警告的实时配色编辑器，以及 JSON 导入/导出，方便分享主题。</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="../screenshots/themes.png" alt="设置对话框中的主题编辑器" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>在 Linux 上安装</h2>
+        <p class="sub">几分钟内从源代码构建，仅为当前用户安装。无需 root，不改动系统文件。</p>
+        <pre><span class="c"># 1. 依赖项（Node.js ≥ 22.13，Rust ≥ 1.80）</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    Debian / Ubuntu 24.04+（另需从 nodejs.org / rustup.rs 安装 Node.js 22 和 Rust）</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># 2. 构建并安装到 ~/.local</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># 3. 启动，然后在 Settings → Sign-in &amp; API key 中：用 Claude 登录、粘贴密钥或选择 Ollama</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td><code>cd remote/android &amp;&amp; ./gradlew :app:assembleRelease</code>（JDK 17），在手机上安装 APK，然后与<a href="#relay">你的中继</a>配对</td></tr>
+          <tr><th>更新</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>卸载</th><td><code>./scripts/uninstall.sh</code>（加上 <code>--purge</code> 可删除历史、设置和已保存的密钥）</td></tr>
+          <tr><th>指南</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">Claude 订阅</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">API 密钥设置</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">计费与上限</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">安全模型</a>（英文）</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>常见问题</h2>
+        <p class="sub">简短回答。仓库中的指南有详细说明。</p>
+        <details><summary>它是免费的吗？</summary><p>VOID Workshop 和 VOID Portal 都是免费开源软件（MIT）。你只需为所用的模型付费：你的 Claude 订阅、你自己 Console 账户上的 Anthropic API 用量，或使用本地 Ollama 模型则完全免费。中继在 Cloudflare 免费套餐内即可运行。</p></details>
+        <details><summary>我的代码或密钥会被发送到别处吗？</summary><p>只会发往你选择的模型提供商。没有遥测，也没有作者服务器。密钥保存在你的桌面密钥环中，VOID Portal 的流量通过你自己部署的中继端到端加密。</p></details>
+        <details><summary>它和 Claude Code 有什么不同？</summary><p>它在一个围绕审阅打造的桌面窗口中运行同样的 Claude Agent SDK：每次写入前展示 diff，每条命令都需批准，逐文件接受和拒绝，沙箱，花费上限，以及手机遥控。</p></details>
+        <details><summary>支持哪些系统？</summary><p>Linux（在 Arch 上开发，也可在 Debian/Ubuntu 及其他带 WebKitGTK 4.1 的发行版上运行）。VOID Portal 需要 Android 8 或更高版本。</p></details>
+        <details><summary>我能用别人的中继吗？</summary><p>别这样做：部署你自己的。只需几分钟，免费，而且流量和可用性都掌握在你自己手中。</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">由 <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> 制作 · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub 上的源代码</a> · MIT 许可证。<br />VOID Workshop 是独立的开源项目，与 Anthropic 无关联，也未获其背书。Claude 的使用受 Anthropic 条款约束，费用计入你自己的账户。</div>
+    </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID Workshop: открытый ИИ-агент для программирования под Linux с подтверждением каждого шага и пультом VOID Portal для телефона</title>
+    <meta name="description" content="VOID Workshop — бесплатный агент для программирования с открытым исходным кодом для рабочего стола Linux на базе Claude Agent SDK. Используйте подписку Claude, API-ключ или локальные модели Ollama; просматривайте diff перед каждой записью и подтверждайте каждую команду. VOID Portal позволяет управлять им с Android-телефона со сквозным шифрованием." />
+    <meta name="keywords" content="ИИ-агент для программирования, ИИ-помощник программиста, Claude Agent SDK, альтернатива Claude Code, приложение для Linux, локальный ИИ для кода, Ollama, ревью кода, подтверждение, пульт для Android, Tauri" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="en" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="es" href="https://m4s4t0-v01d.github.io/void-workshop/es/" />
+    <link rel="alternate" hreflang="ar" href="https://m4s4t0-v01d.github.io/void-workshop/ar/" />
+    <link rel="alternate" hreflang="pt" href="https://m4s4t0-v01d.github.io/void-workshop/pt/" />
+    <link rel="alternate" hreflang="fr" href="https://m4s4t0-v01d.github.io/void-workshop/fr/" />
+    <link rel="alternate" hreflang="ja" href="https://m4s4t0-v01d.github.io/void-workshop/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="de" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="id" href="https://m4s4t0-v01d.github.io/void-workshop/id/" />
+    <link rel="alternate" hreflang="ko" href="https://m4s4t0-v01d.github.io/void-workshop/ko/" />
+    <link rel="alternate" hreflang="tr" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="hi" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="id_ID" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+    <meta property="og:locale:alternate" content="hi_IN" />
+    <meta property="og:title" content="VOID Workshop: ваш код, ваш ключ, ваше решение" />
+    <meta property="og:description" content="Открытая ИИ-среда для программирования под Linux с подтверждением каждого шага, а также VOID Portal — Android-пульт со сквозным шифрованием. Автор M4S4T0-V01D." />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="Окно VOID Workshop: дерево файлов, диалог с агентом, панели плана и изменений, терминал и строка состояния" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VOID Workshop: ваш код, ваш ключ, ваше решение" />
+    <meta name="twitter:description" content="Открытая ИИ-среда для программирования под Linux с подтверждением каждого шага, а также VOID Portal — Android-пульт со сквозным шифрованием. Автор M4S4T0-V01D." />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/ru/",
+            "inLanguage": "ru",
+            "description": "Локальная ИИ-среда для программирования под Linux на базе Claude Agent SDK с подтверждением каждого шага: diff перед каждой записью, подтверждение перед каждой командой и лимиты расходов.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/ru/#portal",
+            "inLanguage": "ru",
+            "description": "Android-пульт для VOID Workshop: запускайте задачи, подтверждайте изменения и команды, получайте уведомления — со сквозным шифрованием через ваш собственный ретранслятор.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="./"><img src="../logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">Как это работает</a>
+          <a href="#safety" class="hide-sm">Безопасность</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">Ретранслятор</a>
+          <a href="#install" class="hide-xs">Установка</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
+        </div>
+        <details class="lang">
+          <summary aria-label="Язык"><span aria-hidden="true">🌐</span> Русский</summary>
+          <div class="menu">
+            <a href="../" hreflang="en" lang="en" data-lang="en">English<span>EN</span></a>
+            <a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang="zh">简体中文<span>ZH</span></a>
+            <a href="../es/" hreflang="es" lang="es" data-lang="es">Español<span>ES</span></a>
+            <a href="../ar/" hreflang="ar" lang="ar" data-lang="ar">العربية<span>AR</span></a>
+            <a href="../pt/" hreflang="pt" lang="pt" data-lang="pt">Português<span>PT</span></a>
+            <a href="../fr/" hreflang="fr" lang="fr" data-lang="fr">Français<span>FR</span></a>
+            <a href="../ja/" hreflang="ja" lang="ja" data-lang="ja">日本語<span>JA</span></a>
+            <a href="../ru/" hreflang="ru" lang="ru" data-lang="ru" aria-current="page">Русский<span>RU</span></a>
+            <a href="../de/" hreflang="de" lang="de" data-lang="de">Deutsch<span>DE</span></a>
+            <a href="../id/" hreflang="id" lang="id" data-lang="id">Bahasa Indonesia<span>ID</span></a>
+            <a href="../ko/" hreflang="ko" lang="ko" data-lang="ko">한국어<span>KO</span></a>
+            <a href="../tr/" hreflang="tr" lang="tr" data-lang="tr">Türkçe<span>TR</span></a>
+            <a href="../hi/" hreflang="hi" lang="hi" data-lang="hi">हिन्दी<span>HI</span></a>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="../logo.svg" alt="Логотип VOID Workshop" />
+        <h1>Ваш код. Ваш ключ.<br /><span class="grad">Ваше решение.</span></h1>
+        <p class="lead">VOID Workshop — бесплатный агент для программирования с открытым исходным кодом для рабочего стола Linux на базе Claude Agent SDK. Он составляет план, прежде чем что-либо трогать, показывает diff перед каждой записью, спрашивает перед каждой командой и останавливается на заданном вами бюджете. Подключите подписку Claude, API-ключ или локальные модели Ollama и управляйте им с телефона через VOID Portal.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Установить на Linux</a>
+          <a class="btn" href="#portal">Скачать VOID Portal</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">Исходный код</a>
+        </div>
+        <div class="shot"><img src="../screenshots/workspace.png" alt="Окно VOID Workshop: дерево файлов, диалог с агентом, панели плана и изменений, терминал и строка состояния" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>Работает агент, решает человек</h2>
+        <p class="sub">Опишите задачу своими словами. Агент берёт на себя рутину, а каждое изменение остаётся под вашим контролем.</p>
+        <div class="flow">
+          <div><b>Выберите проект</b><span>Агент видит только эту папку и каталоги, которые вы явно добавите.</span></div>
+          <div><b>Опишите задачу</b><span>Своими словами. Следующие сообщения продолжают тот же сеанс.</span></div>
+          <div><b>Проверьте план</b><span>Сначала исследование только на чтение. Ничего не меняется, пока вы не одобрите.</span></div>
+          <div><b>Подтвердите каждое действие</b><span>Diff для каждой записи; команда, папка и причина для каждой команды.</span></div>
+          <div><b>Проверьте и сохраните</b><span>Принимайте или отклоняйте каждый файл, запускайте тесты, делайте коммит, когда решите.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>Видно точно, что изменится</h2>
+          <p class="sub" style="margin-bottom: 18px">Каждая правка приходит в виде unified diff до записи. Если файл на диске изменится, пока вы решаете, правка будет отклонена, так что ваша собственная работа никогда не перезапишется незаметно.</p>
+          <ul class="checks">
+            <li><b>Предложено → применено → протестировано → закоммичено:</b> понятное состояние каждого файла.</li>
+            <li><b>Принять / отклонить по файлам</b>; при отклонении исходное содержимое восстанавливается.</li>
+            <li><b>Локальные точки сохранения Git</b>, которые не трогают вашу ветку и индекс.</li>
+            <li><b>Коммит только по нажатию Commit.</b> Никаких push.</li>
+          </ul>
+        </div>
+        <img src="../screenshots/review.png" alt="Диалог подтверждения с unified diff предлагаемого изменения файла" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>Спроектировано так, будто модели нельзя доверять</h2>
+        <p class="sub">Вывод модели и содержимое репозитория считаются недоверенными входными данными. Подтверждение — первый уровень защиты, но не единственный.</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>Подтверждение каждого действия</h3><p>Точная команда, рабочий каталог, причина от агента и что делает команда (чтение, запись, сеть, git, установка). Подтверждения никогда не запоминаются.</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>Песочница Bubblewrap</h3><p>Команды агента могут писать только внутри проекта и не имеют доступа к сети, если вы не разрешите конкретные домены.</p></div>
+          <div class="card"><span class="icon">✕</span><h3>Жёсткие запреты</h3><p>sudo, широкие <code>rm -rf</code>, push, переписывание истории, публикации, выгрузки, SSH, доступ к связке ключей и попытки изменить настройки самого приложения отклоняются сразу.</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>Канонизация путей</h3><p><code>..</code>, символические ссылки и <code>~</code> не позволяют выйти за пределы проекта. SSH-ключи, облачные учётные данные, профили браузера и связки ключей всегда недоступны.</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>Секреты остаются секретами</h3><p><code>.env</code>, закрытые ключи и файлы с учётными данными требуют явного подтверждения. В журналах, истории и интерфейсе они скрываются.</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>Никогда от root, без телеметрии</h3><p>Отказывается запускаться от root. Нет сервера автора, прокси или аналитики: данные уходят только выбранному вами поставщику моделей и, для VOID Portal, на ретранслятор, который вы развернули сами.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>Подписка или ключ. Честные цифры.</h2>
+          <p class="sub" style="margin-bottom: 18px">Используйте подписку Claude или API-ключ Anthropic Console из связки ключей вашего рабочего стола и переключайтесь одним щелчком. VOID Workshop проверяет источник учётных данных до отправки первого запроса.</p>
+          <ul class="checks">
+            <li><b>Лимиты на задачу и на день</b> (по умолчанию: $1 и $3), а также ограничения на число ходов и выходных токенов.</li>
+            <li><b>Останавливается, когда кредиты заканчиваются</b>, и никогда не покупает кредиты и не меняет способ оплаты.</li>
+            <li><b>Список моделей берётся из Models API</b> для вашего ключа; ничего не зашито в код.</li>
+            <li><b>Сочетайте с лимитом расходов рабочей области в Console</b> для жёсткого потолка.</li>
+          </ul>
+        </div>
+        <div class="note"><b>Это оценки, а не баланс.</b> Стоимость рассчитывается по расходу токенов, о котором сообщает Agent SDK. Повторные попытки, кэширование, изменения цен и другое использование в вашей организации влияют на реальный счёт, а API, через которое приложение могло бы узнать ваш остаток, не существует. VOID Workshop пишет об этом в строке состояния и даёт ссылку на Console Billing.</div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="../screenshots/editor-nebula.png" alt="Встроенный редактор кода в теме Nebula, цвета подсветки получены из темы" loading="lazy" />
+        <div>
+          <h2>Настоящий редактор в ваших цветах</h2>
+          <p class="sub" style="margin-bottom: 18px">Откройте любой файл проекта во встроенном редакторе CodeMirror, внесите быструю правку сами, а остальное поручите агенту. Подсветка синтаксиса генерируется из вашей темы, поэтому у каждой темы, включая созданные вами, подходящие цвета.</p>
+          <ul class="checks">
+            <li><b>Вкладки, поиск и сохранение</b>, а также предупреждение, если агент или другая программа изменили файл на диске.</li>
+            <li><b>Несколько курсоров</b> и история отмены, сохраняющаяся при переключении проектов.</li>
+            <li><b>Конфиденциальные файлы сначала спрашивают</b>, прежде чем открыться или сохраниться.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>VOID Portal: <span class="grad">телефон как пульт</span></h2>
+        <p class="sub">Приложение-компаньон для Android. Запускайте задачи и ставьте их в очередь откуда угодно, подтверждайте изменения и команды (хоть прямо из уведомления), переключайте модель, режим и аккаунт и узнавайте, когда задача готова, ждёт вас или ПК ушёл в офлайн.</p>
+        <p class="wire">телефон ──<b>wss</b>──► ваш ретранслятор ◄──<b>wss</b>── ПК<br />└──── сквозное шифрование, AES-256-GCM ────┘</p>
+        <ul class="checks">
+          <li><b>Сопряжение по QR-коду.</b> Секрет есть только в коде; ретранслятор не видит ни его, ни ваших запросов, ни вашего кода.</li>
+          <li><b>Дома ничего не открыто наружу.</b> Обе стороны подключаются сами, поэтому не нужны ни открытые порты, ни проброс портов.</li>
+          <li><b>Те же правила, что и на ПК.</b> Заблокированные команды остаются заблокированными; рискованные по-прежнему требуют вашего подтверждения.</li>
+          <li><b>Темы как на вашем ПК</b>, Material You и перекрашиваемый значок приложения.</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="../screenshots/portal-home.png" alt="Главный экран VOID Portal: ПК в сети, активные задачи и одно ожидающее подтверждение" loading="lazy" /><figcaption>Состояние ПК, задачи, что ждёт вас</figcaption></figure>
+          <figure><img src="../screenshots/portal-approval.png" alt="Подтверждение изменения файла с его diff на телефоне" loading="lazy" /><figcaption>Подтверждайте, видя весь diff</figcaption></figure>
+          <figure><img src="../screenshots/portal-task.png" alt="Диалог задачи в VOID Portal" loading="lazy" /><figcaption>Следите за задачей и отвечайте</figcaption></figure>
+          <figure><img src="../screenshots/portal-settings.png" alt="Настройки VOID Portal и выбор темы" loading="lazy" /><figcaption>Настройки ПК и темы</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>Свой ретранслятор за пять минут</h2>
+        <p class="sub">Общего ретранслятора нет: каждый разворачивает свой на бесплатном аккаунте Cloudflare, поэтому ваш трафик никогда не идёт через чужой сервер. Бесплатного тарифа Workers одному человеку хватает с запасом.</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>Аккаунт Cloudflare</b><span>Зарегистрируйтесь бесплатно и выберите поддомен <code>workers.dev</code>.</span></div>
+          <div><b>Разверните Worker</b><span><code>wrangler deploy</code> из <code>remote/relay</code>.</span></div>
+          <div><b>Проверьте</b><span>Дымовой тест выполняет 18 проверок вашего ретранслятора.</span></div>
+          <div><b>Укажите его в Workshop</b><span>Settings → VOID Portal (phone) → Relay.</span></div>
+          <div><b>Подключите телефон</b><span>Нажмите Pair a phone и отсканируйте QR-код в приложении.</span></div>
+        </div>
+        <pre><span class="c"># из вашего клона репозитория</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># один раз авторизуйте wrangler в браузере</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># необязательно: обновления VOID Portal внутри приложения (или удалите блок [[r2_buckets]] в wrangler.toml)</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">Затем введите <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> в <b>Settings → VOID Portal (phone) → Relay</b>. Потеряли код сопряжения или телефон? Отвяжите устройство там же, и его ключ перестанет работать. Полное руководство — в <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay">remote/README.md</a> (на английском).</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Настройте под себя</h2>
+        <p class="sub">Семь встроенных тем, редактор цветов в реальном времени с предупреждениями о контрасте и импорт/экспорт JSON, чтобы делиться темами.</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="../screenshots/themes.png" alt="Редактор тем в окне настроек" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>Установка на Linux</h2>
+        <p class="sub">Собирается из исходников за несколько минут и устанавливается только для вашего пользователя. Без root и без системных файлов.</p>
+        <pre><span class="c"># 1. зависимости (Node.js ≥ 22.13, Rust ≥ 1.80)</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    Debian / Ubuntu 24.04+ (плюс Node.js 22 и Rust с nodejs.org / rustup.rs)</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># 2. сборка и установка в ~/.local</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># 3. запустите, затем Settings → Sign-in &amp; API key: войдите через Claude, вставьте ключ или выберите Ollama</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td><code>cd remote/android &amp;&amp; ./gradlew :app:assembleRelease</code> (JDK 17), установите APK на телефон и свяжите его с <a href="#relay">вашим ретранслятором</a></td></tr>
+          <tr><th>Обновление</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>Удаление</th><td><code>./scripts/uninstall.sh</code> (добавьте <code>--purge</code>, чтобы удалить историю, настройки и сохранённый ключ)</td></tr>
+          <tr><th>Руководства</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">Подписка Claude</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">Настройка API-ключа</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">Оплата и лимиты</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">Модель безопасности</a> (на английском)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Вопросы</h2>
+        <p class="sub">Короткие ответы. Подробные — в руководствах в репозитории.</p>
+        <details><summary>Это бесплатно?</summary><p>VOID Workshop и VOID Portal бесплатны и имеют открытый исходный код (MIT). Вы платите только за используемую модель: подписку Claude, использование Anthropic API в своём аккаунте Console или ничего при локальных моделях Ollama. Ретранслятор укладывается в бесплатный тариф Cloudflare.</p></details>
+        <details><summary>Мой код или ключ куда-то отправляются?</summary><p>Только выбранному вами поставщику моделей. Нет ни телеметрии, ни сервера автора. Ключи хранятся в связке ключей вашего рабочего стола, а трафик VOID Portal шифруется сквозным шифрованием и идёт через ретранслятор, который вы развернули сами.</p></details>
+        <details><summary>Чем это отличается от Claude Code?</summary><p>Тот же Claude Agent SDK работает в окне рабочего стола, построенном вокруг проверки: diff перед каждой записью, подтверждение каждой команды, приём и отклонение по файлам, песочница, лимиты расходов и пульт на телефоне.</p></details>
+        <details><summary>На каких системах работает?</summary><p>Linux (разрабатывается на Arch, работает на Debian/Ubuntu и других с WebKitGTK 4.1). Для VOID Portal нужен Android 8 или новее.</p></details>
+        <details><summary>Можно пользоваться чужим ретранслятором?</summary><p>Не стоит: разверните свой. Это занимает несколько минут, бесплатно, и ваш трафик и доступность остаются в ваших руках.</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">Автор <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Исходный код на GitHub</a> · Лицензия MIT.<br />VOID Workshop — независимый проект с открытым исходным кодом, не связанный с Anthropic и не одобренный ею. Использование Claude регулируется условиями Anthropic и оплачивается с вашего собственного аккаунта.</div>
+    </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
+  </body>
+</html>

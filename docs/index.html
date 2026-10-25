@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,16 +10,43 @@
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#0b0a12" />
     <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="en" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="es" href="https://m4s4t0-v01d.github.io/void-workshop/es/" />
+    <link rel="alternate" hreflang="ar" href="https://m4s4t0-v01d.github.io/void-workshop/ar/" />
+    <link rel="alternate" hreflang="pt" href="https://m4s4t0-v01d.github.io/void-workshop/pt/" />
+    <link rel="alternate" hreflang="fr" href="https://m4s4t0-v01d.github.io/void-workshop/fr/" />
+    <link rel="alternate" hreflang="ja" href="https://m4s4t0-v01d.github.io/void-workshop/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="de" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="id" href="https://m4s4t0-v01d.github.io/void-workshop/id/" />
+    <link rel="alternate" hreflang="ko" href="https://m4s4t0-v01d.github.io/void-workshop/ko/" />
+    <link rel="alternate" hreflang="tr" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="hi" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://m4s4t0-v01d.github.io/void-workshop/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="VOID Workshop" />
     <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="id_ID" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+    <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop: your code, your key, your approval" />
     <meta property="og:description" content="Open-source, approval-first AI coding workspace for Linux, plus VOID Portal, an end-to-end encrypted Android remote. By M4S4T0-V01D." />
     <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="The VOID Workshop window with an agent conversation, plan and changes" />
+    <meta property="og:image:alt" content="The VOID Workshop window: file tree, agent conversation, plan and changes panels, terminal and status bar" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: your code, your key, your approval" />
-    <meta name="twitter:description" content="Open-source, approval-first AI coding workspace for Linux, with an Android remote." />
+    <meta name="twitter:description" content="Open-source, approval-first AI coding workspace for Linux, plus VOID Portal, an end-to-end encrypted Android remote. By M4S4T0-V01D." />
     <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
     <script type="application/ld+json">
       {
@@ -29,6 +56,7 @@
             "@type": "SoftwareApplication",
             "name": "VOID Workshop",
             "url": "https://m4s4t0-v01d.github.io/void-workshop/",
+            "inLanguage": "en",
             "description": "Local, approval-first AI coding workspace for Linux built on the Claude Agent SDK, with diffs before every write, approvals before every command, and spending limits.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
@@ -43,6 +71,7 @@
             "@type": "MobileApplication",
             "name": "VOID Portal",
             "url": "https://m4s4t0-v01d.github.io/void-workshop/#portal",
+            "inLanguage": "en",
             "description": "Android remote for VOID Workshop: start tasks, approve changes and commands, and get notified, end-to-end encrypted through your own relay.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Android",
@@ -53,438 +82,58 @@
         ]
       }
     </script>
+    <script>
+      (function () {
+        var langs = ["en","zh","es","ar","pt","fr","ja","ru","de","id","ko","tr","hi"];
+        var alias = { in: 'id', ms: 'id' };
+        var pick;
+        try {
+          pick = localStorage.getItem('vw-lang');
+        } catch (e) {}
+        if (!pick) {
+          var prefs = navigator.languages || [navigator.language];
+          for (var i = 0; i < prefs.length && !pick; i++) {
+            var base = String(prefs[i] || '').toLowerCase().split('-')[0];
+            base = alias[base] || base;
+            if (langs.indexOf(base) >= 0) pick = base;
+          }
+        }
+        if (pick && pick !== 'en' && langs.indexOf(pick) >= 0) location.replace(pick + '/' + location.hash);
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="logo.svg" />
-    <style>
-      :root {
-        --bg: #0b0a12;
-        --panel: #121020;
-        --panel-alt: #1a1730;
-        --border: #2a2546;
-        --text: #e8e4ff;
-        --dim: #a49dcb;
-        --accent: #a970ff;
-        --accent2: #22e3ff;
-        --ok: #3ee08f;
-        --warn: #ffc857;
-        --danger: #ff5c7a;
-        --mono: ui-monospace, 'JetBrains Mono', 'Fira Code', 'DejaVu Sans Mono', monospace;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--text);
-        font:
-          16px/1.6 Inter,
-          'Noto Sans',
-          system-ui,
-          -apple-system,
-          'Segoe UI',
-          sans-serif;
-        -webkit-font-smoothing: antialiased;
-      }
-      body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        opacity: 0.55;
-        background-image:
-          radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
-          radial-gradient(1px 1px at 68% 9%, #cfc4ff 50%, transparent 51%),
-          radial-gradient(1.5px 1.5px at 85% 42%, #9ff3ff 50%, transparent 51%),
-          radial-gradient(1px 1px at 33% 61%, #fff 50%, transparent 51%),
-          radial-gradient(1px 1px at 52% 83%, #d9ceff 50%, transparent 51%),
-          radial-gradient(1.5px 1.5px at 7% 89%, #fff 50%, transparent 51%),
-          radial-gradient(1px 1px at 92% 74%, #b9f6ff 50%, transparent 51%),
-          radial-gradient(1px 1px at 24% 36%, #e8e4ff 50%, transparent 51%);
-        background-size: 420px 420px;
-      }
-      a {
-        color: var(--accent2);
-      }
-      .wrap {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 0 20px;
-      }
-      nav {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: color-mix(in srgb, var(--bg) 85%, transparent);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid var(--border);
-      }
-      nav .wrap {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        height: 58px;
-      }
-      nav .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        font-size: 14px;
-        color: var(--text);
-        text-decoration: none;
-      }
-      nav .brand img {
-        width: 28px;
-        height: 28px;
-      }
-      nav .links {
-        margin-left: auto;
-        display: flex;
-        gap: 18px;
-        font-size: 14px;
-      }
-      nav .links a {
-        color: var(--dim);
-        text-decoration: none;
-      }
-      nav .links a:hover {
-        color: var(--text);
-      }
-      .grad {
-        background: linear-gradient(90deg, var(--accent), var(--accent2));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      header.hero {
-        padding: 72px 0 40px;
-        text-align: center;
-        background:
-          radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--accent) 28%, transparent), transparent),
-          radial-gradient(ellipse 40% 40% at 80% 20%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent);
-      }
-      .hero img.logo {
-        width: 104px;
-        height: 104px;
-        filter: drop-shadow(0 0 32px color-mix(in srgb, var(--accent) 55%, transparent));
-      }
-      .hero h1 {
-        font-size: clamp(34px, 6vw, 60px);
-        line-height: 1.08;
-        margin: 18px 0 14px;
-        letter-spacing: -0.02em;
-      }
-      .hero p.lead {
-        font-size: clamp(17px, 2.2vw, 20px);
-        color: var(--dim);
-        max-width: 760px;
-        margin: 0 auto 28px;
-      }
-      .cta {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 11px 20px;
-        border-radius: 9px;
-        font-weight: 600;
-        text-decoration: none;
-        border: 1px solid var(--border);
-        color: var(--text);
-        background: var(--panel-alt);
-      }
-      .btn.primary {
-        background: linear-gradient(135deg, var(--accent), #6f7bff);
-        border-color: transparent;
-        color: #fff;
-      }
-      .btn:hover {
-        filter: brightness(1.1);
-      }
-      .shot {
-        margin: 44px auto 0;
-        border-radius: 14px;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow:
-          0 30px 80px rgba(0, 0, 0, 0.6),
-          0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
-        max-width: 1080px;
-      }
-      .shot img {
-        display: block;
-        width: 100%;
-        height: auto;
-      }
-      section {
-        padding: 64px 0;
-        border-top: 1px solid var(--border);
-      }
-      h2 {
-        font-size: clamp(26px, 3.6vw, 36px);
-        margin: 0 0 10px;
-        letter-spacing: -0.01em;
-      }
-      .sub {
-        color: var(--dim);
-        max-width: 720px;
-        margin: 0 0 34px;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 16px;
-      }
-      .card {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 20px;
-      }
-      .card h3 {
-        margin: 6px 0 6px;
-        font-size: 17px;
-      }
-      .card p {
-        margin: 0;
-        color: var(--dim);
-        font-size: 15px;
-      }
-      .icon {
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: color-mix(in srgb, var(--accent) 18%, var(--panel));
-        color: var(--accent);
-        font-size: 18px;
-      }
-      .icon.c {
-        background: color-mix(in srgb, var(--accent2) 16%, var(--panel));
-        color: var(--accent2);
-      }
-      .flow {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
-        counter-reset: s;
-      }
-      .flow div {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 16px;
-        position: relative;
-      }
-      .flow div::before {
-        counter-increment: s;
-        content: counter(s);
-        display: inline-flex;
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        color: #0b0a12;
-        font-weight: 700;
-        font-size: 13px;
-        margin-bottom: 8px;
-      }
-      .flow b {
-        display: block;
-      }
-      .flow span {
-        color: var(--dim);
-        font-size: 14px;
-      }
-      .two {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 28px;
-        align-items: center;
-      }
-      .two img {
-        width: 100%;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-      }
-      ul.checks {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        gap: 10px;
-      }
-      ul.checks li {
-        padding-left: 28px;
-        position: relative;
-        color: var(--dim);
-      }
-      ul.checks li b {
-        color: var(--text);
-      }
-      ul.checks li::before {
-        content: '✓';
-        position: absolute;
-        left: 0;
-        color: var(--ok);
-        font-weight: 700;
-      }
-      ul.checks.x li::before {
-        content: '✕';
-        color: var(--danger);
-      }
-      pre {
-        background: #07060d;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 16px 18px;
-        overflow-x: auto;
-        font: 14px/1.6 var(--mono);
-        color: #d9d4ff;
-      }
-      pre .c {
-        color: #6f6890;
-      }
-      pre .p {
-        color: var(--accent2);
-      }
-      .themes {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px;
-      }
-      .theme {
-        border-radius: 10px;
-        padding: 12px;
-        border: 1px solid var(--border);
-        font-size: 14px;
-      }
-      .theme .sw {
-        display: flex;
-        height: 30px;
-        border-radius: 6px;
-        overflow: hidden;
-        margin-bottom: 8px;
-      }
-      .theme .sw span {
-        flex: 1;
-      }
-      .note {
-        border: 1px solid color-mix(in srgb, var(--warn) 60%, var(--border));
-        background: color-mix(in srgb, var(--warn) 9%, var(--panel));
-        border-radius: 12px;
-        padding: 16px 18px;
-        color: #f5e2b0;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 15px;
-      }
-      td,
-      th {
-        border-bottom: 1px solid var(--border);
-        padding: 10px 8px;
-        text-align: left;
-        vertical-align: top;
-      }
-      th {
-        color: var(--dim);
-        font-weight: 500;
-      }
-      footer {
-        border-top: 1px solid var(--border);
-        padding: 32px 0 48px;
-        color: var(--dim);
-        font-size: 14px;
-      }
-      .phones {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 18px;
-        margin-top: 28px;
-      }
-      .phones figure {
-        margin: 0;
-        text-align: center;
-        color: var(--dim);
-        font-size: 14px;
-      }
-      .phones img {
-        width: 100%;
-        max-width: 240px;
-        border-radius: 26px;
-        border: 1px solid var(--border);
-        box-shadow:
-          0 24px 60px rgba(0, 0, 0, 0.55),
-          0 0 0 1px color-mix(in srgb, var(--accent2) 22%, transparent);
-        margin-bottom: 10px;
-      }
-      .wire {
-        text-align: center;
-        font: 14px/1.6 var(--mono);
-        color: var(--dim);
-        margin: 0 0 30px;
-      }
-      .wire b {
-        color: var(--accent2);
-        font-weight: 600;
-      }
-      details {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 14px 18px;
-        margin-bottom: 10px;
-      }
-      details summary {
-        cursor: pointer;
-        font-weight: 600;
-      }
-      details p {
-        color: var(--dim);
-        margin: 10px 0 0;
-      }
-      @media (max-width: 760px) {
-        .two {
-          grid-template-columns: 1fr;
-        }
-        nav .links a.hide-sm {
-          display: none;
-        }
-        header.hero {
-          padding-top: 48px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <nav>
       <div class="wrap">
-        <a class="brand" href="#"><img src="logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <a class="brand" href="./"><img src="logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
         <div class="links">
           <a href="#how" class="hide-sm">How it works</a>
           <a href="#safety" class="hide-sm">Safety</a>
           <a href="#portal" class="hide-sm">VOID Portal</a>
           <a href="#relay" class="hide-sm">Relay</a>
-          <a href="#install">Install</a>
-          <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub</a>
+          <a href="#install" class="hide-xs">Install</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
         </div>
+        <details class="lang">
+          <summary aria-label="Language"><span aria-hidden="true">🌐</span> English</summary>
+          <div class="menu">
+            <a href="./" hreflang="en" lang="en" data-lang="en" aria-current="page">English<span>EN</span></a>
+            <a href="zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang="zh">简体中文<span>ZH</span></a>
+            <a href="es/" hreflang="es" lang="es" data-lang="es">Español<span>ES</span></a>
+            <a href="ar/" hreflang="ar" lang="ar" data-lang="ar">العربية<span>AR</span></a>
+            <a href="pt/" hreflang="pt" lang="pt" data-lang="pt">Português<span>PT</span></a>
+            <a href="fr/" hreflang="fr" lang="fr" data-lang="fr">Français<span>FR</span></a>
+            <a href="ja/" hreflang="ja" lang="ja" data-lang="ja">日本語<span>JA</span></a>
+            <a href="ru/" hreflang="ru" lang="ru" data-lang="ru">Русский<span>RU</span></a>
+            <a href="de/" hreflang="de" lang="de" data-lang="de">Deutsch<span>DE</span></a>
+            <a href="id/" hreflang="id" lang="id" data-lang="id">Bahasa Indonesia<span>ID</span></a>
+            <a href="ko/" hreflang="ko" lang="ko" data-lang="ko">한국어<span>KO</span></a>
+            <a href="tr/" hreflang="tr" lang="tr" data-lang="tr">Türkçe<span>TR</span></a>
+            <a href="hi/" hreflang="hi" lang="hi" data-lang="hi">हिन्दी<span>HI</span></a>
+          </div>
+        </details>
       </div>
     </nav>
 
@@ -559,9 +208,7 @@
             <li><b>Pair it with a Console workspace spend limit</b> for a hard cap.</li>
           </ul>
         </div>
-        <div class="note">
-          <b>Estimates, not a balance.</b> Cost figures are estimated from the token usage the Agent SDK reports. Retries, caching, price changes and other usage in your organization all affect the real bill, and there's no API for an app to read your remaining credit. VOID Workshop says so in the status bar and links you to Console Billing.
-        </div>
+        <div class="note"><b>Estimates, not a balance.</b> Cost figures are estimated from the token usage the Agent SDK reports. Retries, caching, price changes and other usage in your organization all affect the real bill, and there's no API for an app to read your remaining credit. VOID Workshop says so in the status bar and links you to Console Billing.</div>
       </div>
     </section>
 
@@ -637,7 +284,7 @@
           <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
           <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
         </div>
-        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="screenshots/themes.png" alt="Theme editor in the settings dialog" /></div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="screenshots/themes.png" alt="Theme editor in the settings dialog" loading="lazy" /></div>
       </div>
     </section>
 
@@ -685,5 +332,23 @@
     <footer>
       <div class="wrap">Made by <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Source on GitHub</a> · MIT licence.<br />VOID Workshop is an independent open-source project, not affiliated with or endorsed by Anthropic. Use of Claude is subject to Anthropic's terms and is billed to your own account.</div>
     </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
   </body>
 </html>

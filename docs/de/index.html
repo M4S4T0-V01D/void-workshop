@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="de" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID Workshop: Open-Source-KI-Coding-Agent für Linux mit Freigabe zuerst und der Handy-Fernbedienung VOID Portal</title>
+    <meta name="description" content="VOID Workshop ist ein kostenloser Open-Source-Coding-Agent für den Linux-Desktop auf Basis des Claude Agent SDK. Nutze dein Claude-Abo, einen API-Schlüssel oder lokale Ollama-Modelle; prüfe vor jedem Schreiben einen Diff und gib jeden Befehl frei. Mit VOID Portal steuerst du ihn Ende-zu-Ende-verschlüsselt von deinem Android-Handy." />
+    <meta name="keywords" content="KI-Coding-Agent, KI-Programmierassistent, Claude Agent SDK, Claude-Code-Alternative, Linux-Desktop-App, lokale KI-Programmierung, Ollama, Code-Review, Freigabe, Android-Fernbedienung, Tauri" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="en" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="es" href="https://m4s4t0-v01d.github.io/void-workshop/es/" />
+    <link rel="alternate" hreflang="ar" href="https://m4s4t0-v01d.github.io/void-workshop/ar/" />
+    <link rel="alternate" hreflang="pt" href="https://m4s4t0-v01d.github.io/void-workshop/pt/" />
+    <link rel="alternate" hreflang="fr" href="https://m4s4t0-v01d.github.io/void-workshop/fr/" />
+    <link rel="alternate" hreflang="ja" href="https://m4s4t0-v01d.github.io/void-workshop/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="de" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="id" href="https://m4s4t0-v01d.github.io/void-workshop/id/" />
+    <link rel="alternate" hreflang="ko" href="https://m4s4t0-v01d.github.io/void-workshop/ko/" />
+    <link rel="alternate" hreflang="tr" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="hi" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="id_ID" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+    <meta property="og:locale:alternate" content="hi_IN" />
+    <meta property="og:title" content="VOID Workshop: dein Code, dein Schlüssel, deine Freigabe" />
+    <meta property="og:description" content="Open-Source-KI-Arbeitsumgebung zum Programmieren unter Linux mit Freigabe zuerst, dazu VOID Portal, eine Ende-zu-Ende-verschlüsselte Android-Fernbedienung. Von M4S4T0-V01D." />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="Das VOID-Workshop-Fenster: Dateibaum, Unterhaltung mit dem Agenten, Plan- und Änderungsbereiche, Terminal und Statusleiste" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VOID Workshop: dein Code, dein Schlüssel, deine Freigabe" />
+    <meta name="twitter:description" content="Open-Source-KI-Arbeitsumgebung zum Programmieren unter Linux mit Freigabe zuerst, dazu VOID Portal, eine Ende-zu-Ende-verschlüsselte Android-Fernbedienung. Von M4S4T0-V01D." />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/de/",
+            "inLanguage": "de",
+            "description": "Lokale KI-Arbeitsumgebung zum Programmieren unter Linux mit Freigabe zuerst, auf Basis des Claude Agent SDK: Diffs vor jedem Schreiben, Freigaben vor jedem Befehl und Ausgabenlimits.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/de/#portal",
+            "inLanguage": "de",
+            "description": "Android-Fernbedienung für VOID Workshop: Aufgaben starten, Änderungen und Befehle freigeben und benachrichtigt werden, Ende-zu-Ende-verschlüsselt über dein eigenes Relay.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="./"><img src="../logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">So funktioniert's</a>
+          <a href="#safety" class="hide-sm">Sicherheit</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">Relay</a>
+          <a href="#install" class="hide-xs">Installieren</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
+        </div>
+        <details class="lang">
+          <summary aria-label="Sprache"><span aria-hidden="true">🌐</span> Deutsch</summary>
+          <div class="menu">
+            <a href="../" hreflang="en" lang="en" data-lang="en">English<span>EN</span></a>
+            <a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang="zh">简体中文<span>ZH</span></a>
+            <a href="../es/" hreflang="es" lang="es" data-lang="es">Español<span>ES</span></a>
+            <a href="../ar/" hreflang="ar" lang="ar" data-lang="ar">العربية<span>AR</span></a>
+            <a href="../pt/" hreflang="pt" lang="pt" data-lang="pt">Português<span>PT</span></a>
+            <a href="../fr/" hreflang="fr" lang="fr" data-lang="fr">Français<span>FR</span></a>
+            <a href="../ja/" hreflang="ja" lang="ja" data-lang="ja">日本語<span>JA</span></a>
+            <a href="../ru/" hreflang="ru" lang="ru" data-lang="ru">Русский<span>RU</span></a>
+            <a href="../de/" hreflang="de" lang="de" data-lang="de" aria-current="page">Deutsch<span>DE</span></a>
+            <a href="../id/" hreflang="id" lang="id" data-lang="id">Bahasa Indonesia<span>ID</span></a>
+            <a href="../ko/" hreflang="ko" lang="ko" data-lang="ko">한국어<span>KO</span></a>
+            <a href="../tr/" hreflang="tr" lang="tr" data-lang="tr">Türkçe<span>TR</span></a>
+            <a href="../hi/" hreflang="hi" lang="hi" data-lang="hi">हिन्दी<span>HI</span></a>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="../logo.svg" alt="VOID-Workshop-Logo" />
+        <h1>Dein Code. Dein Schlüssel.<br /><span class="grad">Deine Freigabe.</span></h1>
+        <p class="lead">VOID Workshop ist ein kostenloser Open-Source-Coding-Agent für den Linux-Desktop auf Basis des Claude Agent SDK. Er plant, bevor er etwas anfasst, zeigt vor jedem Schreiben einen Diff, fragt vor jedem Befehl und stoppt beim Budget, das du festlegst. Bring dein Claude-Abo, einen API-Schlüssel oder lokale Ollama-Modelle mit und steuere alles mit VOID Portal vom Handy aus.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Unter Linux installieren</a>
+          <a class="btn" href="#portal">VOID Portal holen</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">Quellcode ansehen</a>
+        </div>
+        <div class="shot"><img src="../screenshots/workspace.png" alt="Das VOID-Workshop-Fenster: Dateibaum, Unterhaltung mit dem Agenten, Plan- und Änderungsbereiche, Terminal und Statusleiste" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>Der Agent arbeitet, du gibst frei</h2>
+        <p class="sub">Beschreibe in deinen eigenen Worten, was du willst. Der Agent erledigt die Laufarbeit; über jede Änderung entscheidest du.</p>
+        <div class="flow">
+          <div><b>Projekt wählen</b><span>Der Agent sieht nur diesen Ordner und Verzeichnisse, die du ausdrücklich hinzufügst.</span></div>
+          <div><b>Aufgabe beschreiben</b><span>In deinen eigenen Worten. Folgenachrichten setzen dieselbe Sitzung fort.</span></div>
+          <div><b>Plan prüfen</b><span>Zuerst eine reine Leseerkundung. Nichts wird bearbeitet, bis du zustimmst.</span></div>
+          <div><b>Jede Aktion freigeben</b><span>Ein Diff für jedes Schreiben; Befehl, Ordner und Begründung für jeden Befehl.</span></div>
+          <div><b>Prüfen &amp; behalten</b><span>Jede Datei annehmen oder ablehnen, Tests ausführen, committen, wann du willst.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>Sieh genau, was sich ändert</h2>
+          <p class="sub" style="margin-bottom: 18px">Jede Bearbeitung kommt als Unified Diff, bevor sie geschrieben wird. Ändert sich die Datei auf der Platte, während du überlegst, wird die Bearbeitung verweigert, sodass deine eigene Arbeit nie stillschweigend überschrieben wird.</p>
+          <ul class="checks">
+            <li><b>Vorgeschlagen → angewendet → getestet → committet:</b> klare Zustände für jede Datei.</li>
+            <li><b>Annehmen / Ablehnen pro Datei</b>; beim Ablehnen wird der ursprüngliche Inhalt wiederhergestellt.</li>
+            <li><b>Lokale Git-Checkpoints</b>, die deinen Branch und Index nie anfassen.</li>
+            <li><b>Committet nur, wenn du auf Commit klickst.</b> Niemals ein Push.</li>
+          </ul>
+        </div>
+        <img src="../screenshots/review.png" alt="Freigabedialog mit dem Unified Diff einer vorgeschlagenen Dateiänderung" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>Gebaut, als wäre das Modell nicht vertrauenswürdig</h2>
+        <p class="sub">Modellausgaben und Repository-Inhalte gelten als nicht vertrauenswürdige Eingaben. Die Freigabe ist die erste Schutzschicht, nicht die einzige.</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>Freigabe pro Aktion</h3><p>Der genaue Befehl, das Arbeitsverzeichnis, die Begründung des Agenten und was der Befehl tut (Lesen, Schreiben, Netzwerk, git, Installationen). Freigaben werden nie gespeichert.</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>Bubblewrap-Sandbox</h3><p>Befehle des Agenten können nur im Projekt schreiben und erreichen das Netzwerk nicht, außer du erlaubst bestimmte Domains.</p></div>
+          <div class="card"><span class="icon">✕</span><h3>Harte Sperren</h3><p>sudo, breite <code>rm -rf</code>, Pushes, Umschreiben der Historie, Veröffentlichen, Uploads, SSH, Schlüsselbund-Zugriff und Versuche, die eigene Konfiguration der App anzufassen, werden sofort abgelehnt.</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>Pfad-Kanonisierung</h3><p><code>..</code>, Symlinks und <code>~</code> können nicht aus dem Projekt ausbrechen. SSH-Schlüssel, Cloud-Zugangsdaten, Browserprofile und Schlüsselbunde sind immer tabu.</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>Geheimnisse bleiben geheim</h3><p><code>.env</code>, private Schlüssel und Zugangsdateien brauchen eine ausdrückliche Freigabe. Logs, Verlauf und Oberfläche werden geschwärzt.</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>Nie als root, keine Telemetrie</h3><p>Verweigert den Start als root. Kein Server des Autors, kein Proxy, keine Analytics: Die einzigen Ziele sind der Modellanbieter deiner Wahl und, für VOID Portal, das Relay, das du selbst bereitgestellt hast.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>Dein Abo oder dein Schlüssel. Ehrliche Zahlen.</h2>
+          <p class="sub" style="margin-bottom: 18px">Nutze dein Claude-Abo oder einen Anthropic-Console-API-Schlüssel aus dem Schlüsselbund deines Desktops und wechsle mit einem Klick. VOID Workshop prüft die Herkunft der Zugangsdaten, bevor auch nur eine Anfrage rausgeht.</p>
+          <ul class="checks">
+            <li><b>Limits pro Aufgabe und pro Tag</b> (Standard: 1 $ und 3 $), dazu Obergrenzen für Runden und Ausgabe-Tokens.</li>
+            <li><b>Stoppt, wenn das Guthaben aufgebraucht ist</b>, und kauft nie Guthaben nach oder wechselt die Abrechnung.</li>
+            <li><b>Modelle kommen aus der Models API</b> für deinen Schlüssel; keines ist fest einprogrammiert.</li>
+            <li><b>Kombiniere es mit einem Ausgabenlimit für den Console-Workspace</b> für eine harte Obergrenze.</li>
+          </ul>
+        </div>
+        <div class="note"><b>Schätzungen, kein Kontostand.</b> Kosten werden aus der Token-Nutzung geschätzt, die das Agent SDK meldet. Wiederholungen, Caching, Preisänderungen und andere Nutzung in deiner Organisation beeinflussen die echte Rechnung, und es gibt keine API, mit der eine App dein Restguthaben lesen kann. VOID Workshop sagt das in der Statusleiste und verlinkt auf Console Billing.</div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="../screenshots/editor-nebula.png" alt="Der eingebaute Code-Editor im Nebula-Theme, Syntaxfarben aus dem Theme abgeleitet" loading="lazy" />
+        <div>
+          <h2>Ein echter Editor, in deinen Farben</h2>
+          <p class="sub" style="margin-bottom: 18px">Öffne jede Projektdatei im eingebauten CodeMirror-Editor, erledige eine schnelle Korrektur selbst und überlass den Rest dem Agenten. Die Syntaxhervorhebung wird aus deinem Theme erzeugt, sodass jedes Theme, auch deine eigenen, passende Farben bekommt.</p>
+          <ul class="checks">
+            <li><b>Tabs, Suche und Speichern</b>, und eine Warnung, wenn der Agent oder ein anderes Programm die Datei auf der Platte geändert hat.</li>
+            <li><b>Mehrere Cursor</b> und ein Rückgängig-Verlauf, der Projektwechsel übersteht.</li>
+            <li><b>Sensible Dateien fragen erst</b>, bevor sie geöffnet oder gespeichert werden.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>VOID Portal: <span class="grad">dein Handy als Fernbedienung</span></h2>
+        <p class="sub">Die Android-Begleit-App. Starte Aufgaben und reihe sie von überall ein, gib Änderungen und Befehle frei (auf Wunsch direkt aus der Benachrichtigung), wechsle Modell, Modus und Konto und erfahre, wenn eine Aufgabe fertig ist, dich braucht oder der PC offline geht.</p>
+        <p class="wire">Handy ──<b>wss</b>──► dein Relay ◄──<b>wss</b>── PC<br />└──── Ende-zu-Ende-verschlüsselt, AES-256-GCM ────┘</p>
+        <ul class="checks">
+          <li><b>Kopplung per QR-Code.</b> Das Geheimnis steckt nur im Code; das Relay sieht weder es noch deine Prompts oder deinen Code.</li>
+          <li><b>Zu Hause ist nichts offen.</b> Beide Seiten verbinden sich nach außen, also keine offenen Ports und keine Portweiterleitung.</li>
+          <li><b>Dieselben Regeln wie am Desktop.</b> Gesperrte Befehle bleiben gesperrt; riskante brauchen weiterhin deine Freigabe.</li>
+          <li><b>Themes passend zu deinem PC</b>, Material You und ein umgefärbtes App-Symbol.</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="../screenshots/portal-home.png" alt="Startbildschirm von VOID Portal: PC online, laufende Aufgaben und eine offene Freigabe" loading="lazy" /><figcaption>PC-Status, Aufgaben, was auf dich wartet</figcaption></figure>
+          <figure><img src="../screenshots/portal-approval.png" alt="Freigabe einer Dateiänderung mit ihrem Diff auf dem Handy" loading="lazy" /><figcaption>Freigeben mit dem vollständigen Diff</figcaption></figure>
+          <figure><img src="../screenshots/portal-task.png" alt="Eine Aufgaben-Unterhaltung in VOID Portal" loading="lazy" /><figcaption>Einer Aufgabe folgen und antworten</figcaption></figure>
+          <figure><img src="../screenshots/portal-settings.png" alt="VOID-Portal-Einstellungen und Theme-Auswahl" loading="lazy" /><figcaption>PC-Einstellungen und Themes</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>Dein eigenes Relay in fünf Minuten</h2>
+        <p class="sub">Es gibt kein gemeinsames Relay: Jede Person stellt ihr eigenes auf einem kostenlosen Cloudflare-Konto bereit, sodass dein Datenverkehr nie über den Server eines anderen läuft. Der kostenlose Workers-Tarif reicht für eine Person locker aus.</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>Cloudflare-Konto</b><span>Kostenlos registrieren und eine <code>workers.dev</code>-Subdomain wählen.</span></div>
+          <div><b>Worker bereitstellen</b><span><code>wrangler deploy</code> in <code>remote/relay</code>.</span></div>
+          <div><b>Prüfen</b><span>Der Smoke-Test führt 18 Prüfungen gegen dein Relay aus.</span></div>
+          <div><b>Workshop darauf zeigen lassen</b><span>Settings → VOID Portal (phone) → Relay.</span></div>
+          <div><b>Handy koppeln</b><span>Klicke auf Pair a phone und scanne dann den QR-Code in der App.</span></div>
+        </div>
+        <pre><span class="c"># aus deinem Klon des Repositorys</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># wrangler einmalig im Browser autorisieren</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># optional: In-App-Updates für VOID Portal (oder lösche den [[r2_buckets]]-Block in wrangler.toml)</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">Trage dann <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> unter <b>Settings → VOID Portal (phone) → Relay</b> ein. Kopplungscode oder Handy verloren? Entkopple das Gerät an derselben Stelle, dann funktioniert sein Schlüssel nicht mehr. Die vollständige Anleitung steht in <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay">remote/README.md</a> (auf Englisch).</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Mach es zu deinem</h2>
+        <p class="sub">Sieben eingebaute Themes, ein Live-Farbeditor mit Kontrastwarnungen und JSON-Import/-Export, um Themes zu teilen.</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="../screenshots/themes.png" alt="Theme-Editor im Einstellungsdialog" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>Unter Linux installieren</h2>
+        <p class="sub">Baut in wenigen Minuten aus dem Quellcode und installiert nur für deinen Benutzer. Kein root, keine Systemdateien.</p>
+        <pre><span class="c"># 1. Abhängigkeiten (Node.js ≥ 22.13, Rust ≥ 1.80)</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    Debian / Ubuntu 24.04+ (dazu Node.js 22 und Rust von nodejs.org / rustup.rs)</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># 2. bauen und nach ~/.local installieren</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># 3. starten, dann Settings → Sign-in &amp; API key: mit Claude anmelden, einen Schlüssel einfügen oder Ollama wählen</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td><code>cd remote/android &amp;&amp; ./gradlew :app:assembleRelease</code> (JDK 17), APK aufs Handy installieren und mit <a href="#relay">deinem Relay</a> koppeln</td></tr>
+          <tr><th>Aktualisieren</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>Deinstallieren</th><td><code>./scripts/uninstall.sh</code> (mit <code>--purge</code> werden Verlauf, Einstellungen und der gespeicherte Schlüssel gelöscht)</td></tr>
+          <tr><th>Anleitungen</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">Claude-Abo</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">API-Schlüssel einrichten</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">Abrechnung &amp; Limits</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">Sicherheitsmodell</a> (auf Englisch)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Fragen</h2>
+        <p class="sub">Die kurzen Antworten. Die Anleitungen im Repository haben die langen.</p>
+        <details><summary>Ist es kostenlos?</summary><p>VOID Workshop und VOID Portal sind kostenlos und Open Source (MIT). Du zahlst nur für das Modell, das du nutzt: dein Claude-Abo, die Anthropic-API-Nutzung auf deinem eigenen Console-Konto oder gar nichts mit lokalen Ollama-Modellen. Das Relay passt in den kostenlosen Tarif von Cloudflare.</p></details>
+        <details><summary>Gehen mein Code oder mein Schlüssel irgendwohin?</summary><p>Nur zum Modellanbieter deiner Wahl. Es gibt keine Telemetrie und keinen Server des Autors. Schlüssel bleiben im Schlüsselbund deines Desktops, und der Datenverkehr von VOID Portal läuft Ende-zu-Ende-verschlüsselt über das Relay, das du selbst bereitstellst.</p></details>
+        <details><summary>Was unterscheidet es von Claude Code?</summary><p>Es führt dasselbe Claude Agent SDK in einem Desktop-Fenster aus, das aufs Prüfen ausgelegt ist: ein Diff vor jedem Schreiben, eine Freigabe für jeden Befehl, Annehmen und Ablehnen pro Datei, eine Sandbox, Ausgabenlimits und eine Handy-Fernbedienung.</p></details>
+        <details><summary>Auf welchen Systemen läuft es?</summary><p>Linux (entwickelt unter Arch, läuft unter Debian/Ubuntu und anderen mit WebKitGTK 4.1). VOID Portal braucht Android 8 oder neuer.</p></details>
+        <details><summary>Kann ich das Relay von jemand anderem nutzen?</summary><p>Lieber nicht: Stell dein eigenes bereit. Das dauert ein paar Minuten, ist kostenlos und hält deinen Datenverkehr und deine Verfügbarkeit in deiner Hand.</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">Erstellt von <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Quellcode auf GitHub</a> · MIT-Lizenz.<br />VOID Workshop ist ein unabhängiges Open-Source-Projekt, weder mit Anthropic verbunden noch von Anthropic unterstützt. Die Nutzung von Claude unterliegt den Bedingungen von Anthropic und wird über dein eigenes Konto abgerechnet.</div>
+    </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
+  </body>
+</html>

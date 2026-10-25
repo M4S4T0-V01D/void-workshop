@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="hi" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID Workshop: Linux के लिए अनुमति-पहले वाला ओपन सोर्स AI कोडिंग एजेंट, और फ़ोन रिमोट VOID Portal</title>
+    <meta name="description" content="VOID Workshop, Claude Agent SDK पर बना Linux डेस्कटॉप के लिए एक मुफ़्त और ओपन सोर्स कोडिंग एजेंट है। अपना Claude प्लान, API कुंजी या लोकल Ollama मॉडल इस्तेमाल करें; हर लिखने से पहले diff देखें और हर कमांड को मंज़ूरी दें। VOID Portal से आप इसे Android फ़ोन से एंड-टू-एंड एन्क्रिप्शन के साथ चला सकते हैं।" />
+    <meta name="keywords" content="AI कोडिंग एजेंट, AI कोडिंग असिस्टेंट, Claude Agent SDK, Claude Code विकल्प, Linux डेस्कटॉप ऐप, लोकल AI कोडिंग, Ollama, कोड रिव्यू, मंज़ूरी, Android रिमोट, Tauri" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="en" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="es" href="https://m4s4t0-v01d.github.io/void-workshop/es/" />
+    <link rel="alternate" hreflang="ar" href="https://m4s4t0-v01d.github.io/void-workshop/ar/" />
+    <link rel="alternate" hreflang="pt" href="https://m4s4t0-v01d.github.io/void-workshop/pt/" />
+    <link rel="alternate" hreflang="fr" href="https://m4s4t0-v01d.github.io/void-workshop/fr/" />
+    <link rel="alternate" hreflang="ja" href="https://m4s4t0-v01d.github.io/void-workshop/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="de" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="id" href="https://m4s4t0-v01d.github.io/void-workshop/id/" />
+    <link rel="alternate" hreflang="ko" href="https://m4s4t0-v01d.github.io/void-workshop/ko/" />
+    <link rel="alternate" hreflang="tr" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="hi" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <meta property="og:locale" content="hi_IN" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="id_ID" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="tr_TR" />
+    <meta property="og:title" content="VOID Workshop: आपका कोड, आपकी कुंजी, आपकी मंज़ूरी" />
+    <meta property="og:description" content="Linux के लिए अनुमति-पहले वाला ओपन सोर्स AI कोडिंग वर्कस्पेस, साथ में VOID Portal, एंड-टू-एंड एन्क्रिप्टेड Android रिमोट। निर्माता M4S4T0-V01D।" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="VOID Workshop विंडो: फ़ाइल ट्री, एजेंट से बातचीत, योजना और बदलाव पैनल, टर्मिनल और स्टेटस बार" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VOID Workshop: आपका कोड, आपकी कुंजी, आपकी मंज़ूरी" />
+    <meta name="twitter:description" content="Linux के लिए अनुमति-पहले वाला ओपन सोर्स AI कोडिंग वर्कस्पेस, साथ में VOID Portal, एंड-टू-एंड एन्क्रिप्टेड Android रिमोट। निर्माता M4S4T0-V01D।" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/hi/",
+            "inLanguage": "hi",
+            "description": "Claude Agent SDK पर बना, अनुमति-पहले वाला लोकल Linux AI कोडिंग वर्कस्पेस: हर लिखने से पहले diff, हर कमांड से पहले मंज़ूरी, और ख़र्च की सीमाएँ।",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/hi/#portal",
+            "inLanguage": "hi",
+            "description": "VOID Workshop के लिए Android रिमोट: टास्क शुरू करें, बदलावों और कमांड को मंज़ूरी दें, सूचनाएँ पाएँ, सब कुछ आपके अपने रिले के ज़रिए एंड-टू-एंड एन्क्रिप्टेड।",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="./"><img src="../logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">यह कैसे काम करता है</a>
+          <a href="#safety" class="hide-sm">सुरक्षा</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">रिले</a>
+          <a href="#install" class="hide-xs">इंस्टॉल</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
+        </div>
+        <details class="lang">
+          <summary aria-label="भाषा"><span aria-hidden="true">🌐</span> हिन्दी</summary>
+          <div class="menu">
+            <a href="../" hreflang="en" lang="en" data-lang="en">English<span>EN</span></a>
+            <a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang="zh">简体中文<span>ZH</span></a>
+            <a href="../es/" hreflang="es" lang="es" data-lang="es">Español<span>ES</span></a>
+            <a href="../ar/" hreflang="ar" lang="ar" data-lang="ar">العربية<span>AR</span></a>
+            <a href="../pt/" hreflang="pt" lang="pt" data-lang="pt">Português<span>PT</span></a>
+            <a href="../fr/" hreflang="fr" lang="fr" data-lang="fr">Français<span>FR</span></a>
+            <a href="../ja/" hreflang="ja" lang="ja" data-lang="ja">日本語<span>JA</span></a>
+            <a href="../ru/" hreflang="ru" lang="ru" data-lang="ru">Русский<span>RU</span></a>
+            <a href="../de/" hreflang="de" lang="de" data-lang="de">Deutsch<span>DE</span></a>
+            <a href="../id/" hreflang="id" lang="id" data-lang="id">Bahasa Indonesia<span>ID</span></a>
+            <a href="../ko/" hreflang="ko" lang="ko" data-lang="ko">한국어<span>KO</span></a>
+            <a href="../tr/" hreflang="tr" lang="tr" data-lang="tr">Türkçe<span>TR</span></a>
+            <a href="../hi/" hreflang="hi" lang="hi" data-lang="hi" aria-current="page">हिन्दी<span>HI</span></a>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="../logo.svg" alt="VOID Workshop लोगो" />
+        <h1>आपका कोड। आपकी कुंजी।<br /><span class="grad">आपकी मंज़ूरी।</span></h1>
+        <p class="lead">VOID Workshop, Claude Agent SDK पर बना Linux डेस्कटॉप के लिए एक मुफ़्त और ओपन सोर्स कोडिंग एजेंट है। यह किसी भी चीज़ को छूने से पहले योजना बनाता है, हर लिखने से पहले diff दिखाता है, हर कमांड से पहले पूछता है, और आपके तय किए बजट पर रुक जाता है। अपना Claude प्लान, API कुंजी या लोकल Ollama मॉडल लाएँ, और VOID Portal से इसे अपने फ़ोन से चलाएँ।</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Linux पर इंस्टॉल करें</a>
+          <a class="btn" href="#portal">VOID Portal पाएँ</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">सोर्स देखें</a>
+        </div>
+        <div class="shot"><img src="../screenshots/workspace.png" alt="VOID Workshop विंडो: फ़ाइल ट्री, एजेंट से बातचीत, योजना और बदलाव पैनल, टर्मिनल और स्टेटस बार" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>काम एजेंट करता है, फ़ैसला इंसान</h2>
+        <p class="sub">अपनी भाषा में बताइए कि आपको क्या चाहिए। मेहनत वाला काम एजेंट करता है, और हर बदलाव पर फ़ैसला आपका रहता है।</p>
+        <div class="flow">
+          <div><b>प्रोजेक्ट चुनें</b><span>एजेंट सिर्फ़ वही फ़ोल्डर और वे डायरेक्टरी देख सकता है जिन्हें आप ख़ुद जोड़ें।</span></div>
+          <div><b>टास्क बताएँ</b><span>आम भाषा में। आगे के संदेश उसी सेशन में जारी रहते हैं।</span></div>
+          <div><b>योजना जाँचें</b><span>पहले सिर्फ़-पढ़ने वाली खोज। आपकी मंज़ूरी तक कुछ भी नहीं बदला जाता।</span></div>
+          <div><b>हर कार्रवाई को मंज़ूरी दें</b><span>हर लिखने के लिए diff; हर कमांड के लिए कमांड, फ़ोल्डर और वजह।</span></div>
+          <div><b>जाँचें और रखें</b><span>हर फ़ाइल स्वीकार या अस्वीकार करें, टेस्ट चलाएँ, और जब चाहें commit करें।</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>ठीक-ठीक देखें क्या बदलेगा</h2>
+          <p class="sub" style="margin-bottom: 18px">हर बदलाव लिखे जाने से पहले unified diff के रूप में आता है। अगर आपके सोचते-सोचते डिस्क पर फ़ाइल बदल जाए, तो वह बदलाव अस्वीकार हो जाता है, इसलिए आपका अपना काम कभी चुपचाप ओवरराइट नहीं होता।</p>
+          <ul class="checks">
+            <li><b>प्रस्तावित → लागू → टेस्ट किया → commit किया:</b> हर फ़ाइल की साफ़ स्थिति।</li>
+            <li><b>हर फ़ाइल के लिए स्वीकार / अस्वीकार</b>; अस्वीकार करने पर मूल सामग्री वापस आ जाती है।</li>
+            <li><b>लोकल Git चेकपॉइंट</b> जो आपकी ब्रांच या इंडेक्स को कभी नहीं छूते।</li>
+            <li><b>Commit तभी जब आप Commit पर क्लिक करें।</b> push कभी नहीं।</li>
+          </ul>
+        </div>
+        <img src="../screenshots/review.png" alt="प्रस्तावित फ़ाइल बदलाव का unified diff दिखाता मंज़ूरी डायलॉग" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>यह मानकर बनाया गया कि मॉडल पर भरोसा नहीं किया जा सकता</h2>
+        <p class="sub">मॉडल का आउटपुट और रिपॉज़िटरी की सामग्री अविश्वसनीय इनपुट माने जाते हैं। मंज़ूरी सुरक्षा की पहली परत है, अकेली नहीं।</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>हर कार्रवाई पर मंज़ूरी</h3><p>सटीक कमांड, वर्किंग डायरेक्टरी, एजेंट की बताई वजह, और कमांड क्या करती है (पढ़ना, लिखना, नेटवर्क, git, इंस्टॉल)। मंज़ूरियाँ कभी याद नहीं रखी जातीं।</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>Bubblewrap सैंडबॉक्स</h3><p>एजेंट की कमांड सिर्फ़ प्रोजेक्ट के अंदर लिख सकती हैं और जब तक आप ख़ास डोमेन की अनुमति न दें, उन्हें नेटवर्क नहीं मिलता।</p></div>
+          <div class="card"><span class="icon">✕</span><h3>पक्की रोक</h3><p>sudo, बड़े पैमाने पर <code>rm -rf</code>, push, इतिहास दोबारा लिखना, पब्लिश, अपलोड, SSH, कीरिंग तक पहुँच, और ऐप की अपनी सेटिंग छूने की कोशिशें सीधे अस्वीकार होती हैं।</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>पाथ का मानकीकरण</h3><p><code>..</code>, सिमलिंक और <code>~</code> से प्रोजेक्ट के बाहर नहीं जाया जा सकता। SSH कुंजियाँ, क्लाउड क्रेडेंशियल, ब्राउज़र प्रोफ़ाइल और कीरिंग हमेशा वर्जित हैं।</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>राज़ राज़ ही रहते हैं</h3><p><code>.env</code>, प्राइवेट कुंजियों और क्रेडेंशियल फ़ाइलों के लिए साफ़ मंज़ूरी चाहिए, और लॉग, इतिहास और UI में वे छिपा दी जाती हैं।</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>कभी root नहीं, कोई टेलीमेट्री नहीं</h3><p>root के रूप में चलने से इनकार करता है। कोई निर्माता सर्वर, प्रॉक्सी या एनालिटिक्स नहीं: डेटा सिर्फ़ आपके चुने मॉडल प्रोवाइडर को जाता है और, VOID Portal के लिए, उस रिले को जिसे आपने ख़ुद डिप्लॉय किया।</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>प्लान हो या कुंजी। ईमानदार आँकड़े।</h2>
+          <p class="sub" style="margin-bottom: 18px">अपना Claude प्लान या डेस्कटॉप कीरिंग में सहेजी Anthropic Console API कुंजी इस्तेमाल करें, और एक क्लिक में बदलें। VOID Workshop एक भी अनुरोध भेजने से पहले क्रेडेंशियल का स्रोत जाँचता है।</p>
+          <ul class="checks">
+            <li><b>प्रति टास्क और प्रति दिन सीमाएँ</b> (डिफ़ॉल्ट: $1 और $3), साथ में टर्न और आउटपुट टोकन की सीमाएँ।</li>
+            <li><b>क्रेडिट ख़त्म होने पर रुक जाता है</b>, और कभी क्रेडिट नहीं ख़रीदता या भुगतान का तरीका नहीं बदलता।</li>
+            <li><b>मॉडल Models API से आते हैं</b>, आपकी कुंजी के हिसाब से; कुछ भी हार्डकोड नहीं।</li>
+            <li><b>पक्की सीमा के लिए Console वर्कस्पेस की ख़र्च सीमा के साथ</b> इस्तेमाल करें।</li>
+          </ul>
+        </div>
+        <div class="note"><b>ये अनुमान हैं, बैलेंस नहीं।</b> लागत का अनुमान Agent SDK के बताए टोकन इस्तेमाल से लगाया जाता है। दोबारा कोशिशें, कैशिंग, क़ीमतों में बदलाव और आपके संगठन का दूसरा इस्तेमाल असली बिल पर असर डालते हैं, और ऐसा कोई API नहीं है जिससे ऐप आपका बचा क्रेडिट पढ़ सके। VOID Workshop यह बात स्टेटस बार में बताता है और Console Billing का लिंक देता है।</div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="../screenshots/editor-nebula.png" alt="Nebula थीम में बिल्ट-इन कोड एडिटर, सिंटैक्स रंग थीम से बने" loading="lazy" />
+        <div>
+          <h2>असली एडिटर, आपके रंगों में</h2>
+          <p class="sub" style="margin-bottom: 18px">प्रोजेक्ट की कोई भी फ़ाइल बिल्ट-इन CodeMirror एडिटर में खोलें, छोटा सुधार ख़ुद करें, और बाक़ी एजेंट को सौंपें। सिंटैक्स हाइलाइटिंग आपकी थीम से बनती है, इसलिए हर थीम को, आपकी बनाई थीम को भी, मेल खाते रंग मिलते हैं।</p>
+          <ul class="checks">
+            <li><b>टैब, खोज और सेव</b>, और जब एजेंट या कोई दूसरा प्रोग्राम डिस्क पर फ़ाइल बदले तो चेतावनी।</li>
+            <li><b>कई कर्सर</b> और undo इतिहास जो प्रोजेक्ट बदलने पर भी बना रहता है।</li>
+            <li><b>संवेदनशील फ़ाइलें पहले पूछती हैं</b>, फिर खुलती या सेव होती हैं।</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>VOID Portal: <span class="grad">आपका फ़ोन बना रिमोट</span></h2>
+        <p class="sub">Android के लिए साथी ऐप। कहीं से भी टास्क शुरू करें और कतार में लगाएँ, बदलावों और कमांड को मंज़ूरी दें (सीधे सूचना से भी), मॉडल, मोड और अकाउंट बदलें, और जानें कि कब टास्क पूरा हुआ, कब उसे आपकी ज़रूरत है, या कब PC ऑफ़लाइन हो गया।</p>
+        <p class="wire">फ़ोन ──<b>wss</b>──► आपका रिले ◄──<b>wss</b>── PC<br />└──── एंड-टू-एंड एन्क्रिप्टेड, AES-256-GCM ────┘</p>
+        <ul class="checks">
+          <li><b>QR कोड से पेयरिंग।</b> राज़ सिर्फ़ कोड में है; रिले न उसे देखता है, न आपके प्रॉम्प्ट, न आपका कोड।</li>
+          <li><b>घर पर कुछ भी खुला नहीं।</b> दोनों तरफ़ से बाहर की ओर कनेक्शन होता है, इसलिए न कोई खुला पोर्ट, न पोर्ट फ़ॉरवर्डिंग।</li>
+          <li><b>डेस्कटॉप जैसे ही नियम।</b> रोकी गई कमांड रुकी रहती हैं; जोखिम वाली कमांड को अब भी आपकी मंज़ूरी चाहिए।</li>
+          <li><b>आपके PC से मेल खाती थीम</b>, Material You, और रंग बदलने वाला ऐप आइकन।</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="../screenshots/portal-home.png" alt="VOID Portal होम स्क्रीन: PC ऑनलाइन, सक्रिय टास्क और एक लंबित मंज़ूरी" loading="lazy" /><figcaption>PC की स्थिति, टास्क, आपके लिए क्या बाक़ी है</figcaption></figure>
+          <figure><img src="../screenshots/portal-approval.png" alt="फ़ोन पर diff के साथ फ़ाइल बदलाव को मंज़ूरी देना" loading="lazy" /><figcaption>पूरा diff देखकर मंज़ूरी दें</figcaption></figure>
+          <figure><img src="../screenshots/portal-task.png" alt="VOID Portal में टास्क की बातचीत" loading="lazy" /><figcaption>टास्क पर नज़र रखें और जवाब दें</figcaption></figure>
+          <figure><img src="../screenshots/portal-settings.png" alt="VOID Portal सेटिंग और थीम चुनना" loading="lazy" /><figcaption>PC सेटिंग और थीम</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>पाँच मिनट में अपना रिले</h2>
+        <p class="sub">कोई साझा रिले नहीं है: हर कोई अपना रिले मुफ़्त Cloudflare अकाउंट पर डिप्लॉय करता है, इसलिए आपका ट्रैफ़िक कभी किसी और के सर्वर से नहीं गुज़रता। एक व्यक्ति के लिए मुफ़्त Workers प्लान काफ़ी से ज़्यादा है।</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>Cloudflare अकाउंट</b><span>मुफ़्त में साइन अप करें और एक <code>workers.dev</code> सबडोमेन चुनें।</span></div>
+          <div><b>Worker डिप्लॉय करें</b><span><code>wrangler deploy</code> को <code>remote/relay</code> से चलाएँ।</span></div>
+          <div><b>जाँचें</b><span>स्मोक टेस्ट आपके रिले पर 18 जाँचें चलाता है।</span></div>
+          <div><b>Workshop को उसका पता दें</b><span>Settings → VOID Portal (phone) → Relay।</span></div>
+          <div><b>फ़ोन पेयर करें</b><span>Pair a phone पर क्लिक करें, फिर ऐप में QR कोड स्कैन करें।</span></div>
+        </div>
+        <pre><span class="c"># रिपॉज़िटरी की अपनी क्लोन से</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># ब्राउज़र में wrangler को एक बार अधिकृत करें</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># वैकल्पिक: VOID Portal के इन-ऐप अपडेट (या wrangler.toml में [[r2_buckets]] ब्लॉक हटा दें)</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">फिर <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> को <b>Settings → VOID Portal (phone) → Relay</b> में डालें। पेयरिंग कोड या फ़ोन खो गया? उसी जगह से डिवाइस को अनपेयर करें और उसकी कुंजी काम करना बंद कर देगी। पूरी गाइड <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay">remote/README.md</a> (अंग्रेज़ी में) में है।</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>इसे अपना बनाएँ</h2>
+        <p class="sub">सात बिल्ट-इन थीम, कंट्रास्ट चेतावनियों के साथ लाइव रंग एडिटर, और थीम साझा करने के लिए JSON इंपोर्ट/एक्सपोर्ट।</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="../screenshots/themes.png" alt="सेटिंग डायलॉग में थीम एडिटर" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>Linux पर इंस्टॉल करें</h2>
+        <p class="sub">सोर्स से कुछ ही मिनटों में बनता है और सिर्फ़ आपके यूज़र के लिए इंस्टॉल होता है। न root, न सिस्टम फ़ाइलें।</p>
+        <pre><span class="c"># 1. निर्भरताएँ (Node.js ≥ 22.13, Rust ≥ 1.80)</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    Debian / Ubuntu 24.04+ (साथ में nodejs.org / rustup.rs से Node.js 22 और Rust)</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># 2. बिल्ड करें और ~/.local में इंस्टॉल करें</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># 3. चलाएँ, फिर Settings → Sign-in &amp; API key: Claude से साइन इन करें, कुंजी पेस्ट करें या Ollama चुनें</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td><code>cd remote/android &amp;&amp; ./gradlew :app:assembleRelease</code> (JDK 17), APK को अपने फ़ोन पर इंस्टॉल करें और <a href="#relay">अपने रिले</a> से पेयर करें</td></tr>
+          <tr><th>अपडेट</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>अनइंस्टॉल</th><td><code>./scripts/uninstall.sh</code> (इतिहास, सेटिंग और सहेजी कुंजी भी हटाने के लिए <code>--purge</code> जोड़ें)</td></tr>
+          <tr><th>गाइड</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">Claude प्लान</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">API कुंजी सेटअप</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">बिलिंग और सीमाएँ</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">सुरक्षा मॉडल</a> (अंग्रेज़ी में)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>सवाल</h2>
+        <p class="sub">छोटे जवाब। विस्तार रिपॉज़िटरी की गाइड में है।</p>
+        <details><summary>क्या यह मुफ़्त है?</summary><p>VOID Workshop और VOID Portal मुफ़्त और ओपन सोर्स (MIT) हैं। आप सिर्फ़ उस मॉडल के पैसे देते हैं जिसे इस्तेमाल करते हैं: Claude प्लान, अपने Console अकाउंट पर Anthropic API इस्तेमाल, या लोकल Ollama मॉडल के साथ कुछ भी नहीं। रिले Cloudflare के मुफ़्त प्लान में आ जाता है।</p></details>
+        <details><summary>क्या मेरा कोड या कुंजी कहीं भेजी जाती है?</summary><p>सिर्फ़ आपके चुने मॉडल प्रोवाइडर को। कोई टेलीमेट्री नहीं, कोई निर्माता सर्वर नहीं। कुंजियाँ आपकी डेस्कटॉप कीरिंग में रहती हैं, और VOID Portal का ट्रैफ़िक आपके ख़ुद डिप्लॉय किए रिले के ज़रिए एंड-टू-एंड एन्क्रिप्टेड होता है।</p></details>
+        <details><summary>यह Claude Code से कैसे अलग है?</summary><p>यह वही Claude Agent SDK एक ऐसी डेस्कटॉप विंडो में चलाता है जो समीक्षा के इर्द-गिर्द बनी है: हर लिखने से पहले diff, हर कमांड पर मंज़ूरी, हर फ़ाइल के लिए स्वीकार और अस्वीकार, सैंडबॉक्स, ख़र्च सीमाएँ, और फ़ोन रिमोट।</p></details>
+        <details><summary>यह किन सिस्टम पर चलता है?</summary><p>Linux (Arch पर विकसित, WebKitGTK 4.1 वाले Debian/Ubuntu और दूसरों पर चलता है)। VOID Portal के लिए Android 8 या नया चाहिए।</p></details>
+        <details><summary>क्या मैं किसी और का रिले इस्तेमाल कर सकता/सकती हूँ?</summary><p>ऐसा न करें: अपना ख़ुद का डिप्लॉय करें। इसमें कुछ मिनट लगते हैं, यह मुफ़्त है, और आपका ट्रैफ़िक और उपलब्धता आपके हाथ में रहती है।</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">निर्माता <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub पर सोर्स</a> · MIT लाइसेंस।<br />VOID Workshop एक स्वतंत्र ओपन सोर्स प्रोजेक्ट है और Anthropic से संबद्ध या उसके द्वारा समर्थित नहीं है। Claude का इस्तेमाल Anthropic की शर्तों के अधीन है और आपके अपने अकाउंट पर बिल होता है।</div>
+    </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
+  </body>
+</html>

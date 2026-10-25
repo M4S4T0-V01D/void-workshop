@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="tr" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID Workshop: Linux için onay öncelikli, açık kaynaklı yapay zekâ kodlama ajanı ve telefon kumandası VOID Portal</title>
+    <meta name="description" content="VOID Workshop, Claude Agent SDK üzerine kurulu, Linux masaüstü için ücretsiz ve açık kaynaklı bir kodlama ajanıdır. Claude aboneliğinizi, API anahtarınızı veya yerel Ollama modellerini kullanın; her yazmadan önce diff'i inceleyin ve her komutu onaylayın. VOID Portal ile Android telefonunuzdan uçtan uca şifrelemeyle kontrol edin." />
+    <meta name="keywords" content="yapay zekâ kodlama ajanı, yapay zekâ kodlama asistanı, Claude Agent SDK, Claude Code alternatifi, Linux masaüstü uygulaması, yerel yapay zekâ ile kodlama, Ollama, kod incelemesi, onaylar, Android kumanda, Tauri" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="en" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://m4s4t0-v01d.github.io/void-workshop/zh/" />
+    <link rel="alternate" hreflang="es" href="https://m4s4t0-v01d.github.io/void-workshop/es/" />
+    <link rel="alternate" hreflang="ar" href="https://m4s4t0-v01d.github.io/void-workshop/ar/" />
+    <link rel="alternate" hreflang="pt" href="https://m4s4t0-v01d.github.io/void-workshop/pt/" />
+    <link rel="alternate" hreflang="fr" href="https://m4s4t0-v01d.github.io/void-workshop/fr/" />
+    <link rel="alternate" hreflang="ja" href="https://m4s4t0-v01d.github.io/void-workshop/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://m4s4t0-v01d.github.io/void-workshop/ru/" />
+    <link rel="alternate" hreflang="de" href="https://m4s4t0-v01d.github.io/void-workshop/de/" />
+    <link rel="alternate" hreflang="id" href="https://m4s4t0-v01d.github.io/void-workshop/id/" />
+    <link rel="alternate" hreflang="ko" href="https://m4s4t0-v01d.github.io/void-workshop/ko/" />
+    <link rel="alternate" hreflang="tr" href="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <link rel="alternate" hreflang="hi" href="https://m4s4t0-v01d.github.io/void-workshop/hi/" />
+    <link rel="alternate" hreflang="x-default" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/tr/" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="id_ID" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="hi_IN" />
+    <meta property="og:title" content="VOID Workshop: kodunuz, anahtarınız, kararınız" />
+    <meta property="og:description" content="Linux için onay öncelikli, açık kaynaklı bir yapay zekâ kodlama ortamı ve uçtan uca şifreli Android kumandası VOID Portal. Yapan: M4S4T0-V01D." />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="Dosya ağacı, ajan sohbeti, plan ve değişiklik panelleri, terminal ve durum çubuğuyla VOID Workshop penceresi" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VOID Workshop: kodunuz, anahtarınız, kararınız" />
+    <meta name="twitter:description" content="Linux için onay öncelikli, açık kaynaklı bir yapay zekâ kodlama ortamı ve uçtan uca şifreli Android kumandası VOID Portal. Yapan: M4S4T0-V01D." />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/tr/",
+            "inLanguage": "tr",
+            "description": "Claude Agent SDK üzerine kurulu, onay öncelikli yerel bir Linux yapay zekâ kodlama ortamı: her yazmadan önce diff, her komuttan önce onay ve harcama limitleri.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/tr/#portal",
+            "inLanguage": "tr",
+            "description": "VOID Workshop için Android kumandası: görev başlatın, değişiklikleri ve komutları onaylayın, bildirim alın; hepsi kendi relay sunucunuz üzerinden uçtan uca şifreli.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="../logo.svg" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="./"><img src="../logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">Nasıl çalışır</a>
+          <a href="#safety" class="hide-sm">Güvenlik</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">Relay</a>
+          <a href="#install" class="hide-xs">Kurulum</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
+        </div>
+        <details class="lang">
+          <summary aria-label="Dil"><span aria-hidden="true">🌐</span> Türkçe</summary>
+          <div class="menu">
+            <a href="../" hreflang="en" lang="en" data-lang="en">English<span>EN</span></a>
+            <a href="../zh/" hreflang="zh-Hans" lang="zh-Hans" data-lang="zh">简体中文<span>ZH</span></a>
+            <a href="../es/" hreflang="es" lang="es" data-lang="es">Español<span>ES</span></a>
+            <a href="../ar/" hreflang="ar" lang="ar" data-lang="ar">العربية<span>AR</span></a>
+            <a href="../pt/" hreflang="pt" lang="pt" data-lang="pt">Português<span>PT</span></a>
+            <a href="../fr/" hreflang="fr" lang="fr" data-lang="fr">Français<span>FR</span></a>
+            <a href="../ja/" hreflang="ja" lang="ja" data-lang="ja">日本語<span>JA</span></a>
+            <a href="../ru/" hreflang="ru" lang="ru" data-lang="ru">Русский<span>RU</span></a>
+            <a href="../de/" hreflang="de" lang="de" data-lang="de">Deutsch<span>DE</span></a>
+            <a href="../id/" hreflang="id" lang="id" data-lang="id">Bahasa Indonesia<span>ID</span></a>
+            <a href="../ko/" hreflang="ko" lang="ko" data-lang="ko">한국어<span>KO</span></a>
+            <a href="../tr/" hreflang="tr" lang="tr" data-lang="tr" aria-current="page">Türkçe<span>TR</span></a>
+            <a href="../hi/" hreflang="hi" lang="hi" data-lang="hi">हिन्दी<span>HI</span></a>
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="../logo.svg" alt="VOID Workshop logosu" />
+        <h1>Kodunuz. Anahtarınız.<br /><span class="grad">Kararınız.</span></h1>
+        <p class="lead">VOID Workshop, Claude Agent SDK üzerine kurulu, Linux masaüstü için ücretsiz ve açık kaynaklı bir kodlama ajanıdır. Herhangi bir şeye dokunmadan önce plan yapar, her yazmadan önce diff gösterir, her komuttan önce sorar ve belirlediğiniz bütçede durur. Claude aboneliğinizi, API anahtarınızı veya yerel Ollama modellerini getirin ve VOID Portal ile telefonunuzdan yönetin.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Linux'a kur</a>
+          <a class="btn" href="#portal">VOID Portal'ı edinin</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">Kaynak kodu görüntüle</a>
+        </div>
+        <div class="shot"><img src="../screenshots/workspace.png" alt="Dosya ağacı, ajan sohbeti, plan ve değişiklik panelleri, terminal ve durum çubuğuyla VOID Workshop penceresi" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>Ajan çalışır, insan karar verir</h2>
+        <p class="sub">Ne istediğinizi kendi cümlelerinizle anlatın. Zahmetli kısmı ajan üstlenir; her değişikliğin kontrolü sizde kalır.</p>
+        <div class="flow">
+          <div><b>Bir proje seçin</b><span>Ajan yalnızca o klasörü ve açıkça eklediğiniz dizinleri görebilir.</span></div>
+          <div><b>Görevi anlatın</b><span>Gündelik dille. Sonraki mesajlar aynı oturumda devam eder.</span></div>
+          <div><b>Planı inceleyin</b><span>Önce salt okunur keşif. Siz onaylayana kadar hiçbir şey düzenlenmez.</span></div>
+          <div><b>Her işlemi onaylayın</b><span>Her yazma için diff; her komut için komut, klasör ve gerekçe.</span></div>
+          <div><b>Doğrulayın ve saklayın</b><span>Her dosyayı kabul edin veya reddedin, testleri çalıştırın, istediğiniz zaman commit edin.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>Neyin değişeceğini tam olarak görün</h2>
+          <p class="sub" style="margin-bottom: 18px">Her düzenleme, yazılmadan önce unified diff olarak gelir. Siz karar verirken diskteki dosya değişirse düzenleme reddedilir; böylece kendi çalışmanızın üzerine asla sessizce yazılmaz.</p>
+          <ul class="checks">
+            <li><b>Önerildi → uygulandı → test edildi → commit edildi:</b> her dosya için net bir durum.</li>
+            <li><b>Dosya bazında kabul / ret</b>; reddetmek orijinal içeriği geri getirir.</li>
+            <li><b>Yerel Git kontrol noktaları</b>; dalınıza ve index'inize asla dokunmaz.</li>
+            <li><b>Yalnızca Commit'e tıkladığınızda commit.</b> Asla push yok.</li>
+          </ul>
+        </div>
+        <img src="../screenshots/review.png" alt="Önerilen bir dosya değişikliğinin unified diff'ini gösteren onay penceresi" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>Modele güvenilemeyeceği varsayımıyla tasarlandı</h2>
+        <p class="sub">Model çıktısı ve depo içeriği güvenilmeyen girdi olarak ele alınır. Onaylar ilk savunma katmanıdır, tek katman değil.</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>İşlem bazında onay</h3><p>Tam komut, çalışma dizini, ajanın belirttiği gerekçe ve komutun ne yaptığı (okuma, yazma, ağ, git, kurulum). Onaylar asla hatırlanmaz.</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>Bubblewrap korumalı alanı</h3><p>Ajanın komutları yalnızca proje içine yazabilir ve belirli alan adlarına izin vermediğiniz sürece ağa erişemez.</p></div>
+          <div class="card"><span class="icon">✕</span><h3>Kesin engeller</h3><p>sudo, geniş kapsamlı <code>rm -rf</code>, push, geçmişi yeniden yazma, yayınlama, yükleme, SSH, anahtarlık erişimi ve uygulamanın kendi ayarlarına dokunma girişimleri doğrudan reddedilir.</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>Yol standartlaştırma</h3><p><code>..</code>, sembolik bağlantılar ve <code>~</code> ile projenin dışına çıkılamaz. SSH anahtarları, bulut kimlik bilgileri, tarayıcı profilleri ve anahtarlıklar her zaman yasaktır.</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>Sırlar sır olarak kalır</h3><p><code>.env</code>, özel anahtarlar ve kimlik bilgisi dosyaları açık onay gerektirir; günlüklerde, geçmişte ve arayüzde gizlenir.</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>Asla root değil, telemetri yok</h3><p>root olarak çalışmayı reddeder. Geliştirici sunucusu, proxy veya analiz yok: veriler yalnızca seçtiğiniz model sağlayıcısına ve VOID Portal için kendi kurduğunuz relay sunucusuna gider.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>Abonelik veya anahtar. Dürüst rakamlar.</h2>
+          <p class="sub" style="margin-bottom: 18px">Claude aboneliğinizi veya masaüstü anahtarlığınızda saklanan bir Anthropic Console API anahtarını kullanın ve tek tıkla geçiş yapın. VOID Workshop tek bir istek göndermeden önce kimlik bilgisinin kaynağını doğrular.</p>
+          <ul class="checks">
+            <li><b>Görev başına ve günlük limitler</b> (varsayılan: 1 $ ve 3 $), ayrıca tur ve çıktı token sınırları.</li>
+            <li><b>Kredi bittiğinde durur</b>; asla kredi satın almaz veya ödeme yöntemini değiştirmez.</li>
+            <li><b>Modeller Models API'den</b> anahtarınıza göre gelir; hiçbiri koda gömülü değildir.</li>
+            <li><b>Kesin bir tavan için Console çalışma alanı harcama limitiyle</b> birlikte kullanın.</li>
+          </ul>
+        </div>
+        <div class="note"><b>Bunlar tahmindir, bakiye değil.</b> Maliyet, Agent SDK'nın bildirdiği token kullanımından tahmin edilir. Yeniden denemeler, önbellekleme, fiyat değişiklikleri ve kuruluşunuzdaki diğer kullanımlar gerçek faturayı etkiler ve uygulamanın kalan kredinizi okuyabileceği bir API yoktur. VOID Workshop bunu durum çubuğunda belirtir ve Console Billing bağlantısı verir.</div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="../screenshots/editor-nebula.png" alt="Nebula temasında yerleşik kod düzenleyici, sözdizimi renkleri temadan türetilmiş" loading="lazy" />
+        <div>
+          <h2>Gerçek bir düzenleyici, sizin renklerinizle</h2>
+          <p class="sub" style="margin-bottom: 18px">Projedeki herhangi bir dosyayı yerleşik CodeMirror düzenleyicide açın, küçük düzeltmeleri kendiniz yapın, gerisini ajana bırakın. Sözdizimi vurgulaması temanızdan üretilir; böylece kendi yaptıklarınız dahil her tema uyumlu renkler alır.</p>
+          <ul class="checks">
+            <li><b>Sekmeler, arama ve kaydetme</b>; ajan veya başka bir program diskteki dosyayı değiştirdiğinde uyarı.</li>
+            <li><b>Çoklu imleç</b> ve projeler arasında geçerken korunan geri alma geçmişi.</li>
+            <li><b>Hassas dosyalar önce sorar</b>, sonra açılır veya kaydedilir.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>VOID Portal: <span class="grad">telefonunuz bir kumanda</span></h2>
+        <p class="sub">Android için yardımcı uygulama. Her yerden görev başlatın ve sıraya koyun, değişiklikleri ve komutları onaylayın (doğrudan bildirimden bile), model, mod ve hesap değiştirin; bir görev bittiğinde, size ihtiyaç duyduğunda veya PC çevrimdışı olduğunda haberdar olun.</p>
+        <p class="wire">telefon ──<b>wss</b>──► relay'iniz ◄──<b>wss</b>── PC<br />└──── uçtan uca şifreli, AES-256-GCM ────┘</p>
+        <ul class="checks">
+          <li><b>QR koduyla eşleştirme.</b> Sır yalnızca kodun içindedir; relay ne onu ne istemlerinizi ne de kodunuzu görür.</li>
+          <li><b>Evde hiçbir şey açıkta değil.</b> İki taraf da dışarıya bağlanır; açık port veya port yönlendirme yoktur.</li>
+          <li><b>Masaüstüyle aynı kurallar.</b> Engellenen komutlar engelli kalır; riskli olanlar yine onayınızı gerektirir.</li>
+          <li><b>PC'nizle uyumlu temalar</b>, Material You ve rengi değiştirilebilen uygulama simgesi.</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="../screenshots/portal-home.png" alt="VOID Portal ana ekranı: PC çevrimiçi, etkin görevler ve bekleyen bir onay" loading="lazy" /><figcaption>PC durumu, görevler, sizi bekleyenler</figcaption></figure>
+          <figure><img src="../screenshots/portal-approval.png" alt="Telefonda diff'iyle birlikte bir dosya değişikliğini onaylama" loading="lazy" /><figcaption>Tüm diff'i görerek onaylayın</figcaption></figure>
+          <figure><img src="../screenshots/portal-task.png" alt="VOID Portal'da bir görev sohbeti" loading="lazy" /><figcaption>Görevi takip edin ve yanıtlayın</figcaption></figure>
+          <figure><img src="../screenshots/portal-settings.png" alt="VOID Portal ayarları ve tema seçimi" loading="lazy" /><figcaption>PC ayarları ve temalar</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>Beş dakikada kendi relay'iniz</h2>
+        <p class="sub">Ortak bir relay yok: herkes kendi relay'ini ücretsiz bir Cloudflare hesabına kurar, böylece trafiğiniz asla başkasının sunucusundan geçmez. Ücretsiz Workers planı tek bir kişi için fazlasıyla yeterlidir.</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>Cloudflare hesabı</b><span>Ücretsiz kaydolun ve bir <code>workers.dev</code> alt alan adı seçin.</span></div>
+          <div><b>Worker'ı kurun</b><span><code>wrangler deploy</code> komutunu <code>remote/relay</code> içinden çalıştırın.</span></div>
+          <div><b>Doğrulayın</b><span>Duman testi relay'inize karşı 18 kontrol çalıştırır.</span></div>
+          <div><b>Workshop'a tanıtın</b><span>Settings → VOID Portal (phone) → Relay.</span></div>
+          <div><b>Telefonu eşleştirin</b><span>Pair a phone'a tıklayın, ardından uygulamada QR kodunu tarayın.</span></div>
+        </div>
+        <pre><span class="c"># depo klonunuzdan</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># wrangler'ı tarayıcıda yetkilendirin, bir kez</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># isteğe bağlı: VOID Portal uygulama içi güncellemeleri (veya wrangler.toml'daki [[r2_buckets]] bloğunu silin)</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">Ardından <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> adresini <b>Settings → VOID Portal (phone) → Relay</b> alanına girin. Eşleştirme kodunu veya telefonu mu kaybettiniz? Aynı yerden cihazın eşleştirmesini kaldırın; anahtarı artık çalışmaz. Tam kılavuz <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay">remote/README.md</a> dosyasında (İngilizce).</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Size göre olsun</h2>
+        <p class="sub">Yedi yerleşik tema, kontrast uyarılı canlı renk düzenleyici ve temaları paylaşmak için JSON içe/dışa aktarma.</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="../screenshots/themes.png" alt="Ayarlar penceresindeki tema düzenleyici" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>Linux'a kurulum</h2>
+        <p class="sub">Kaynaktan birkaç dakikada derlenir ve yalnızca kendi kullanıcınız için kurulur. root yok, sistem dosyası yok.</p>
+        <pre><span class="c"># 1. bağımlılıklar (Node.js ≥ 22.13, Rust ≥ 1.80)</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    Debian / Ubuntu 24.04+ (artı nodejs.org / rustup.rs'den Node.js 22 ve Rust)</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># 2. derleyin ve ~/.local'a kurun</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># 3. başlatın, ardından Settings → Sign-in &amp; API key: Claude ile giriş yapın, bir anahtar yapıştırın veya Ollama'yı seçin</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td><code>cd remote/android &amp;&amp; ./gradlew :app:assembleRelease</code> (JDK 17), APK'yı telefonunuza kurun ve <a href="#relay">relay'inizle</a> eşleştirin</td></tr>
+          <tr><th>Güncelleme</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>Kaldırma</th><td><code>./scripts/uninstall.sh</code> (geçmişi, ayarları ve kayıtlı anahtarı da silmek için <code>--purge</code> ekleyin)</td></tr>
+          <tr><th>Kılavuzlar</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">Claude aboneliği</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">API anahtarı kurulumu</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">Faturalama ve limitler</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">Güvenlik modeli</a> (İngilizce)</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Sorular</h2>
+        <p class="sub">Kısa yanıtlar. Ayrıntılar depodaki kılavuzlarda.</p>
+        <details><summary>Ücretsiz mi?</summary><p>VOID Workshop ve VOID Portal ücretsiz ve açık kaynaklıdır (MIT). Yalnızca kullandığınız model için ödeme yaparsınız: Claude aboneliği, kendi Console hesabınızdaki Anthropic API kullanımı veya yerel Ollama modelleriyle hiçbir şey. Relay, Cloudflare'in ücretsiz planına sığar.</p></details>
+        <details><summary>Kodum veya anahtarım bir yere gönderiliyor mu?</summary><p>Yalnızca seçtiğiniz model sağlayıcısına. Telemetri yok, geliştirici sunucusu yok. Anahtarlar masaüstü anahtarlığınızda kalır ve VOID Portal trafiği kendi kurduğunuz relay üzerinden uçtan uca şifrelenir.</p></details>
+        <details><summary>Claude Code'dan farkı ne?</summary><p>Aynı Claude Agent SDK'yı incelemeye göre tasarlanmış bir masaüstü penceresinde çalıştırır: her yazmadan önce diff, her komut için onay, dosya bazında kabul ve ret, korumalı alan, harcama limitleri ve telefon kumandası.</p></details>
+        <details><summary>Hangi sistemlerde çalışır?</summary><p>Linux (Arch üzerinde geliştirildi; WebKitGTK 4.1 bulunan Debian/Ubuntu ve diğerlerinde çalışır). VOID Portal için Android 8 veya üstü gerekir.</p></details>
+        <details><summary>Başkasının relay'ini kullanabilir miyim?</summary><p>Kullanmayın: kendinizinkini kurun. Birkaç dakika sürer, ücretsizdir ve trafiğinizi ve erişilebilirliği kendi elinizde tutar.</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">Yapan <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub'daki kaynak kod</a> · MIT lisansı.<br />VOID Workshop bağımsız, açık kaynaklı bir projedir; Anthropic ile bağlantılı değildir ve Anthropic tarafından onaylanmamıştır. Claude kullanımı Anthropic'in koşullarına tabidir ve kendi hesabınıza faturalandırılır.</div>
+    </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
+  </body>
+</html>

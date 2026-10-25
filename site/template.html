@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="{{lang}}" dir="{{dir}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{attr:title}}</title>
+    <meta name="description" content="{{attr:description}}" />
+    <meta name="keywords" content="{{attr:keywords}}" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="{{url}}" />
+{{alternates}}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="{{url}}" />
+    <meta property="og:locale" content="{{ogLocale}}" />
+{{ogAlternates}}
+    <meta property="og:title" content="{{attr:ogTitle}}" />
+    <meta property="og:description" content="{{attr:ogDescription}}" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="{{attr:shotAlt}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{attr:ogTitle}}" />
+    <meta name="twitter:description" content="{{attr:ogDescription}}" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "{{url}}",
+            "inLanguage": "{{lang}}",
+            "description": {{json:ldWorkshop}},
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "{{url}}#portal",
+            "inLanguage": "{{lang}}",
+            "description": {{json:ldPortal}},
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+{{redirect}}
+    <link rel="icon" type="image/svg+xml" href="{{root}}logo.svg" />
+    <link rel="stylesheet" href="{{root}}style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="./"><img src="{{root}}logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">{{navHow}}</a>
+          <a href="#safety" class="hide-sm">{{navSafety}}</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">{{navRelay}}</a>
+          <a href="#install" class="hide-xs">{{navInstall}}</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop" class="hide-sm">GitHub</a>
+        </div>
+        <details class="lang">
+          <summary aria-label="{{attr:langLabel}}"><span aria-hidden="true">🌐</span> {{langName}}</summary>
+          <div class="menu">
+{{langMenu}}
+          </div>
+        </details>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="{{root}}logo.svg" alt="{{attr:logoAlt}}" />
+        <h1>{{heroTitle}}</h1>
+        <p class="lead">{{heroLead}}</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">{{ctaInstall}}</a>
+          <a class="btn" href="#portal">{{ctaPortal}}</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">{{ctaSource}}</a>
+        </div>
+        <div class="shot"><img src="{{root}}screenshots/workspace.png" alt="{{attr:shotAlt}}" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>{{howTitle}}</h2>
+        <p class="sub">{{howSub}}</p>
+        <div class="flow">
+          <div><b>{{flow1t}}</b><span>{{flow1d}}</span></div>
+          <div><b>{{flow2t}}</b><span>{{flow2d}}</span></div>
+          <div><b>{{flow3t}}</b><span>{{flow3d}}</span></div>
+          <div><b>{{flow4t}}</b><span>{{flow4d}}</span></div>
+          <div><b>{{flow5t}}</b><span>{{flow5d}}</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>{{reviewTitle}}</h2>
+          <p class="sub" style="margin-bottom: 18px">{{reviewSub}}</p>
+          <ul class="checks">
+            <li>{{review1}}</li>
+            <li>{{review2}}</li>
+            <li>{{review3}}</li>
+            <li>{{review4}}</li>
+          </ul>
+        </div>
+        <img src="{{root}}screenshots/review.png" alt="{{attr:reviewAlt}}" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>{{safetyTitle}}</h2>
+        <p class="sub">{{safetySub}}</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>{{safe1t}}</h3><p>{{safe1d}}</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>{{safe2t}}</h3><p>{{safe2d}}</p></div>
+          <div class="card"><span class="icon">✕</span><h3>{{safe3t}}</h3><p>{{safe3d}}</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>{{safe4t}}</h3><p>{{safe4d}}</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>{{safe5t}}</h3><p>{{safe5d}}</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>{{safe6t}}</h3><p>{{safe6d}}</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>{{billTitle}}</h2>
+          <p class="sub" style="margin-bottom: 18px">{{billSub}}</p>
+          <ul class="checks">
+            <li>{{bill1}}</li>
+            <li>{{bill2}}</li>
+            <li>{{bill3}}</li>
+            <li>{{bill4}}</li>
+          </ul>
+        </div>
+        <div class="note">{{billNote}}</div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="{{root}}screenshots/editor-nebula.png" alt="{{attr:editorAlt}}" loading="lazy" />
+        <div>
+          <h2>{{editorTitle}}</h2>
+          <p class="sub" style="margin-bottom: 18px">{{editorSub}}</p>
+          <ul class="checks">
+            <li>{{editor1}}</li>
+            <li>{{editor2}}</li>
+            <li>{{editor3}}</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>{{portalTitle}}</h2>
+        <p class="sub">{{portalSub}}</p>
+        <p class="wire">{{wire}}</p>
+        <ul class="checks">
+          <li>{{portal1}}</li>
+          <li>{{portal2}}</li>
+          <li>{{portal3}}</li>
+          <li>{{portal4}}</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="{{root}}screenshots/portal-home.png" alt="{{attr:portalAlt1}}" loading="lazy" /><figcaption>{{portalCap1}}</figcaption></figure>
+          <figure><img src="{{root}}screenshots/portal-approval.png" alt="{{attr:portalAlt2}}" loading="lazy" /><figcaption>{{portalCap2}}</figcaption></figure>
+          <figure><img src="{{root}}screenshots/portal-task.png" alt="{{attr:portalAlt3}}" loading="lazy" /><figcaption>{{portalCap3}}</figcaption></figure>
+          <figure><img src="{{root}}screenshots/portal-settings.png" alt="{{attr:portalAlt4}}" loading="lazy" /><figcaption>{{portalCap4}}</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>{{relayTitle}}</h2>
+        <p class="sub">{{relaySub}}</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>{{relay1t}}</b><span>{{relay1d}}</span></div>
+          <div><b>{{relay2t}}</b><span>{{relay2d}}</span></div>
+          <div><b>{{relay3t}}</b><span>{{relay3d}}</span></div>
+          <div><b>{{relay4t}}</b><span>{{relay4d}}</span></div>
+          <div><b>{{relay5t}}</b><span>{{relay5d}}</span></div>
+        </div>
+        <pre><span class="c"># {{relayC1}}</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># {{relayC2}}</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># {{relayC3}}</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">{{relayAfter}}</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>{{themesTitle}}</h2>
+        <p class="sub">{{themesSub}}</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="{{root}}screenshots/themes.png" alt="{{attr:themesAlt}}" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>{{installTitle}}</h2>
+        <p class="sub">{{installSub}}</p>
+        <pre><span class="c"># {{inst1}}</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    {{inst1b}}</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># {{inst2}}</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># {{inst3}}</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td>{{instPortal}}</td></tr>
+          <tr><th>{{instUpdate}}</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>{{instUninstall}}</th><td>{{instUninstallD}}</td></tr>
+          <tr><th>{{instGuides}}</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">{{gPlan}}</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">{{gKey}}</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">{{gBilling}}</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">{{gSecurity}}</a>{{guidesNote}}</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>{{faqTitle}}</h2>
+        <p class="sub">{{faqSub}}</p>
+        <details><summary>{{q1}}</summary><p>{{a1}}</p></details>
+        <details><summary>{{q2}}</summary><p>{{a2}}</p></details>
+        <details><summary>{{q3}}</summary><p>{{a3}}</p></details>
+        <details><summary>{{q4}}</summary><p>{{a4}}</p></details>
+        <details><summary>{{q5}}</summary><p>{{a5}}</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">{{footer}}</div>
+    </footer>
+    <script>
+      // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
+      document.querySelectorAll('.lang .menu a').forEach((a) =>
+        a.addEventListener('click', () => {
+          try {
+            localStorage.setItem('vw-lang', a.dataset.lang);
+          } catch {}
+        }),
+      );
+      // Close the language menu on a click outside it or on Escape.
+      const menu = document.querySelector('.lang');
+      document.addEventListener('click', (e) => {
+        if (menu.open && !menu.contains(e.target)) menu.open = false;
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') menu.open = false;
+      });
+    </script>
+  </body>
+</html>

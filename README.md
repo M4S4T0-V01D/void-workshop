@@ -172,6 +172,10 @@ VOID_LIVE_SDK=1 npm test    # also run zero-cost checks against the real Agent S
 
 See [guides/security.md](guides/security.md) for the full security model and known limitations.
 
+## Website
+
+The [project site](https://m4s4t0-v01d.github.io/void-workshop/) is served by GitHub Pages from `docs/` in 13 languages. Pages are generated: edit `site/template.html` or a translation in `site/i18n/<lang>.json` (`en.json` is the source of truth), then run `node site/build.mjs`. The build refuses a translation with a missing key or markup that differs from English; `node site/build.mjs --check` fails if `docs/` is out of date.
+
 ## Author and license
 
 Made by [M4S4T0-V01D](https://github.com/M4S4T0-V01D). MIT licensed, see [LICENSE](LICENSE). VOID Workshop is an independent project, not affiliated with or endorsed by Anthropic. Use of the Claude API is subject to Anthropic's terms.
