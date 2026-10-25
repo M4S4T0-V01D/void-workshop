@@ -40,7 +40,13 @@ export function RightPanel({
   const pendingReview = review.filter((r) => !['accepted', 'rejected', 'committed'].includes(r.status)).length;
   return (
     <>
-      <div className="tabs">
+      <div
+        className="tabs panel-tabs"
+        onWheel={(e) => {
+          // A vertical wheel scrolls the tab row sideways when it overflows.
+          if (e.deltaY && !e.deltaX) e.currentTarget.scrollLeft += e.deltaY;
+        }}
+      >
         <button className={`tab ${tab === 'plan' ? 'active' : ''}`} onClick={() => setTab('plan')}>
           Plan {visiblePlan.length > 0 && <span className="count">{visiblePlan.length}</span>}
         </button>

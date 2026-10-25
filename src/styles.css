@@ -1951,6 +1951,21 @@ a {
   scrollbar-width: thin;
   background: var(--panel);
 }
+.panel-tabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+.panel-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+.panel-tabs::-webkit-scrollbar-thumb {
+  border-width: 1px;
+}
+.panel-tabs .tab {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 .editor-tabs .tab {
   display: inline-flex;
   align-items: center;
