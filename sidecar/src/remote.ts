@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import QRCode from 'qrcode';
+import { relaySource, type UpdateSource } from './updater.js';
 import { DEFAULT_RELAY, deriveKeys, open, pairingLink, seal, type PairKeys } from './remoteCrypto.js';
 import { clip, redactValue } from './redact.js';
 import { log } from './log.js';
@@ -337,13 +338,13 @@ export class RemoteBridge {
   }
 
   /** Credentials for the relay's update downloads: any paired phone's channel will do. */
-  updateSource(): { baseUrl: string; headers: Record<string, string> } | null {
+  updateSource(): UpdateSource | null {
     const link = this.links.values().next().value as DeviceLink | undefined;
     if (!link || !this.config.relayUrl) return null;
-    return {
-      baseUrl: this.config.relayUrl.replace(/^ws/, 'http'),
-      headers: { 'x-void-channel': link.keys.channelId, authorization: `Bearer ${link.keys.token}` },
-    };
+    return relaySource(this.config.relayUrl.replace(/^ws/, 'http'), {
+      'x-void-channel': link.keys.channelId,
+      authorization: `Bearer ${link.keys.token}`,
+    });
   }
 
   status(): { relayUrl: string; devices: DeviceStatus[] } {

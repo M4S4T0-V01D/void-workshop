@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { UPDATE_PRODUCT, Updater, compareVersions, verifyRelease, type Release } from '../src/updater.js';
+import { UPDATE_PRODUCT, Updater, compareVersions, githubSource, relaySource, verifyRelease, type Release } from '../src/updater.js';
 
 const { privateKey, publicKey } = generateKeyPairSync('ed25519');
 const PUB = publicKey.export({ type: 'spki', format: 'pem' }).toString();
@@ -48,7 +48,7 @@ function server(latest: unknown, pkg: Buffer | null) {
   return { fetchFn, seen };
 }
 
-const source = () => ({ baseUrl: 'https://relay.test', headers: { 'x-void-channel': 'c'.repeat(32), authorization: 'Bearer t' } });
+const source = () => relaySource('https://relay.test', { 'x-void-channel': 'c'.repeat(32), authorization: 'Bearer t' });
 
 describe('desktop updates', () => {
   it('compares x.y.z versions numerically', () => {
@@ -77,7 +77,7 @@ describe('desktop updates', () => {
     expect((await mk('0.2.0').check()).status).toBe('current');
     expect((await mk('0.1.9').check()).status).toBe('current');
     const unpaired = new Updater({ current: '0.2.0', publicKey: PUB, dir: tmp(), source: () => null });
-    expect(await unpaired.check()).toMatchObject({ status: 'unavailable', reason: expect.stringMatching(/pair a phone/) });
+    expect(await unpaired.check()).toMatchObject({ status: 'unavailable', reason: expect.stringMatching(/update repository.*pair a phone/) });
   });
 
   it('downloads, checks and unpacks a signed package', async () => {
@@ -103,5 +103,76 @@ describe('desktop updates', () => {
     await expect(run({ sha256: sha, size: pkg.length + 1 })).rejects.toThrow(/shorter/);
     const wrong = makePackage('0.3.0', '0.2.5');
     await expect(run({ sha256: createHash('sha256').update(wrong).digest('hex'), size: wrong.length }, wrong)).rejects.toThrow(/not the release/);
+  });
+
+  describe('GitHub releases source', () => {
+    const API = 'https://api.github.com/repos/octo/fork';
+    /** A fake api.github.com with a releases list and asset downloads. */
+    function github(releases: unknown[], files: Record<string, Buffer | string>) {
+      const seen: { url: string; headers: Record<string, string> }[] = [];
+      const fetchFn = (async (url: string, init?: RequestInit) => {
+        const headers = (init?.headers ?? {}) as Record<string, string>;
+        seen.push({ url, headers });
+        if (url === `${API}/releases?per_page=30`) return new Response(JSON.stringify(releases), { status: 200 });
+        const id = /\/releases\/assets\/(\w+)$/.exec(url)?.[1];
+        const body = id ? files[id] : undefined;
+        if (body === undefined || headers.Accept !== 'application/octet-stream') return new Response('no', { status: 404 });
+        return new Response(typeof body === 'string' ? body : new Uint8Array(body), { status: 200 });
+      }) as unknown as typeof fetch;
+      return { fetchFn, seen };
+    }
+    const rel = (tag: string, extra: object = {}) => ({
+      tag_name: tag,
+      draft: false,
+      prerelease: false,
+      assets: [
+        { name: 'latest.json', url: `${API}/releases/assets/${tag.replace(/\W/g, '_')}_m`, size: 1 },
+        { name: `void-workshop-${tag.replace('workshop-v', '')}.tar.gz`, url: `${API}/releases/assets/${tag.replace(/\W/g, '_')}_p`, size: 1 },
+      ],
+      ...extra,
+    });
+
+    it('installs the newest workshop release, skipping drafts, prereleases and Portal tags', async () => {
+      const pkg = makePackage('0.3.0');
+      const sha = createHash('sha256').update(pkg).digest('hex');
+      const { fetchFn, seen } = github(
+        [
+          rel('workshop-v0.9.0', { draft: true }),
+          rel('workshop-v0.8.0', { prerelease: true }),
+          rel('portal-v2.0.0'),
+          rel('workshop-v0.3.0'),
+          rel('workshop-v0.2.0'),
+        ],
+        { workshop_v0_3_0_m: JSON.stringify(signed({ version: '0.3.0', sha256: sha, size: pkg.length })), workshop_v0_3_0_p: pkg },
+      );
+      const u = new Updater({ current: '0.2.0', publicKey: PUB, dir: tmp(), source: () => githubSource('octo/fork', async () => null), fetch: fetchFn });
+      expect(await u.check()).toMatchObject({ status: 'available', source: 'github.com/octo/fork', release: { version: '0.3.0' } });
+      const { dir: tree } = await u.prepare();
+      expect(fs.existsSync(path.join(tree, 'RELEASE'))).toBe(true);
+      // Not signed in: no Authorization header anywhere.
+      expect(seen.every((s) => !s.headers.Authorization)).toBe(true);
+    });
+
+    it('still requires the pinned signature', async () => {
+      const { fetchFn } = github([rel('workshop-v0.3.0')], { workshop_v0_3_0_m: JSON.stringify(signed({ version: '0.3.0' }, other.privateKey)) });
+      const u = new Updater({ current: '0.2.0', publicKey: PUB, dir: tmp(), source: () => githubSource('octo/fork', async () => null), fetch: fetchFn });
+      await expect(u.check()).rejects.toThrow(/signature/);
+    });
+
+    it('sends the GitHub token for private forks and reports missing releases', async () => {
+      const { fetchFn, seen } = github([rel('portal-v1.0.0')], {});
+      const u = new Updater({ current: '0.2.0', publicKey: PUB, dir: tmp(), source: () => githubSource('octo/fork', async () => 'ghp_x'), fetch: fetchFn });
+      expect(await u.check()).toMatchObject({ status: 'unavailable', source: 'github.com/octo/fork', reason: expect.stringMatching(/No desktop release/) });
+      expect(seen[0]?.headers.Authorization).toBe('Bearer ghp_x');
+    });
+
+    it('rejects bad repository names and asset URLs off api.github.com', async () => {
+      expect(() => githubSource('../etc', async () => null)).toThrow(/Not a GitHub repository/);
+      expect(() => githubSource('octo/fork/extra', async () => null)).toThrow();
+      const evil = { ...rel('workshop-v0.3.0'), assets: [{ name: 'latest.json', url: 'https://evil.test/x', size: 1 }] };
+      const { fetchFn } = github([evil], {});
+      const u = new Updater({ current: '0.2.0', publicKey: PUB, dir: tmp(), source: () => githubSource('octo/fork', async () => 'ghp_x'), fetch: fetchFn });
+      await expect(u.check()).rejects.toThrow(/has no latest.json/);
+    });
   });
 });

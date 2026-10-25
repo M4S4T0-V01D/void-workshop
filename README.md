@@ -4,7 +4,7 @@
 
 <p align="center">A local, approval-first AI coding workspace for Linux, powered by the Claude Agent SDK and <b>your own Claude plan or Anthropic Console API key</b>.</p>
 
-<p align="center"><a href="https://m4s4t0-v01d.github.io/void-workshop/">Website</a> · <a href="#install">Install</a> · <a href="#void-portal-your-phone-as-a-remote">VOID Portal</a> · <a href="guides/api-key.md">API key setup</a> · <a href="guides/claude-plan.md">Claude plan</a> · <a href="guides/billing.md">Billing &amp; limits</a> · <a href="guides/security.md">Security model</a></p>
+<p align="center"><a href="https://m4s4t0-v01d.github.io/void-workshop/">Website</a> · <a href="#install">Install</a> · <a href="#void-portal-your-phone-as-a-remote">VOID Portal</a> · <a href="guides/api-key.md">API key setup</a> · <a href="guides/claude-plan.md">Claude plan</a> · <a href="guides/billing.md">Billing &amp; limits</a> · <a href="guides/security.md">Security model</a> · <a href="guides/forking.md">Forking</a></p>
 
 ---
 

@@ -4,65 +4,37 @@ import { call, errorText, onSidecarEvent, openServiceUrl } from '../../api';
 import type { CloudflareStatus, GithubDeviceCode, GithubStatus, Settings } from '../../types';
 import { Callout } from '../common';
 import { CopyLink } from './AccountSections';
-import { notifyServicesChanged } from '../ServicePanels';
+import { GithubMark, notifyServicesChanged } from '../ServicePanels';
 
 type ToastFn = (t: 'info' | 'warn' | 'error', m: string) => void;
 
 const OAUTH_APPS = 'https://github.com/settings/developers';
+const NEW_OAUTH_APP = 'https://github.com/settings/applications/new';
 const CF_TOKENS = 'https://dash.cloudflare.com/profile/api-tokens';
 
 const storedIn = (b: 'secret-service' | 'file' | null) =>
   b === 'secret-service' ? 'Desktop Secret Service (KWallet / GNOME Keyring)' : b === 'file' ? 'Owner-only key file (0600)' : '—';
 
+/** One toast per finished sign-in, even when Settings and the panel both listen. */
+let lastSignInToast = 0;
+
 export function GithubSection({ settings, save, toast }: { settings: Settings; save: (p: Partial<Settings>) => Promise<void>; toast: ToastFn }) {
   const [status, setStatus] = useState<GithubStatus | null>(null);
-  const [clientId, setClientId] = useState(settings.githubClientId);
-  const [code, setCode] = useState<GithubDeviceCode | null>(null);
-  const [token, setToken] = useState('');
-  const [busy, setBusy] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     let live = true;
     call<GithubStatus>('github.status')
-      .then((s) => {
-        if (!live) return;
-        setStatus(s);
-        setCode(s.pending);
-      })
+      .then((s) => live && setStatus(s))
       .catch((err) => toast('error', errorText(err)));
     const off = onSidecarEvent((e) => {
-      if (e.event !== 'github.changed') return;
-      const p = e.payload as { status: GithubStatus; error: string | null };
-      setStatus(p.status);
-      setCode(null);
-      if (p.error) toast('error', p.error);
-      else if (p.status.login) toast('info', `Signed in to GitHub as ${p.status.login}.`);
-      notifyServicesChanged();
+      if (e.event === 'github.changed') setStatus((e.payload as { status: GithubStatus }).status);
     });
     return () => {
       live = false;
       void off.then((f) => f());
     };
   }, [toast]);
-
-  const run = async (what: string, fn: () => Promise<void>) => {
-    setBusy(what);
-    try {
-      await fn();
-    } catch (err) {
-      toast('error', errorText(err));
-    } finally {
-      setBusy(null);
-    }
-  };
-
-  const signIn = () =>
-    run('login', async () => {
-      if (clientId !== settings.githubClientId) await save({ githubClientId: clientId.trim() });
-      const c = await call<GithubDeviceCode>('github.login');
-      setCode(c);
-      await openServiceUrl(c.verificationUri);
-    });
 
   const signedIn = !!status?.configured && !status.problem;
 
@@ -102,108 +74,203 @@ export function GithubSection({ settings, save, toast }: { settings: Settings; s
         <div className="row">
           <button
             className="btn"
-            disabled={!!busy}
-            onClick={() =>
-              void run('logout', async () => {
-                setStatus(await call<GithubStatus>('github.logout'));
-                notifyServicesChanged();
-              })
-            }
+            disabled={busy}
+            onClick={() => {
+              setBusy(true);
+              call<GithubStatus>('github.logout')
+                .then((s) => {
+                  setStatus(s);
+                  notifyServicesChanged();
+                })
+                .catch((err) => toast('error', errorText(err)))
+                .finally(() => setBusy(false));
+            }}
           >
             <LogOut size={14} /> Sign out of GitHub
           </button>
         </div>
       ) : (
-        <>
-          <h4>Sign in with your OAuth App</h4>
-          <Callout tone="info">
-            Register an OAuth App at GitHub → Settings → Developer settings → OAuth Apps (any homepage and callback URL), tick <b>Enable Device Flow</b>, and
-            paste its <b>Client ID</b> here. No client secret is needed.
-          </Callout>
-          <CopyLink url={OAUTH_APPS} />
-          <div className="row">
-            <input
-              style={{ flex: 1 }}
-              placeholder="Client ID, e.g. Ov23li…"
-              value={clientId}
-              spellCheck={false}
-              onChange={(e) => setClientId(e.target.value.trim())}
-            />
-            <button className="btn ghost" disabled={clientId === settings.githubClientId} onClick={() => void save({ githubClientId: clientId })}>
-              <Save size={14} /> Save
-            </button>
-            <button className="btn primary" disabled={!clientId || !!busy || !!code} onClick={() => void signIn()}>
-              {busy === 'login' ? <Loader2 size={14} className="spin" /> : <LogIn size={14} />} Sign in
-            </button>
-          </div>
-          {code && (
-            <div className="device-code">
-              <p>Enter this code on GitHub (the page opened in your browser):</p>
-              <div className="row">
-                <code className="code-big">{code.userCode}</code>
-                <button className="btn small" onClick={() => void navigator.clipboard.writeText(code.userCode)}>
-                  Copy
-                </button>
-                <button className="btn small" onClick={() => void openServiceUrl(code.verificationUri).catch((err) => toast('error', errorText(err)))}>
-                  <ExternalLink size={13} /> Open {code.verificationUri.replace(/^https:\/\//, '')}
-                </button>
-                <button
-                  className="btn small ghost"
-                  onClick={() =>
-                    void run('cancel', async () => {
-                      await call('github.loginCancel');
-                      setCode(null);
-                    })
-                  }
-                >
-                  <X size={13} /> Cancel
-                </button>
-              </div>
-              <p className="muted row">
-                <Loader2 size={12} className="spin" /> Waiting for GitHub… the code expires {new Date(code.expiresAt).toLocaleTimeString()}.
-              </p>
-            </div>
-          )}
-
-          <h4>Or paste a token</h4>
-          <p className="muted">
-            A personal access token works too (classic with <code>repo</code>, or fine-grained with read access to the repositories, plus write to issues and
-            pull requests for commenting).
-          </p>
-          <div className="row">
-            <input
-              type="password"
-              style={{ flex: 1 }}
-              placeholder="ghp_… or github_pat_…"
-              value={token}
-              autoComplete="off"
-              onChange={(e) => setToken(e.target.value)}
-            />
-            <button
-              className="btn"
-              disabled={!token || !!busy}
-              onClick={() =>
-                void run('token', async () => {
-                  const s = await call<GithubStatus>('github.setToken', { token });
-                  setToken('');
-                  setStatus(s);
-                  notifyServicesChanged();
-                  toast('info', `Signed in to GitHub as ${s.login}.`);
-                })
-              }
-            >
-              {busy === 'token' ? <Loader2 size={14} className="spin" /> : <Save size={14} />} Store token
-            </button>
-          </div>
-        </>
+        status && <GithubConnect settings={settings} save={save} toast={toast} pending={status.pending} onSignedIn={setStatus} />
       )}
     </>
   );
 }
 
+/**
+ * Sign in to GitHub: the device flow with the user's OAuth App, or a pasted token. Used in Settings and,
+ * compact, in the GitHub panel itself.
+ */
+export function GithubConnect({
+  settings,
+  save,
+  toast,
+  pending,
+  onSignedIn,
+  compact = false,
+}: {
+  settings: Settings;
+  save: (p: Partial<Settings>) => Promise<void>;
+  toast: ToastFn;
+  pending: GithubDeviceCode | null;
+  onSignedIn?: (s: GithubStatus) => void;
+  compact?: boolean;
+}) {
+  const [clientId, setClientId] = useState(settings.githubClientId);
+  const [editId, setEditId] = useState(!settings.githubClientId);
+  const [code, setCode] = useState<GithubDeviceCode | null>(pending);
+  const [token, setToken] = useState('');
+  const [showToken, setShowToken] = useState(!compact);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  useEffect(() => setCode(pending), [pending]);
+  useEffect(() => {
+    const off = onSidecarEvent((e) => {
+      if (e.event !== 'github.changed') return;
+      const p = e.payload as { status: GithubStatus; error: string | null };
+      setCode(null);
+      notifyServicesChanged();
+      if (Date.now() - lastSignInToast < 2000) return;
+      lastSignInToast = Date.now();
+      if (p.error) toast('error', p.error);
+      else if (p.status.login) toast('info', `Signed in to GitHub as ${p.status.login}.`);
+    });
+    return () => void off.then((f) => f());
+  }, [toast]);
+
+  const run = async (what: string, fn: () => Promise<void>) => {
+    setBusy(what);
+    try {
+      await fn();
+    } catch (err) {
+      toast('error', errorText(err));
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const signIn = () =>
+    run('login', async () => {
+      const id = clientId.trim();
+      if (id !== settings.githubClientId) await save({ githubClientId: id });
+      setEditId(false);
+      const c = await call<GithubDeviceCode>('github.login');
+      setCode(c);
+      await openServiceUrl(c.verificationUri);
+    });
+
+  const storeToken = () =>
+    run('token', async () => {
+      const s = await call<GithubStatus>('github.setToken', { token });
+      setToken('');
+      onSignedIn?.(s);
+      notifyServicesChanged();
+      toast('info', `Signed in to GitHub as ${s.login}.`);
+    });
+
+  if (code)
+    return (
+      <div className="device-code">
+        <p>Enter this code on GitHub (the page opened in your browser):</p>
+        <div className="row wrap">
+          <code className="code-big">{code.userCode}</code>
+          <button className="btn small" onClick={() => void navigator.clipboard.writeText(code.userCode)}>
+            Copy
+          </button>
+          <button className="btn small" onClick={() => void openServiceUrl(code.verificationUri).catch((err) => toast('error', errorText(err)))}>
+            <ExternalLink size={13} /> Open {code.verificationUri.replace(/^https:\/\//, '')}
+          </button>
+          <button
+            className="btn small ghost"
+            onClick={() =>
+              void run('cancel', async () => {
+                await call('github.loginCancel');
+                setCode(null);
+              })
+            }
+          >
+            <X size={13} /> Cancel
+          </button>
+        </div>
+        <p className="muted row">
+          <Loader2 size={12} className="spin" /> Waiting for GitHub… the code expires {new Date(code.expiresAt).toLocaleTimeString()}.
+        </p>
+      </div>
+    );
+
+  return (
+    <div className={compact ? 'service-connect' : undefined}>
+      {editId ? (
+        <>
+          {!compact && <h4>Sign in with your OAuth App</h4>}
+          <Callout tone="info">
+            Register an OAuth App on GitHub (any homepage and callback URL), tick <b>Enable Device Flow</b>, and paste its <b>Client ID</b> here. No client
+            secret is needed.
+          </Callout>
+          <div className="row wrap">
+            <button className="btn small" onClick={() => void openServiceUrl(NEW_OAUTH_APP).catch((err) => toast('error', errorText(err)))}>
+              <ExternalLink size={13} /> Register an OAuth App
+            </button>
+            {!compact && <CopyLink url={OAUTH_APPS} />}
+          </div>
+          <div className="row">
+            <input
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder="Client ID, e.g. Ov23li…"
+              value={clientId}
+              spellCheck={false}
+              onChange={(e) => setClientId(e.target.value.trim())}
+            />
+            <button className="btn primary" disabled={!clientId || !!busy} onClick={() => void signIn()}>
+              {busy === 'login' ? <Loader2 size={14} className="spin" /> : <LogIn size={14} />} Sign in
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="row wrap">
+          <button className="btn primary" disabled={!!busy} onClick={() => void signIn()}>
+            {busy === 'login' ? <Loader2 size={14} className="spin" /> : <GithubMark size={14} />} Sign in with GitHub
+          </button>
+          <button className="btn small ghost" title={`Client ID ${settings.githubClientId}`} onClick={() => setEditId(true)}>
+            Change OAuth App
+          </button>
+        </div>
+      )}
+
+      {showToken ? (
+        <>
+          {compact ? <p className="muted">Or paste a personal access token:</p> : <h4>Or paste a token</h4>}
+          {!compact && (
+            <p className="muted">
+              A personal access token works too (classic with <code>repo</code>, or fine-grained with read access to the repositories, plus write to issues and
+              pull requests for commenting).
+            </p>
+          )}
+          <div className="row">
+            <input
+              type="password"
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder="ghp_… or github_pat_…"
+              value={token}
+              autoComplete="off"
+              onChange={(e) => setToken(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && token && !busy && void storeToken()}
+            />
+            <button className="btn" disabled={!token || !!busy} onClick={() => void storeToken()}>
+              {busy === 'token' ? <Loader2 size={14} className="spin" /> : <Save size={14} />} {compact ? 'Use' : 'Store token'}
+            </button>
+          </div>
+        </>
+      ) : (
+        <button className="link small" onClick={() => setShowToken(true)}>
+          Use a personal access token instead
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function CloudflareSection({ toast }: { toast: ToastFn }) {
   const [status, setStatus] = useState<CloudflareStatus | null>(null);
-  const [token, setToken] = useState('');
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -266,42 +333,66 @@ export function CloudflareSection({ toast }: { toast: ToastFn }) {
           </button>
         </div>
       ) : (
-        <>
-          <Callout tone="info">
-            Create a token under My Profile → API Tokens with the <b>Read all resources</b> template (or a custom token with Account Settings, Workers Scripts,
-            Pages, R2, D1 and Workers KV set to Read). Don't use the Global API Key.
-          </Callout>
-          <div className="row">
-            <button className="btn small" onClick={() => void openServiceUrl(CF_TOKENS).catch((err) => toast('error', errorText(err)))}>
-              <ExternalLink size={13} /> Open API Tokens
-            </button>
-          </div>
-          <div className="row">
-            <input
-              type="password"
-              style={{ flex: 1 }}
-              placeholder="Cloudflare API token"
-              value={token}
-              autoComplete="off"
-              onChange={(e) => setToken(e.target.value)}
-            />
-            <button
-              className="btn primary"
-              disabled={!token || busy}
-              onClick={() =>
-                void run(async () => {
-                  const s = await call<CloudflareStatus>('cloudflare.setToken', { token });
-                  setToken('');
-                  return s;
-                }, 'Cloudflare token stored and checked.')
-              }
-            >
-              {busy ? <Loader2 size={14} className="spin" /> : <Save size={14} />} Store token
-            </button>
-          </div>
-        </>
+        status && <CloudflareConnect toast={toast} onConnected={setStatus} />
       )}
     </>
+  );
+}
+
+/** Store a Cloudflare API token; used in Settings and, compact, in the Cloudflare panel. */
+export function CloudflareConnect({ toast, onConnected, compact = false }: { toast: ToastFn; onConnected?: (s: CloudflareStatus) => void; compact?: boolean }) {
+  const [token, setToken] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const store = async () => {
+    setBusy(true);
+    try {
+      const s = await call<CloudflareStatus>('cloudflare.setToken', { token });
+      setToken('');
+      onConnected?.(s);
+      notifyServicesChanged();
+      toast('info', 'Cloudflare token stored and checked.');
+    } catch (err) {
+      toast('error', errorText(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className={compact ? 'service-connect' : undefined}>
+      <Callout tone="info">
+        {compact ? (
+          <>
+            Create an API token with the <b>Read all resources</b> template and paste it here. Don't use the Global API Key.
+          </>
+        ) : (
+          <>
+            Create a token under My Profile → API Tokens with the <b>Read all resources</b> template (or a custom token with Account Settings, Workers Scripts,
+            Pages, R2, D1 and Workers KV set to Read). Don't use the Global API Key.
+          </>
+        )}
+      </Callout>
+      <div className="row">
+        <button className="btn small" onClick={() => void openServiceUrl(CF_TOKENS).catch((err) => toast('error', errorText(err)))}>
+          <ExternalLink size={13} /> Open API Tokens
+        </button>
+      </div>
+      <div className="row">
+        <input
+          type="password"
+          style={{ flex: 1, minWidth: 0 }}
+          placeholder="Cloudflare API token"
+          value={token}
+          autoComplete="off"
+          onChange={(e) => setToken(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && token && !busy && void store()}
+        />
+        <button className="btn primary" disabled={!token || busy} onClick={() => void store()}>
+          {busy ? <Loader2 size={14} className="spin" /> : <Save size={14} />} {compact ? 'Connect' : 'Store token'}
+        </button>
+      </div>
+    </div>
   );
 }
 

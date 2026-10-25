@@ -159,6 +159,11 @@ export class GithubService {
     this.keys = new KeyStore(keyFile, keyMode, GITHUB_SECRET);
   }
 
+  /** The stored token, or null; for update downloads from a private fork's releases. */
+  async tokenOrNull(): Promise<string | null> {
+    return (await this.keys.read())?.key ?? null;
+  }
+
   private async token(): Promise<string> {
     const found = await this.keys.read();
     if (!found) throw new ServiceError('not-signed-in', 'Sign in with GitHub first (Settings → Accounts).');

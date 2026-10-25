@@ -1,7 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { ArrowLeftToLine, ArrowRightToLine, ChevronDown, ChevronRight, Cloud, ExternalLink, Lock, RefreshCw } from 'lucide-react';
 import { call, errorText, onSidecarEvent, openServiceUrl } from '../api';
-import type { CfResource, CfSection, CloudflareResources, CloudflareStatus, GithubListEntry, GithubListKind, GithubRepo, GithubStatus } from '../types';
+import type {
+  CfResource,
+  CfSection,
+  CloudflareResources,
+  CloudflareStatus,
+  GithubListEntry,
+  GithubListKind,
+  GithubRepo,
+  GithubStatus,
+  Settings,
+} from '../types';
+import { CloudflareConnect, GithubConnect } from './settings/ServiceSections';
 import { Callout, timeAgo } from './common';
 
 /** Sign-in changes in Settings tell the open panels to load again. */
@@ -43,12 +54,13 @@ function MoveButton({ side, onMove }: { side: Side; onMove: () => void }) {
   );
 }
 
-function SignInPrompt({ what, onOpenSettings }: { what: string; onOpenSettings: () => void }) {
+function SignInPrompt({ what, problem, onOpenSettings, children }: { what: string; problem: string | null; onOpenSettings: () => void; children: ReactNode }) {
   return (
-    <div className="empty-small">
-      <p>{what}</p>
-      <button className="btn small" onClick={onOpenSettings}>
-        Open Settings → GitHub &amp; Cloudflare
+    <div className="service-signin">
+      {problem ? <Callout tone="bad">{problem}</Callout> : <p className="muted">{what}</p>}
+      {children}
+      <button className="link small" onClick={onOpenSettings}>
+        More in Settings → GitHub &amp; Cloudflare
       </button>
     </div>
   );
@@ -67,6 +79,8 @@ export function GithubPanel({
   onMove,
   onOpenItem,
   onOpenSettings,
+  settings,
+  save,
   toast,
 }: {
   root: string | null;
@@ -74,6 +88,8 @@ export function GithubPanel({
   onMove: () => void;
   onOpenItem: (number: number, title: string) => void;
   onOpenSettings: () => void;
+  settings: Settings;
+  save: (p: Partial<Settings>) => Promise<void>;
   toast: ToastFn;
 }) {
   const [status, setStatus] = useState<GithubStatus | null>(null);
@@ -142,7 +158,15 @@ export function GithubPanel({
   let body;
   if (!status) body = error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">Loading…</div>;
   else if (!status.configured || status.problem)
-    body = <SignInPrompt what={status.problem ?? 'Sign in to GitHub to see pull requests, issues and Actions runs here.'} onOpenSettings={onOpenSettings} />;
+    body = (
+      <SignInPrompt
+        what="Sign in to GitHub to see this project's pull requests, issues and Actions runs here."
+        problem={status.problem}
+        onOpenSettings={onOpenSettings}
+      >
+        <GithubConnect compact settings={settings} save={save} toast={toast} pending={status.pending} />
+      </SignInPrompt>
+    );
   else if (!root) body = <div className="empty-small">Open a project.</div>;
   else if (repo === undefined) body = <div className="empty-small">Loading…</div>;
   else if (repo === null) body = <div className="empty-small">This project has no GitHub remote (git remote -v).</div>;
@@ -280,7 +304,11 @@ export function CloudflarePanel({
   let body;
   if (!status) body = error ? <Callout tone="bad">{error}</Callout> : <div className="empty-small">Loading…</div>;
   else if (!status.configured || status.problem)
-    body = <SignInPrompt what={status.problem ?? 'Add a Cloudflare API token to see Workers, Pages, R2, D1 and KV here.'} onOpenSettings={onOpenSettings} />;
+    body = (
+      <SignInPrompt what="Add a Cloudflare API token to see Workers, Pages, R2, D1 and KV here." problem={status.problem} onOpenSettings={onOpenSettings}>
+        <CloudflareConnect compact toast={toast} />
+      </SignInPrompt>
+    );
   else if (!accountId) body = <div className="empty-small">This token can't see any account.</div>;
   else
     body = (

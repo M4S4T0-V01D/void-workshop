@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FORK_DEFAULTS } from './fork.js';
 
 export const EFFORT_LEVELS = ['low', 'medium', 'high', 'xhigh', 'max'] as const;
 
@@ -246,6 +247,11 @@ export const SettingsSchema = z.object({
     .regex(/^[A-Za-z0-9._-]*$/, 'A GitHub client ID has only letters, digits, dots, dashes and underscores.'),
   /** Which side panel holds the GitHub and Cloudflare tabs. */
   servicesPanel: z.enum(SERVICE_PANELS),
+  /** owner/name of a GitHub repository whose releases carry signed desktop updates; empty uses the VOID Portal relay. */
+  updateRepo: z
+    .string()
+    .max(141)
+    .regex(/^(?:[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100})?$/, 'Enter the repository as owner/name, e.g. octo/void-workshop.'),
 });
 export type Settings = z.infer<typeof SettingsSchema>;
 
@@ -286,6 +292,7 @@ export const DEFAULT_SETTINGS: Settings = {
   startAtLogin: false,
   githubClientId: '',
   servicesPanel: 'right',
+  updateRepo: FORK_DEFAULTS.updateRepo,
 };
 
 export const SettingsPatchSchema = SettingsSchema.partial();

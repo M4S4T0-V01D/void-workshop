@@ -1,0 +1,8 @@
+{
+  "updateRepo": "",
+  "relayUrl": "",
+  "relayWorker": "void-relay",
+  "updateBucket": "void-portal-updates",
+  "gitRemote": "origin",
+  "publishToR2": true
+}

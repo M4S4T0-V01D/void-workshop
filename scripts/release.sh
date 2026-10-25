@@ -4,8 +4,10 @@
 #   2. signs a manifest {product, version, sha256, size, notes, date} with the Ed25519 key from
 #      ./scripts/update-key.sh (asks for its passphrase) and checks the signature against the pinned key,
 #   3. uploads the package, then the manifest, to the relay's private R2 bucket (desktop/), where installed
-#      copies paired with VOID Portal find it (Settings → Updates),
-#   4. creates a GitHub Release workshop-v<version> on GitHub as a record.
+#      copies paired with VOID Portal find it (skipped when fork.json has "publishToR2": false),
+#   4. creates a GitHub Release workshop-v<version> with both attached, in fork.json's updateRepo (or this
+#      checkout's default repo); installs with that update repository set get it from there (Settings → Updates).
+# The bucket, repository and git remote come from fork.json (scripts/fork-setup.sh, guides/forking.md).
 #
 # Bump the version (package.json files, Cargo, tauri.conf.json, sidecar/src/config.ts), add a CHANGELOG.md
 # section and commit first, then:   ./scripts/release.sh            (or --dry-run: package and sign only)
@@ -15,6 +17,7 @@ DRY=false
 [ "${1:-}" = "--dry-run" ] && DRY=true
 KEY="${VOID_SIGNING_KEY:-$HOME/.void-signing/workshop-update.pem}"
 PIN=sidecar/src/updateKey.ts
+source scripts/fork-env.sh
 
 version=$(grep -oP "^export const APP_VERSION = '\K[0-9]+\.[0-9]+\.[0-9]+" sidecar/src/config.ts)
 for f in package.json sidecar/package.json src-tauri/tauri.conf.json; do
@@ -28,7 +31,7 @@ notes=$(awk -v v="$version" '$0 ~ "^## " v "( |$)" {on=1; next} on && /^## / {ex
 [ -n "$notes" ] || { echo "CHANGELOG.md has no section for $version." >&2; exit 1; }
 if ! $DRY; then
   git diff --quiet HEAD || { echo "Commit your changes first (the release is tagged at HEAD)." >&2; exit 1; }
-  if gh release view "$tag" >/dev/null 2>&1; then echo "$tag already exists: bump the version first." >&2; exit 1; fi
+  if gh release view "$tag" "${FORK_GH[@]}" >/dev/null 2>&1; then echo "$tag already exists: bump the version first." >&2; exit 1; fi
 fi
 
 ./scripts/build.sh
@@ -66,12 +69,14 @@ if $DRY; then
   exit 0
 fi
 
-echo "==> Uploading to R2 (package first, so the manifest never points at a missing file)"
-( cd remote/relay
-  npx wrangler r2 object put "void-portal-updates/desktop/$version.tar.gz" --file "$pkg" --content-type application/gzip --remote
-  npx wrangler r2 object put void-portal-updates/desktop/latest.json --file "$tmp/latest.json" --content-type application/json --remote )
+if $FORK_R2; then
+  echo "==> Uploading to R2 bucket $FORK_BUCKET (package first, so the manifest never points at a missing file)"
+  ( cd remote/relay
+    npx wrangler r2 object put "$FORK_BUCKET/desktop/$version.tar.gz" --file "$pkg" --content-type application/gzip --remote
+    npx wrangler r2 object put "$FORK_BUCKET/desktop/latest.json" --file "$tmp/latest.json" --content-type application/json --remote )
+fi
 
-echo "==> GitHub release $tag"
-git push -q origin HEAD
-gh release create "$tag" "$pkg" "$tmp/latest.json" --title "VOID Workshop $version" --notes "$notes" --target "$(git rev-parse HEAD)"
-echo "Published VOID Workshop $version: paired installs will offer the update."
+echo "==> GitHub release $tag${FORK_REPO:+ on $FORK_REPO}"
+git push -q "$FORK_REMOTE" HEAD
+gh release create "$tag" "${FORK_GH[@]}" "$pkg" "$tmp/latest.json" --title "VOID Workshop $version" --notes "$notes" --target "$(git rev-parse HEAD)"
+echo "Published VOID Workshop $version: installs updating from ${FORK_REPO:-this repository}$($FORK_R2 && echo ' or the relay') will offer it."

@@ -2236,3 +2236,34 @@ button.link:hover {
   gap: 10px;
   padding: 2px 0 2px 16px;
 }
+.service-signin {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 10px;
+  font-size: 12px;
+}
+.service-signin p {
+  margin: 0;
+}
+.service-signin > button.link,
+.service-connect button.link {
+  align-self: flex-start;
+  font-weight: 500;
+  font-size: 11px;
+}
+.service-connect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.service-connect .row {
+  gap: 6px;
+}
+.service-connect .code-big {
+  font-size: 18px;
+}
+.field-title {
+  font-weight: 600;
+  margin: 10px 0 4px;
+}

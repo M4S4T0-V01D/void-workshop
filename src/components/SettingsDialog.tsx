@@ -36,7 +36,7 @@ import { Callout, Modal, formatUsd, timeAgo } from './common';
 import { CONSOLE, CopyLink, KeySection, SubscriptionSection } from './settings/AccountSections';
 import { AdminSection } from './settings/AdminSection';
 import { AppearanceSection } from './settings/AppearanceSection';
-import { UpdateSection } from './settings/UpdateSection';
+import { RelayField, UpdateSection } from './settings/UpdateSection';
 import { CloudflareSection, GithubSection, ServicesPlacement } from './settings/ServiceSections';
 
 export type SettingsSection =
@@ -150,7 +150,7 @@ export function SettingsDialog({
           {section === 'project' && <ProjectSection project={project} onPermissions={onPermissions} toast={toast} />}
           {section === 'appearance' && <AppearanceSection settings={settings} save={save} toast={toast} onEditUi={onEditUi} />}
           {section === 'billing' && <BillingSection init={init} onBillingCleared={onBillingCleared} />}
-          {section === 'updates' && <UpdateSection version={init.version} toast={toast} />}
+          {section === 'updates' && <UpdateSection version={init.version} settings={settings} save={save} toast={toast} />}
         </section>
       </div>
     </Modal>
@@ -348,13 +348,9 @@ function PortalSection({
   const [status, setStatus] = useState<PortalStatus | null>(null);
   const [name, setName] = useState('My phone');
   const [pairing, setPairing] = useState<{ qrSvg: string; link: string; id: string } | null>(null);
-  const [relay, setRelay] = useState('');
 
   useEffect(() => {
-    void call<PortalStatus>('remote.status').then((s) => {
-      setStatus(s);
-      setRelay(s.relayUrl);
-    });
+    void call<PortalStatus>('remote.status').then(setStatus);
     const un = onSidecarEvent(({ event, payload }) => {
       if (event === 'remote.status') setStatus(payload as PortalStatus);
     });
@@ -461,26 +457,7 @@ function PortalSection({
       <p className="muted">VOID Portal also tells you when this PC goes offline or comes back, so you'll know if it shuts down.</p>
 
       <h4>Relay</h4>
-      <div className="row">
-        <input
-          className="input mono"
-          value={relay}
-          onChange={(e) => setRelay(e.target.value)}
-          placeholder="wss://void-relay.<your-subdomain>.workers.dev"
-          style={{ flex: 1 }}
-        />
-        <button
-          className="btn"
-          disabled={!status || relay === status.relayUrl}
-          onClick={() =>
-            void call<PortalStatus>('remote.setRelay', { url: relay })
-              .then(setStatus)
-              .catch((err) => toast('error', errorText(err)))
-          }
-        >
-          Save
-        </button>
-      </div>
+      <RelayField toast={toast} onSaved={setStatus} />
       <p className="muted">
         Your own Cloudflare Worker: run <code>npx wrangler deploy</code> in <code>remote/relay</code> (the free plan is enough) and enter the address it prints,
         with wss:// instead of https://. It only forwards sealed messages and never sees their contents.

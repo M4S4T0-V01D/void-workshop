@@ -545,6 +545,8 @@ export default function App() {
         onMove={moveServices}
         onOpenItem={(number, title) => editorRef.current?.openView({ kind: 'gh-item', number, title })}
         onOpenSettings={() => setSettingsOpen('accounts')}
+        settings={init.settings}
+        save={saveSettings}
         toast={toast}
       />
     ),

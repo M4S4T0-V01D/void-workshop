@@ -26,7 +26,7 @@ import { log } from './log.js';
 import { exportName, taskMarkdown } from './export.js';
 import { dayKey } from './budget.js';
 import { PLAN_USAGE_FLAG, PlanUsageWatcher, type PlanUsage } from './planUsage.js';
-import { Updater } from './updater.js';
+import { Updater, githubSource } from './updater.js';
 import { UPDATE_PUBLIC_KEY } from './updateKey.js';
 import { GithubService, ServiceError } from './github.js';
 import { CloudflareService } from './cloudflare.js';
@@ -162,7 +162,11 @@ export class Server implements RemoteHost {
       current: APP_VERSION,
       publicKey: opts.updateKey === undefined ? UPDATE_PUBLIC_KEY : opts.updateKey,
       dir: path.join(paths.dataDir, 'updates'),
-      source: () => this.remote.updateSource(),
+      // A set update repository wins; otherwise the relay, through a paired phone.
+      source: () => {
+        const repo = this.store.getSettings().updateRepo;
+        return repo ? githubSource(repo, () => this.github.tokenOrNull()) : this.remote.updateSource();
+      },
       fetch: opts.updateFetch,
     });
     this.noteUpdateResult();

@@ -218,6 +218,7 @@ export interface Settings {
   startAtLogin: boolean;
   githubClientId: string;
   servicesPanel: 'right' | 'left';
+  updateRepo: string;
 }
 
 export interface PortalDevice {
@@ -433,9 +434,9 @@ export interface UpdateRelease {
 }
 
 export type UpdateCheck =
-  | { status: 'unavailable'; current: string; reason: string }
-  | { status: 'current'; current: string; latest: string }
-  | { status: 'available'; current: string; release: UpdateRelease };
+  | { status: 'unavailable'; current: string; reason: string; source: string | null }
+  | { status: 'current'; current: string; latest: string; source: string }
+  | { status: 'available'; current: string; release: UpdateRelease; source: string };
 
 /** Admin dev session: the agent may work on VOID Workshop and VOID Portal themselves (sidecar/src/admin.ts). */
 export interface AdminStatus {

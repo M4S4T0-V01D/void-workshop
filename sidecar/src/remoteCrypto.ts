@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { FORK_DEFAULTS } from './fork.js';
 
 /**
  * VOID Portal end-to-end encryption (see remote/PROTOCOL.md). Both ends derive everything from a
@@ -52,8 +53,8 @@ export function open(keys: PairKeys, dir: Direction, frame: string): unknown {
   return JSON.parse(pt.toString('utf8'));
 }
 
-/** No relay is built in: each user deploys their own (remote/relay) and enters it in Settings. */
-export const DEFAULT_RELAY = '';
+/** No relay is built in unless a fork sets one (fork.json): each user deploys their own (remote/relay) and enters it in Settings. */
+export const DEFAULT_RELAY = FORK_DEFAULTS.relayUrl;
 
 const B32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
