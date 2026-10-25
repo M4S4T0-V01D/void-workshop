@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Minimal capability set: the UI may only call VOID Workshop's own commands, listen to its events and set its own zoom (the UI scale). No filesystem, shell or HTTP plugins are exposed to the webview.",
+  "windows": ["main"],
+  "permissions": ["core:default", "core:webview:allow-set-webview-zoom"]
+}

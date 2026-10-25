@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Manage the VOID Workshop API key from a terminal (useful on headless machines).
+#   void-workshop-key set [--file]   read a key from the terminal (not echoed) and store it
+#   void-workshop-key status         show where a key is stored (never prints the key)
+#   void-workshop-key delete         remove the stored key from this computer
+set -euo pipefail
+ATTRS=(service void-workshop account anthropic-api-key)
+FILE="${VOID_WORKSHOP_KEY_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/void-workshop/credentials/anthropic-api-key}"
+have_ss() { command -v secret-tool >/dev/null && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; }
+case "${1:-}" in
+  set)
+    read -r -s -p "Paste your Anthropic Console API key (input hidden): " key; echo
+    key="${key//[[:space:]]/}"; key="${key#ANTHROPIC_API_KEY=}"; key="${key#\"}"; key="${key%\"}"
+    [[ "$key" =~ ^sk-ant-[a-z]+[0-9]*-[A-Za-z0-9_-]{20,}$ && ! "$key" =~ ^sk-ant-(oat|admin|sid) ]] || { echo "That is not a Console API key (expected sk-ant-…). Subscription tokens and admin keys are not accepted." >&2; exit 1; }
+    if [ "${2:-}" != "--file" ] && have_ss; then
+      printf '%s' "$key" | secret-tool store --label="VOID Workshop: Anthropic API key" "${ATTRS[@]}"
+      rm -f "$FILE"; echo "Stored in the desktop Secret Service."
+    else
+      umask 077; mkdir -p "$(dirname "$FILE")"; chmod 700 "$(dirname "$FILE")"
+      printf '%s' "$key" > "$FILE.tmp"; chmod 600 "$FILE.tmp"; mv "$FILE.tmp" "$FILE"
+      echo "Stored in $FILE (mode 600)."
+    fi
+    unset key ;;
+  status)
+    if have_ss && secret-tool lookup "${ATTRS[@]}" >/dev/null 2>&1; then echo "Key stored in the desktop Secret Service.";
+    elif [ -f "$FILE" ]; then echo "Key stored in $FILE (mode $(stat -c %a "$FILE")).";
+    else echo "No key stored."; fi ;;
+  delete)
+    have_ss && secret-tool clear "${ATTRS[@]}" 2>/dev/null || true
+    rm -f "$FILE"; echo "Local key removed. Revoke it in the Anthropic Console if it may be compromised." ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

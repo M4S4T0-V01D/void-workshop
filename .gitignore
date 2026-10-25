@@ -1,0 +1,27 @@
+node_modules/
+dist/
+sidecar/dist/
+src-tauri/target/
+src-tauri/gen/
+*.log
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+anthropic-api-key
+.vite/
+coverage/
+/screenshots-raw/
+.claude/
+# VOID Portal
+remote/sounds/out/
+remote/relay/.wrangler/
+remote/android/.gradle/
+remote/android/**/build/
+remote/android/local.properties
+remote/android/keystore.properties
+*.jks
+*.keystore
+remote.json
+release-out/

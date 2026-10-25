@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID Workshop: open-source, approval-first AI coding agent for Linux, with the VOID Portal phone remote</title>
+    <meta name="description" content="VOID Workshop is a free, open-source desktop coding agent for Linux built on the Claude Agent SDK. Use your Claude plan, an API key or local Ollama models; review a diff before every write and approve every command. VOID Portal lets you drive it from your Android phone, end-to-end encrypted." />
+    <meta name="keywords" content="AI coding agent, Claude Agent SDK, Claude Code alternative, Linux desktop app, local AI coding, Ollama, code review, approval, Android remote, Tauri" />
+    <meta name="author" content="M4S4T0-V01D" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0a12" />
+    <link rel="canonical" href="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VOID Workshop" />
+    <meta property="og:url" content="https://m4s4t0-v01d.github.io/void-workshop/" />
+    <meta property="og:title" content="VOID Workshop: your code, your key, your approval" />
+    <meta property="og:description" content="Open-source, approval-first AI coding workspace for Linux, plus VOID Portal, an end-to-end encrypted Android remote. By M4S4T0-V01D." />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta property="og:image:alt" content="The VOID Workshop window with an agent conversation, plan and changes" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VOID Workshop: your code, your key, your approval" />
+    <meta name="twitter:description" content="Open-source, approval-first AI coding workspace for Linux, with an Android remote." />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "VOID Workshop",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/",
+            "description": "Local, approval-first AI coding workspace for Linux built on the Claude Agent SDK, with diffs before every write, approvals before every command, and spending limits.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Linux",
+            "license": "https://opensource.org/licenses/MIT",
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
+            "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
+          },
+          {
+            "@type": "MobileApplication",
+            "name": "VOID Portal",
+            "url": "https://m4s4t0-v01d.github.io/void-workshop/#portal",
+            "description": "Android remote for VOID Workshop: start tasks, approve changes and commands, and get notified, end-to-end encrypted through your own relay.",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Android",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-home.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/portal-approval.png"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" }
+          }
+        ]
+      }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <style>
+      :root {
+        --bg: #0b0a12;
+        --panel: #121020;
+        --panel-alt: #1a1730;
+        --border: #2a2546;
+        --text: #e8e4ff;
+        --dim: #a49dcb;
+        --accent: #a970ff;
+        --accent2: #22e3ff;
+        --ok: #3ee08f;
+        --warn: #ffc857;
+        --danger: #ff5c7a;
+        --mono: ui-monospace, 'JetBrains Mono', 'Fira Code', 'DejaVu Sans Mono', monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.6 Inter,
+          'Noto Sans',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.55;
+        background-image:
+          radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 68% 9%, #cfc4ff 50%, transparent 51%),
+          radial-gradient(1.5px 1.5px at 85% 42%, #9ff3ff 50%, transparent 51%),
+          radial-gradient(1px 1px at 33% 61%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 52% 83%, #d9ceff 50%, transparent 51%),
+          radial-gradient(1.5px 1.5px at 7% 89%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 92% 74%, #b9f6ff 50%, transparent 51%),
+          radial-gradient(1px 1px at 24% 36%, #e8e4ff 50%, transparent 51%);
+        background-size: 420px 420px;
+      }
+      a {
+        color: var(--accent2);
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: color-mix(in srgb, var(--bg) 85%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+      nav .wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        height: 58px;
+      }
+      nav .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        font-size: 14px;
+        color: var(--text);
+        text-decoration: none;
+      }
+      nav .brand img {
+        width: 28px;
+        height: 28px;
+      }
+      nav .links {
+        margin-left: auto;
+        display: flex;
+        gap: 18px;
+        font-size: 14px;
+      }
+      nav .links a {
+        color: var(--dim);
+        text-decoration: none;
+      }
+      nav .links a:hover {
+        color: var(--text);
+      }
+      .grad {
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      header.hero {
+        padding: 72px 0 40px;
+        text-align: center;
+        background:
+          radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--accent) 28%, transparent), transparent),
+          radial-gradient(ellipse 40% 40% at 80% 20%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent);
+      }
+      .hero img.logo {
+        width: 104px;
+        height: 104px;
+        filter: drop-shadow(0 0 32px color-mix(in srgb, var(--accent) 55%, transparent));
+      }
+      .hero h1 {
+        font-size: clamp(34px, 6vw, 60px);
+        line-height: 1.08;
+        margin: 18px 0 14px;
+        letter-spacing: -0.02em;
+      }
+      .hero p.lead {
+        font-size: clamp(17px, 2.2vw, 20px);
+        color: var(--dim);
+        max-width: 760px;
+        margin: 0 auto 28px;
+      }
+      .cta {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
+        border-radius: 9px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        color: var(--text);
+        background: var(--panel-alt);
+      }
+      .btn.primary {
+        background: linear-gradient(135deg, var(--accent), #6f7bff);
+        border-color: transparent;
+        color: #fff;
+      }
+      .btn:hover {
+        filter: brightness(1.1);
+      }
+      .shot {
+        margin: 44px auto 0;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        box-shadow:
+          0 30px 80px rgba(0, 0, 0, 0.6),
+          0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+        max-width: 1080px;
+      }
+      .shot img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      section {
+        padding: 64px 0;
+        border-top: 1px solid var(--border);
+      }
+      h2 {
+        font-size: clamp(26px, 3.6vw, 36px);
+        margin: 0 0 10px;
+        letter-spacing: -0.01em;
+      }
+      .sub {
+        color: var(--dim);
+        max-width: 720px;
+        margin: 0 0 34px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+      .card h3 {
+        margin: 6px 0 6px;
+        font-size: 17px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--dim);
+        font-size: 15px;
+      }
+      .icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: color-mix(in srgb, var(--accent) 18%, var(--panel));
+        color: var(--accent);
+        font-size: 18px;
+      }
+      .icon.c {
+        background: color-mix(in srgb, var(--accent2) 16%, var(--panel));
+        color: var(--accent2);
+      }
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        counter-reset: s;
+      }
+      .flow div {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        position: relative;
+      }
+      .flow div::before {
+        counter-increment: s;
+        content: counter(s);
+        display: inline-flex;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #0b0a12;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      .flow b {
+        display: block;
+      }
+      .flow span {
+        color: var(--dim);
+        font-size: 14px;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        align-items: center;
+      }
+      .two img {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      }
+      ul.checks {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 10px;
+      }
+      ul.checks li {
+        padding-left: 28px;
+        position: relative;
+        color: var(--dim);
+      }
+      ul.checks li b {
+        color: var(--text);
+      }
+      ul.checks li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--ok);
+        font-weight: 700;
+      }
+      ul.checks.x li::before {
+        content: '✕';
+        color: var(--danger);
+      }
+      pre {
+        background: #07060d;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px 18px;
+        overflow-x: auto;
+        font: 14px/1.6 var(--mono);
+        color: #d9d4ff;
+      }
+      pre .c {
+        color: #6f6890;
+      }
+      pre .p {
+        color: var(--accent2);
+      }
+      .themes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+      }
+      .theme {
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+      }
+      .theme .sw {
+        display: flex;
+        height: 30px;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+      .theme .sw span {
+        flex: 1;
+      }
+      .note {
+        border: 1px solid color-mix(in srgb, var(--warn) 60%, var(--border));
+        background: color-mix(in srgb, var(--warn) 9%, var(--panel));
+        border-radius: 12px;
+        padding: 16px 18px;
+        color: #f5e2b0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+      }
+      td,
+      th {
+        border-bottom: 1px solid var(--border);
+        padding: 10px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        color: var(--dim);
+        font-weight: 500;
+      }
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 32px 0 48px;
+        color: var(--dim);
+        font-size: 14px;
+      }
+      .phones {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 18px;
+        margin-top: 28px;
+      }
+      .phones figure {
+        margin: 0;
+        text-align: center;
+        color: var(--dim);
+        font-size: 14px;
+      }
+      .phones img {
+        width: 100%;
+        max-width: 240px;
+        border-radius: 26px;
+        border: 1px solid var(--border);
+        box-shadow:
+          0 24px 60px rgba(0, 0, 0, 0.55),
+          0 0 0 1px color-mix(in srgb, var(--accent2) 22%, transparent);
+        margin-bottom: 10px;
+      }
+      .wire {
+        text-align: center;
+        font: 14px/1.6 var(--mono);
+        color: var(--dim);
+        margin: 0 0 30px;
+      }
+      .wire b {
+        color: var(--accent2);
+        font-weight: 600;
+      }
+      details {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+      }
+      details summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      details p {
+        color: var(--dim);
+        margin: 10px 0 0;
+      }
+      @media (max-width: 760px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
+        nav .links a.hide-sm {
+          display: none;
+        }
+        header.hero {
+          padding-top: 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="#"><img src="logo.svg" alt="" /><span><span class="grad">VOID</span> WORKSHOP</span></a>
+        <div class="links">
+          <a href="#how" class="hide-sm">How it works</a>
+          <a href="#safety" class="hide-sm">Safety</a>
+          <a href="#portal" class="hide-sm">VOID Portal</a>
+          <a href="#relay" class="hide-sm">Relay</a>
+          <a href="#install">Install</a>
+          <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <img class="logo" src="logo.svg" alt="VOID Workshop logo" />
+        <h1>Your code. Your key.<br /><span class="grad">Your approval.</span></h1>
+        <p class="lead">VOID Workshop is a free, open-source desktop coding agent for Linux built on the Claude Agent SDK. It plans before it touches anything, shows a diff before every write, asks before every command, and stops at the budget you set. Bring your Claude plan, an API key or local Ollama models, and drive it from your phone with VOID Portal.</p>
+        <div class="cta">
+          <a class="btn primary" href="#install">Install on Linux</a>
+          <a class="btn" href="#portal">Get VOID Portal</a>
+          <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">View source</a>
+        </div>
+        <div class="shot"><img src="screenshots/workspace.png" alt="The VOID Workshop window: file tree, agent conversation, plan and changes panels, terminal and status bar" /></div>
+      </div>
+    </header>
+
+    <section id="how">
+      <div class="wrap">
+        <h2>Agent-first, human-approved</h2>
+        <p class="sub">Describe what you want in plain English. The agent does the legwork; you stay in charge of every change.</p>
+        <div class="flow">
+          <div><b>Pick a project</b><span>The agent can only see that folder, plus directories you explicitly add.</span></div>
+          <div><b>Describe the task</b><span>Plain English. Follow-ups continue the same session.</span></div>
+          <div><b>Review the plan</b><span>Read-only exploration first. Nothing is edited until you approve.</span></div>
+          <div><b>Approve each action</b><span>A diff for every write; command, folder and reason for every command.</span></div>
+          <div><b>Inspect &amp; keep</b><span>Accept or reject each file, run tests, commit when you choose.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap two">
+        <div>
+          <h2>See exactly what will change</h2>
+          <p class="sub" style="margin-bottom: 18px">Every edit arrives as a unified diff before it's written. If the file changes on disk while you're deciding, the edit is refused, so your own work is never silently overwritten.</p>
+          <ul class="checks">
+            <li><b>Proposed → applied → tested → committed:</b> clear states for every file.</li>
+            <li><b>Per-file accept / reject</b> restores the original content on reject.</li>
+            <li><b>Local Git checkpoints</b> that never touch your branch or index.</li>
+            <li><b>Commits only when you click Commit.</b> Never a push.</li>
+          </ul>
+        </div>
+        <img src="screenshots/review.png" alt="Approval dialog showing a unified diff for a proposed file change" />
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="wrap">
+        <h2>Built like the model is untrusted</h2>
+        <p class="sub">Model output and repository content are treated as untrusted input. Approval is the first layer, not the only one.</p>
+        <div class="grid">
+          <div class="card"><span class="icon">⌘</span><h3>Approval per action</h3><p>Exact command, working directory, the agent's reason and what the command does (reads, writes, network, git, installs). Approvals are never remembered.</p></div>
+          <div class="card"><span class="icon c">⛨</span><h3>Bubblewrap sandbox</h3><p>Agent commands can only write inside the project and can't reach the network unless you allow specific domains.</p></div>
+          <div class="card"><span class="icon">✕</span><h3>Hard blocks</h3><p>sudo, broad <code>rm -rf</code>, pushes, history rewrites, publishing, uploads, SSH, keyring access and attempts to touch the app's own config are refused outright.</p></div>
+          <div class="card"><span class="icon c">⌖</span><h3>Path canonicalisation</h3><p><code>..</code>, symlinks and <code>~</code> can't escape the project. SSH keys, cloud credentials, browser profiles and keyrings are always off limits.</p></div>
+          <div class="card"><span class="icon">⚿</span><h3>Secrets stay secret</h3><p><code>.env</code>, private keys and credential files need explicit approval. Logs, history and the UI are redacted.</p></div>
+          <div class="card"><span class="icon c">⏻</span><h3>Never root, no telemetry</h3><p>Refuses to run as root. No author server, proxy or analytics: the only destinations are the model provider you chose and, for VOID Portal, the relay you deployed yourself.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="billing">
+      <div class="wrap two">
+        <div>
+          <h2>Your plan or your key. Honest numbers.</h2>
+          <p class="sub" style="margin-bottom: 18px">Use your Claude plan or an Anthropic Console API key stored in your desktop keyring, and switch with one click. VOID Workshop checks the credential source before sending a single request.</p>
+          <ul class="checks">
+            <li><b>Per-task and daily limits</b> (defaults: $1 and $3), plus turn and output-token caps.</li>
+            <li><b>Stops on credit exhaustion</b> and never buys credits or switches billing.</li>
+            <li><b>Models come from the Models API</b> for your key; none are hard-coded.</li>
+            <li><b>Pair it with a Console workspace spend limit</b> for a hard cap.</li>
+          </ul>
+        </div>
+        <div class="note">
+          <b>Estimates, not a balance.</b> Cost figures are estimated from the token usage the Agent SDK reports. Retries, caching, price changes and other usage in your organization all affect the real bill, and there's no API for an app to read your remaining credit. VOID Workshop says so in the status bar and links you to Console Billing.
+        </div>
+      </div>
+    </section>
+
+    <section id="editor">
+      <div class="wrap two">
+        <img src="screenshots/editor-nebula.png" alt="The built-in code editor in the Nebula theme, syntax colours derived from the theme" loading="lazy" />
+        <div>
+          <h2>A real editor, in your colours</h2>
+          <p class="sub" style="margin-bottom: 18px">Open any project file in the built-in CodeMirror editor, make a quick fix yourself, and hand the rest to the agent. Syntax highlighting is generated from your theme, so every theme, including the ones you make, gets matching colours.</p>
+          <ul class="checks">
+            <li><b>Tabs, search and save</b>, and a warning when the agent or another program changed the file on disk.</li>
+            <li><b>Multiple cursors</b>, and undo history kept across project switches.</li>
+            <li><b>Sensitive files ask first</b> before they open or save.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="portal">
+      <div class="wrap">
+        <h2>VOID Portal: <span class="grad">your phone as a remote</span></h2>
+        <p class="sub">The Android companion app. Start and queue tasks from anywhere, approve changes and commands (straight from the notification if you like), switch model, mode and account, and hear when a task is done, needs you, or the PC goes offline.</p>
+        <p class="wire">phone ──<b>wss</b>──► your relay ◄──<b>wss</b>── PC<br />└──── end-to-end encrypted, AES-256-GCM ────┘</p>
+        <ul class="checks">
+          <li><b>Pair with a QR code.</b> The secret lives only in the code; the relay never sees it, your prompts or your code.</li>
+          <li><b>Nothing exposed at home.</b> Both ends connect out, so there are no open ports or port forwarding.</li>
+          <li><b>Same rules as the desktop.</b> Blocked commands stay blocked; risky ones still need your approval.</li>
+          <li><b>Themes that match your PC</b>, Material You, and a recoloured app icon.</li>
+        </ul>
+        <div class="phones">
+          <figure><img src="screenshots/portal-home.png" alt="VOID Portal home screen: PC online, active tasks and a pending approval" loading="lazy" /><figcaption>PC status, tasks, what needs you</figcaption></figure>
+          <figure><img src="screenshots/portal-approval.png" alt="Approving a file change with its diff on the phone" loading="lazy" /><figcaption>Approve with the full diff</figcaption></figure>
+          <figure><img src="screenshots/portal-task.png" alt="A task conversation in VOID Portal" loading="lazy" /><figcaption>Follow and reply to a task</figcaption></figure>
+          <figure><img src="screenshots/portal-settings.png" alt="VOID Portal settings and theme picker" loading="lazy" /><figcaption>PC settings and themes</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="relay">
+      <div class="wrap">
+        <h2>Run your own relay in five minutes</h2>
+        <p class="sub">There is no shared relay: everyone deploys their own on a free Cloudflare account, so your traffic never passes through anyone else's server. The free Workers tier is plenty for one person.</p>
+        <div class="flow" style="margin-bottom: 24px">
+          <div><b>Cloudflare account</b><span>Sign up free and pick a <code>workers.dev</code> subdomain.</span></div>
+          <div><b>Deploy the Worker</b><span><code>wrangler deploy</code> from <code>remote/relay</code>.</span></div>
+          <div><b>Check it</b><span>The smoke test runs 18 checks against your relay.</span></div>
+          <div><b>Point Workshop at it</b><span>Settings → VOID Portal (phone) → Relay.</span></div>
+          <div><b>Pair your phone</b><span>Pair a phone, then scan the QR code in the app.</span></div>
+        </div>
+        <pre><span class="c"># from your clone of the repository</span>
+<span class="p">$</span> cd remote/relay
+<span class="p">$</span> npm install
+<span class="p">$</span> npx wrangler login     <span class="c"># authorise wrangler in the browser, once</span>
+<span class="p">$</span> npx wrangler deploy    <span class="c"># → https://void-relay.&lt;your-subdomain&gt;.workers.dev</span>
+<span class="p">$</span> node test/smoke.mjs wss://void-relay.&lt;your-subdomain&gt;.workers.dev
+
+<span class="c"># optional: in-app updates for VOID Portal (or delete the [[r2_buckets]] block in wrangler.toml)</span>
+<span class="p">$</span> npx wrangler r2 bucket create void-portal-updates</pre>
+        <p class="sub" style="margin: 18px 0 0">Then enter <code>wss://void-relay.&lt;your-subdomain&gt;.workers.dev</code> in <b>Settings → VOID Portal (phone) → Relay</b>. Lost a pairing code or a phone? Unpair the device in the same place and its key stops working. The full guide is in <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/remote/README.md#your-own-relay">remote/README.md</a>.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Make it yours</h2>
+        <p class="sub">Seven built-in themes, a live colour editor with contrast warnings, and JSON import/export so you can share themes.</p>
+        <div class="themes">
+          <div class="theme" style="background: #121020; color: #e8e4ff"><div class="sw"><span style="background: #0b0a12"></span><span style="background: #1a1730"></span><span style="background: #a970ff"></span><span style="background: #22e3ff"></span></div>Void</div>
+          <div class="theme" style="background: #170d22; color: #f5e8ff"><div class="sw"><span style="background: #0e0814"></span><span style="background: #22142f"></span><span style="background: #ff5fd2"></span><span style="background: #4df5d1"></span></div>Nebula</div>
+          <div class="theme" style="background: #0a101c; color: #dce8ff"><div class="sw"><span style="background: #05080f"></span><span style="background: #111a2b"></span><span style="background: #5b8cff"></span><span style="background: #00e0ff"></span></div>Abyss</div>
+          <div class="theme" style="background: #0b120b; color: #c9ffcf"><div class="sw"><span style="background: #060a06"></span><span style="background: #111c11"></span><span style="background: #39ff6a"></span><span style="background: #ffb000"></span></div>Phosphor</div>
+          <div class="theme" style="background: #181010; color: #ffece4"><div class="sw"><span style="background: #0f0a0a"></span><span style="background: #221616"></span><span style="background: #ff7a3d"></span><span style="background: #c77dff"></span></div>Ember</div>
+          <div class="theme" style="background: #ffffff; color: #1c1830"><div class="sw"><span style="background: #f6f5fb"></span><span style="background: #eeebf8"></span><span style="background: #7a3cff"></span><span style="background: #0090b8"></span></div>Daylight</div>
+          <div class="theme" style="background: #0a0a0a; color: #ffffff"><div class="sw"><span style="background: #000"></span><span style="background: #161616"></span><span style="background: #d48cff"></span><span style="background: #00ffff"></span></div>High contrast</div>
+        </div>
+        <div class="shot" style="margin-top: 28px; max-width: 900px"><img src="screenshots/themes.png" alt="Theme editor in the settings dialog" /></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <h2>Install on Linux</h2>
+        <p class="sub">Builds from source in a few minutes and installs for your user only. No root, no system files.</p>
+        <pre><span class="c"># 1. dependencies (Node.js ≥ 22.13, Rust ≥ 1.80)</span>
+<span class="c">#    Arch Linux</span>
+<span class="p">$</span> sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 \
+    librsvg libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
+<span class="c">#    Debian / Ubuntu 24.04+ (plus Node.js 22 and Rust from nodejs.org / rustup.rs)</span>
+<span class="p">$</span> sudo apt install build-essential git libwebkit2gtk-4.1-dev libgtk-3-dev libsoup-3.0-dev \
+    librsvg2-dev libayatana-appindicator3-dev libssl-dev libsecret-1-dev bubblewrap socat ripgrep
+
+<span class="c"># 2. build and install to ~/.local</span>
+<span class="p">$</span> git clone https://github.com/M4S4T0-V01D/void-workshop.git
+<span class="p">$</span> cd void-workshop
+<span class="p">$</span> ./scripts/build.sh
+<span class="p">$</span> ./scripts/install.sh
+
+<span class="c"># 3. launch, then Settings → Sign-in &amp; API key: sign in with Claude, paste a key, or pick Ollama</span>
+<span class="p">$</span> void-workshop</pre>
+        <table>
+          <tr><th>VOID Portal</th><td><code>cd remote/android &amp;&amp; ./gradlew :app:assembleRelease</code> (JDK 17), install the APK on your phone, then pair it with <a href="#relay">your relay</a></td></tr>
+          <tr><th>Update</th><td><code>git pull &amp;&amp; ./scripts/build.sh &amp;&amp; ./scripts/install.sh</code></td></tr>
+          <tr><th>Uninstall</th><td><code>./scripts/uninstall.sh</code> (add <code>--purge</code> to delete history, settings and the stored key)</td></tr>
+          <tr><th>Guides</th><td><a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/claude-plan.md">Claude plan</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/api-key.md">API key setup</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/ollama.md">Ollama</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/billing.md">Billing &amp; limits</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop/blob/main/guides/security.md">Security model</a></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2>Questions</h2>
+        <p class="sub">The short answers. The guides in the repository have the long ones.</p>
+        <details><summary>Is it free?</summary><p>VOID Workshop and VOID Portal are free and open source (MIT). You pay only for the model you use: your Claude plan, Anthropic API usage on your own Console account, or nothing with local Ollama models. The relay fits in Cloudflare's free tier.</p></details>
+        <details><summary>Does my code or my key go anywhere?</summary><p>Only to the model provider you chose. There is no telemetry and no author server. Keys stay in your desktop keyring, and VOID Portal traffic is end-to-end encrypted through the relay you deploy yourself.</p></details>
+        <details><summary>How is it different from Claude Code?</summary><p>It runs the same Claude Agent SDK in a desktop window built around review: a diff before every write, an approval for every command, per-file accept and reject, a sandbox, spending limits, and a phone remote.</p></details>
+        <details><summary>Which systems does it run on?</summary><p>Linux (developed on Arch, works on Debian/Ubuntu and others with WebKitGTK 4.1). VOID Portal needs Android 8 or newer.</p></details>
+        <details><summary>Can I use someone else's relay?</summary><p>Don't: deploy your own. It takes a few minutes, it's free, and it keeps your traffic and availability in your hands.</p></details>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">Made by <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Source on GitHub</a> · MIT licence.<br />VOID Workshop is an independent open-source project, not affiliated with or endorsed by Anthropic. Use of Claude is subject to Anthropic's terms and is billed to your own account.</div>
+    </footer>
+  </body>
+</html>

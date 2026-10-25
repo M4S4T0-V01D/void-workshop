@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://m4s4t0-v01d.github.io/void-workshop/sitemap.xml

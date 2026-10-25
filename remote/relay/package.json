@@ -1,0 +1,21 @@
+{
+  "name": "void-relay",
+  "private": true,
+  "description": "Blind relay between VOID Workshop and the VOID Portal phone app (Cloudflare Workers + Durable Objects).",
+  "author": "M4S4T0-V01D",
+  "homepage": "https://m4s4t0-v01d.github.io/void-workshop/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/M4S4T0-V01D/void-workshop.git"
+  },
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "node test/smoke.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.151.0"
+  }
+}

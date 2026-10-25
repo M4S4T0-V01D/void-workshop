@@ -1,0 +1,21 @@
+name = "void-relay"
+main = "src/index.js"
+compatibility_date = "2026-09-04"
+
+# Relay between VOID Workshop on the PC and the VOID Portal phone app.
+# One Channel Durable Object per paired phone. Frames are end-to-end encrypted
+# by the two ends; the relay only forwards them. WebSocket hibernation keeps
+# idle connections free. See ../PROTOCOL.md.
+[[durable_objects.bindings]]
+name = "CHANNEL"
+class_name = "Channel"
+
+# VOID Portal app updates (private bucket): latest.json and apk/<versionCode>.apk,
+# uploaded by remote/android/release.sh, served only to paired phones.
+[[r2_buckets]]
+binding = "UPDATES"
+bucket_name = "void-portal-updates"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Channel"]

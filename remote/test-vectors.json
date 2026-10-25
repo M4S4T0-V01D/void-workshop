@@ -1,0 +1,13 @@
+{
+  "secret": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
+  "channelId": "af65d1f00b8b5654f57f3396cb3eef16",
+  "token": "u14vVaN81-VhjxUFY9-7HJhZFPxiwkF8-fLjXsWAKss",
+  "hostToPhone": "44fb49fd368d1c14b0c7a9a62917ea9b4d2ccb4c502776b77a72b6c4130ecac6",
+  "phoneToHost": "3e76c11f5315c8184d44d9a623c0fd5c2925ecad29594a80d1e772739745f322",
+  "sample": {
+    "dir": "h2p",
+    "plaintext": "{\"type\":\"hb\",\"ts\":1}",
+    "frame": "BwcHBwcHBwcHBwcH1rsZwDR5g4PmHFOHa-PtRrXZSm0FV8yRxGtk33KfCMkeeMu2"
+  },
+  "secretBase32": "AAAQEAYEAUDAOCAJBIFQYDIOB4IBCEQTCQKRMFYYDENBWHA5DYPQ"
+}

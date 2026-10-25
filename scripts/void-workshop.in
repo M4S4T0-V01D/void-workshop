@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# VOID Workshop launcher (installed by scripts/install.sh).
+set -euo pipefail
+[ "$(id -u)" -ne 0 ] || { echo "VOID Workshop refuses to run as root." >&2; exit 1; }
+export VOID_WORKSHOP_NODE="${VOID_WORKSHOP_NODE:-@NODE@}"
+export VOID_WORKSHOP_SIDECAR_DIR="@LIB@/sidecar"
+# Drop credentials from the launching environment; the app reads its key from the Secret Service or key file.
+unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL CLAUDE_CODE_OAUTH_TOKEN
+exec "@LIB@/void-workshop" "$@"
