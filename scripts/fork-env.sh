@@ -16,4 +16,4 @@ for (const [k, v] of Object.entries(out)) console.log(`${k}=${JSON.stringify(Str
 ' "$_fork_root/fork.json")"
 # gh release flags: publish to the fork's repository when one is set, else gh's default for this checkout.
 FORK_GH=()
-[ -n "$FORK_REPO" ] && FORK_GH=(--repo "$FORK_REPO")
+if [ -n "$FORK_REPO" ]; then FORK_GH=(--repo "$FORK_REPO"); fi
