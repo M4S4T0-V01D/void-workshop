@@ -35,6 +35,12 @@ npm test                                             # everything, one file at a
 cd src-tauri && nice cargo test --quiet              # Rust
 ```
 
+UI text is translated into 13 languages, with the English text as the key. In the window, wrap new text in
+`t()` / `tn()` from `src/i18n`, then add it to every `src/i18n/locales/<code>.json` (`npm run i18n` lists what
+is missing or stale; `src/i18n/i18n.test.ts` fails until it is complete). In Portal, use `tr()` / `trn()` from
+`I18n.kt` and add the text to `app/src/main/assets/i18n/<code>.json`; `I18nTest` checks the keys, placeholders and
+plural forms. Keep `{placeholders}` as they are and leave brand names (VOID Portal, Claude, Ollama...) untranslated.
+
 `sidecar/test/live.test.ts` and `portal-e2e.test.ts` are opt-in (`VOID_LIVE_SDK=1`, `VOID_PORTAL_E2E=1`).
 `tools/ui-harness/run.mjs e2e` spends real credit: only with the user's OK.
 

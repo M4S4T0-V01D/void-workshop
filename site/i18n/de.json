@@ -127,5 +127,7 @@
   "a4": "Linux (entwickelt unter Arch, läuft unter Debian/Ubuntu und anderen mit WebKitGTK 4.1). VOID Portal braucht Android 8 oder neuer.",
   "q5": "Kann ich das Relay von jemand anderem nutzen?",
   "a5": "Lieber nicht: Stell dein eigenes bereit. Das dauert ein paar Minuten, ist kostenlos und hält deinen Datenverkehr und deine Verfügbarkeit in deiner Hand.",
+  "q6": "Kann ich die Apps in meiner Sprache nutzen?",
+  "a6": "Ja. VOID Workshop und VOID Portal sprechen dieselben 13 Sprachen wie diese Website. Beide fragen beim ersten Start; ändern kannst du sie später unter Einstellungen → Darstellung &amp; Sprache am PC und Einstellungen → Sprache auf dem Handy. Die Übersetzungen liegen in <code>src/i18n/locales</code> und <code>remote/android/app/src/main/assets/i18n</code>, Verbesserungen sind willkommen.",
   "footer": "Erstellt von <a href=\"https://github.com/M4S4T0-V01D\">M4S4T0-V01D</a> · <a href=\"https://github.com/M4S4T0-V01D/void-workshop\">Quellcode auf GitHub</a> · MIT-Lizenz.<br />VOID Workshop ist ein unabhängiges Open-Source-Projekt, weder mit Anthropic verbunden noch von Anthropic unterstützt. Die Nutzung von Claude unterliegt den Bedingungen von Anthropic und wird über dein eigenes Konto abgerechnet."
 }

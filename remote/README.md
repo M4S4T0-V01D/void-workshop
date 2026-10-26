@@ -47,6 +47,10 @@ To use another name, change `name` in `wrangler.toml`; the address follows it. I
 
 What the phone may do is an allow-list: tasks, queue, approvals, plan approval, compact, model/mode/effort/fast mode, and the Claude plan / API key / Ollama switch. Keys, sign-in, spending limits, safety settings, project access, the terminal and commits stay on the PC. New tasks can only start in projects already opened on the PC.
 
+## Language
+
+VOID Portal comes in the same 13 languages as VOID Workshop and the website (Arabic right-to-left). It asks on first start, defaulting to the phone's language, and *Settings → Language* changes it any time. The catalogs are `app/src/main/assets/i18n/<code>.json`, keyed by the English text; `I18nTest` keeps them complete.
+
 ## Themes
 
 VOID Portal has the desktop's themes (generated from `src/themes.ts`, so the two apps stay in step) and **Match my PC** (the default), which follows the PC's current theme, custom ones included. The interface, the drifting background, the logo and, optionally, the launcher icon all take the theme's colours: each built-in theme has its own icon (an `<activity-alias>` per theme; the app enables the matching one).

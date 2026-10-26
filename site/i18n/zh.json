@@ -127,5 +127,7 @@
   "a4": "Linux（在 Arch 上开发，也可在 Debian/Ubuntu 及其他带 WebKitGTK 4.1 的发行版上运行）。VOID Portal 需要 Android 8 或更高版本。",
   "q5": "我能用别人的中继吗？",
   "a5": "别这样做：部署你自己的。只需几分钟，免费，而且流量和可用性都掌握在你自己手中。",
+  "q6": "应用能用我的语言吗？",
+  "a6": "可以。VOID Workshop 和 VOID Portal 支持与本站相同的 13 种语言。两者首次启动时都会询问；之后可在电脑上的 设置 → 外观与语言、手机上的 设置 → 语言 中更改。翻译位于 <code>src/i18n/locales</code> 和 <code>remote/android/app/src/main/assets/i18n</code>，欢迎改进。",
   "footer": "由 <a href=\"https://github.com/M4S4T0-V01D\">M4S4T0-V01D</a> 制作 · <a href=\"https://github.com/M4S4T0-V01D/void-workshop\">GitHub 上的源代码</a> · MIT 许可证。<br />VOID Workshop 是独立的开源项目，与 Anthropic 无关联，也未获其背书。Claude 的使用受 Anthropic 条款约束，费用计入你自己的账户。"
 }

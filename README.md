@@ -45,6 +45,7 @@ Everything runs on your machine with your own account: no telemetry, no shared s
 - **Safe commands.** Exact command, working directory and reason shown before each run. Destructive, privilege-escalating, history-rewriting, publishing and exfiltration commands are refused outright. Agent commands run in a bubblewrap sandbox (project-only writes, no network unless you allow domains). Optional switches let Gradle/Android builds use your `~/.gradle` cache and repositories, and let `gh`, `git push` and release scripts run after you approve each one (from the PC or VOID Portal).
 - **Spending controls.** Per-task and daily estimated limits (default $1 / $3), a turn cap (20) and an output-token cap; a stop button; a clear stop on credit exhaustion. Estimates are labelled as estimates.
 - **Git aware.** Branch and working-tree state, local checkpoints that never touch your branch, commits only when you click Commit, and never a push.
+- **Your language.** The desktop app and VOID Portal speak the same 13 languages as the website: English, 简体中文, Español, العربية (right-to-left), Português, Français, 日本語, Русский, Deutsch, Bahasa Indonesia, 한국어, Türkçe and हिन्दी. Both ask on first start; change it any time under *Settings → Appearance & language* on the PC and *Settings → Language* in Portal. The agent answers in whatever language you write to it.
 - **Themes.** Seven built-in themes (default: purple/cyan Void), a live colour editor with contrast warnings, and JSON import/export to share themes.
 
 ## Requirements
@@ -171,6 +172,15 @@ VOID_LIVE_SDK=1 npm test    # also run zero-cost checks against the real Agent S
 ```
 
 See [guides/security.md](guides/security.md) for the full security model and known limitations.
+
+## Translations
+
+Both apps use the English text as the translation key, so a missing translation shows English instead of breaking.
+
+- **Desktop:** `src/i18n/locales/<code>.json`. Plurals are objects keyed by plural category (`one`, `few`, `many`, `other`…). `npm run i18n` lists missing and stale entries, and the web tests fail on placeholders that differ from English.
+- **VOID Portal:** `remote/android/app/src/main/assets/i18n/<code>.json`, keyed by the strings the Kotlin code passes to `tr()` and `trn()`. `I18nTest` (`./gradlew :app:testDebugUnitTest`) checks that each language is complete, has no stale keys, keeps every `{placeholder}` and has the plural forms its language needs.
+
+To add a language, add it to `LANGUAGES` in `src/i18n/index.ts` and in `I18n.kt`, add both catalogs and a `site/i18n/<code>.json` for the website, then run the checks above.
 
 ## Website
 
