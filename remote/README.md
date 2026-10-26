@@ -42,7 +42,7 @@ To use another name, change `name` in `wrangler.toml`; the address follows it. I
 ## Use
 
 1. VOID Workshop → **Settings → VOID Portal (phone)** → **Pair a phone**. Turn on *Keep running in the background* and *Start at login* so the phone can reach it while the window is closed.
-2. Install the APK on the phone, open **VOID Portal**, tap **Scan pairing code**. The code disappears from the PC once the phone connects. For a relay on a plain `wss://host` address the code is `VOIDPORTAL://P/<secret>/<HOST>`: short and upper case, so QR stores it in its coarse alphanumeric mode (33×33 instead of 45×45 modules), which phones read easily off a monitor. If a scan still fails, copy the link shown under the code and paste it into the app.
+2. Install the APK on the phone (download the newest from [Releases](https://github.com/M4S4T0-V01D/void-workshop/releases) or build it, see below), open **VOID Portal**, tap **Scan pairing code**. The code disappears from the PC once the phone connects. For a relay on a plain `wss://host` address the code is `VOIDPORTAL://P/<secret>/<HOST>`: short and upper case, so QR stores it in its coarse alphanumeric mode (33×33 instead of 45×45 modules), which phones read easily off a monitor. If a scan still fails, copy the link shown under the code and paste it into the app.
 3. In VOID Portal → Settings, tap **Let it run in the background** so Android doesn't delay notifications.
 
 What the phone may do is an allow-list: tasks, queue, approvals, plan approval, compact, model/mode/effort/fast mode, and the Claude plan / API key / Ollama switch. Keys, sign-in, spending limits, safety settings, project access, the terminal and commits stay on the PC. New tasks can only start in projects already opened on the PC.
@@ -62,7 +62,7 @@ cd remote/android && python3 art/gen_icon.py                         # icons + m
 
 ## Updates
 
-Releases live in the relay's private R2 bucket (`void-portal-updates`); only a paired phone can fetch them, with its channel token. The app checks when it opens (at most every 3 hours) and twice a day in the background, shows a banner and a notification, and on **Update** downloads the APK, checks its SHA-256 and hands it to Android's installer (which asks you to confirm, as Android always does for apps outside a store; the first time it also asks you to allow installs from VOID Portal). Every release can also be published as a GitHub Release.
+Releases live in the relay's private R2 bucket (`void-portal-updates`); only a paired phone can fetch them, with its channel token. The app checks when it opens (at most every 3 hours) and twice a day in the background, shows a banner and a notification, and on **Update** downloads the APK, checks its SHA-256 and hands it to Android's installer (which asks you to confirm, as Android always does for apps outside a store; the first time it also asks you to allow installs from VOID Portal). Every release can also be published as a GitHub Release. The APKs on this repository's Releases page are signed with the maintainer's key, so a phone running one can only update to another from there (install it over the old one); to update through your own bucket, uninstall it once and install your own build.
 
 To publish: bump `versionCode`/`versionName` in `app/build.gradle.kts`, commit, then
 

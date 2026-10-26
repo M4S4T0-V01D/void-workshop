@@ -124,7 +124,12 @@ npx wrangler deploy      # prints https://void-relay.<your-subdomain>.workers.de
 node test/smoke.mjs wss://void-relay.<your-subdomain>.workers.dev   # checks the deployed relay
 ```
 
-Then in VOID Workshop open **Settings → VOID Portal (phone)**, enter `wss://void-relay.<your-subdomain>.workers.dev` as the relay, and click **Pair a phone**. Build the app with JDK 17 (`cd remote/android && ./gradlew :app:assembleRelease`), install the APK, and scan the code. The full guide, including the optional R2 bucket for app updates and what to do if a pairing code leaks, is in [remote/README.md](remote/README.md#your-own-relay).
+Then in VOID Workshop open **Settings → VOID Portal (phone)**, enter `wss://void-relay.<your-subdomain>.workers.dev` as the relay, and click **Pair a phone**. Install the app and scan the code:
+
+- **Download it:** the newest build is **VOID Portal 1.11.0** ([VOID-Portal-1.11.0.apk](https://github.com/M4S4T0-V01D/void-workshop/releases/download/portal-v1.11.0/VOID-Portal-1.11.0.apk)); every version is under [Releases](https://github.com/M4S4T0-V01D/void-workshop/releases). Android asks you to allow installs from your browser or file manager the first time.
+- **Or build it** with JDK 17: `cd remote/android && ./gradlew :app:assembleRelease`.
+
+Either way, the APK contains no relay, account or key: it learns your relay from the pairing code. The full guide, including the optional R2 bucket for app updates and what to do if a pairing code leaks, is in [remote/README.md](remote/README.md#your-own-relay).
 
 ## Your data stays yours
 
@@ -140,7 +145,7 @@ Then in VOID Workshop open **Settings → VOID Portal (phone)**, enter `wss://vo
 | Start | App menu → VOID Workshop, or `void-workshop` |
 | Development mode | `./scripts/dev.sh` (hot-reloading UI) |
 | Stop | Close the window. Running tasks are interrupted cleanly and their history is kept. |
-| Update | `git pull && ./scripts/build.sh && ./scripts/install.sh` (VOID Portal: rebuild the APK and install it over the old one) |
+| Update | `git pull && ./scripts/build.sh && ./scripts/install.sh` (VOID Portal: install the newer APK from [Releases](https://github.com/M4S4T0-V01D/void-workshop/releases) over the old one, or rebuild it) |
 | Uninstall | `./scripts/uninstall.sh` (keeps data and key) or `./scripts/uninstall.sh --purge` (also deletes history, settings and the stored key) |
 
 Local data lives in `~/.local/share/void-workshop` (SQLite history, logs, file originals, agent session transcripts) and `~/.config/void-workshop` (key file, only if you chose the file backend).
