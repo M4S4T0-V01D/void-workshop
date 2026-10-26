@@ -19,7 +19,7 @@ class PortalService : LifecycleService() {
         super.onCreate()
         Portal.init(this)
         val type = if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING else 0
-        ServiceCompat.startForeground(this, ID, Notifier.serviceNotification(this, "Connecting…"), type)
+        ServiceCompat.startForeground(this, ID, Notifier.serviceNotification(this, tr("Connecting…")), type)
         val nm = getSystemService(NotificationManager::class.java)
         // Look for app updates now and then (quietly; the app shows them on its home screen).
         lifecycleScope.launch {
@@ -31,12 +31,12 @@ class PortalService : LifecycleService() {
         }
         lifecycleScope.launch {
             combine(Portal.link, Portal.pc, Portal.pairing) { link, pc, p -> Triple(link, pc, p) }.collect { (link, pc, p) ->
-                val name = p?.pcName ?: "PC"
+                val name = p?.pcName ?: tr("PC")
                 val text = when {
-                    link != Portal.Link.CONNECTED -> "Reconnecting to the relay…"
-                    pc == Portal.Pc.ONLINE -> "Connected to $name"
-                    pc == Portal.Pc.OFFLINE -> "$name is offline"
-                    else -> "Waiting for $name"
+                    link != Portal.Link.CONNECTED -> tr("Reconnecting to the relay…")
+                    pc == Portal.Pc.ONLINE -> tr("Connected to {name}", "name" to name)
+                    pc == Portal.Pc.OFFLINE -> tr("{name} is offline", "name" to name)
+                    else -> tr("Waiting for {name}", "name" to name)
                 }
                 nm.notify(ID, Notifier.serviceNotification(this@PortalService, text))
             }

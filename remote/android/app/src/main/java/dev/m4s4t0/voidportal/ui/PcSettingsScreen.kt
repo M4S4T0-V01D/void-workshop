@@ -69,8 +69,10 @@ import dev.m4s4t0.voidportal.str
 import dev.m4s4t0.voidportal.strs
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
 
-private val CACHE_TTLS = listOf("auto" to "Default", "5m" to "5 minutes", "1h" to "1 hour")
+// Getters, so the labels follow the interface language.
+private val CACHE_TTLS get() = listOf("auto" to tr("Default"), "5m" to tr("5 minutes"), "1h" to tr("1 hour"))
 
 /** A safety switch waiting for the admin password before it is sent. */
 private data class PendingSafety(val key: String, val value: Boolean, val label: String)
@@ -95,7 +97,7 @@ fun PcSettingsScreen(onBack: () -> Unit) {
                 Portal.call("settings.update", json(*patch))
                 Portal.refresh()
             } catch (e: PortalError) {
-                snack.showSnackbar(e.message ?: "The PC refused the change")
+                snack.showSnackbar(e.message ?: tr("The PC refused the change"))
             }
         }
     }
@@ -106,14 +108,14 @@ fun PcSettingsScreen(onBack: () -> Unit) {
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
-                title = { Text("PC settings") },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, tr("Back")) } },
+                title = { Text(tr("PC settings")) },
             )
         },
     ) { pad ->
         val s = state?.obj("settings")
         if (s == null) {
-            Box(Modifier.fillMaxSize().padding(pad).padding(24.dp)) { Text("Connect to the PC to change its settings.", color = Void.dim) }
+            Box(Modifier.fillMaxSize().padding(pad).padding(24.dp)) { Text(tr("Connect to the PC to change its settings."), color = Void.dim) }
             return@Scaffold
         }
         val admin = state?.obj("admin")
@@ -128,27 +130,27 @@ fun PcSettingsScreen(onBack: () -> Unit) {
             if (adminActive) update(key to value) else pendingSafety = PendingSafety(key, value, label)
         }
         LazyColumn(Modifier.fillMaxSize().padding(pad).imePadding(), contentPadding = PaddingValues(16.dp, 0.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            item { SectionTitle("Agent") }
+            item { SectionTitle(tr("Agent")) }
             item {
                 Card {
-                    Text("Mode for new sessions", fontWeight = FontWeight.Medium)
+                    Text(tr("Mode for new sessions"), fontWeight = FontWeight.Medium)
                     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         for ((m, label) in MODES) FilterChip(selected = s.str("agentMode") == m, onClick = { update("agentMode" to m) }, label = { Text(label) })
                     }
-                    SwitchRow("Git checkpoint before each task", "A private ref; branches, the index and your files stay as they are.", s.bool("checkpointBeforeTasks") == true) {
+                    SwitchRow(tr("Git checkpoint before each task"), tr("A private ref; branches, the index and your files stay as they are."), s.bool("checkpointBeforeTasks") == true) {
                         update("checkpointBeforeTasks" to it)
                     }
                 }
             }
 
-            item { SectionTitle("Speed & tokens") }
+            item { SectionTitle(tr("Speed & tokens")) }
             item {
                 Card {
                     // VOID Workshop 0.2.0 and newer.
                     if (s.containsKey("tokenSaver")) {
                         SwitchRow(
-                            "Save tokens (recommended)",
-                            "Compacts at 120k tokens at the latest, keeps less command output and asks for quiet commands and small screenshots.",
+                            tr("Save tokens (recommended)"),
+                            tr("Compacts at 120k tokens at the latest, keeps less command output and asks for quiet commands and small screenshots."),
                             s.bool("tokenSaver") == true,
                         ) { update("tokenSaver" to it) }
                     }
@@ -156,18 +158,18 @@ fun PcSettingsScreen(onBack: () -> Unit) {
                         val models = state?.obj("models")?.arr(if (s.str("provider") == "ollama") "ollama" else "anthropic") ?: emptyList()
                         val chosen = s.str("implementModel")
                         var open by remember { mutableStateOf(false) }
-                        Text("Implement approved plans with", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                        Text(tr("Implement approved plans with"), fontWeight = FontWeight.Medium, fontSize = 14.sp)
                         Box {
                             OutlinedButton(onClick = { open = true }, modifier = Modifier.fillMaxWidth()) {
                                 Text(
-                                    if (chosen == null) "The same model" else models.firstOrNull { it.str("id") == chosen }?.str("displayName") ?: chosen,
+                                    if (chosen == null) tr("The same model") else models.firstOrNull { it.str("id") == chosen }?.str("displayName") ?: chosen,
                                     Modifier.weight(1f),
                                     maxLines = 1,
                                 )
                                 Icon(Icons.Default.ArrowDropDown, null)
                             }
                             DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-                                DropdownMenuItem(text = { Text("The same model") }, onClick = { open = false; update("implementModel" to null) })
+                                DropdownMenuItem(text = { Text(tr("The same model")) }, onClick = { open = false; update("implementModel" to null) })
                                 for (m in models) {
                                     DropdownMenuItem(
                                         text = { Column { Text(m.str("displayName") ?: ""); Text(m.str("id") ?: "", color = Void.dim, fontSize = 11.sp) } },
@@ -176,101 +178,101 @@ fun PcSettingsScreen(onBack: () -> Unit) {
                                 }
                             }
                         }
-                        Text("Plan with a strong model, build with a cheaper one: Sonnet uses far less of a Claude plan's weekly allowance.", color = Void.dim, fontSize = 12.sp)
+                        Text(tr("Plan with a strong model, build with a cheaper one: Sonnet uses far less of a Claude plan's weekly allowance."), color = Void.dim, fontSize = 12.sp)
                     }
                     OptionalNumberRow(
-                        "Compact the conversation at (tokens)",
-                        offLabel = "Use the model's own window",
+                        tr("Compact the conversation at (tokens)"),
+                        offLabel = tr("Use the model's own window"),
                         value = s.num("contextCapTokens"),
                         min = 100_000.0,
                         max = 1_000_000.0,
                         defaultOn = 200_000.0,
                     ) { update("contextCapTokens" to it?.toLong()) }
-                    Text("Prompt cache", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                    Text(tr("Prompt cache"), fontWeight = FontWeight.Medium, fontSize = 14.sp)
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         for ((id, label) in CACHE_TTLS) FilterChip(selected = s.str("promptCacheTtl") == id, onClick = { update("promptCacheTtl" to id) }, label = { Text(label) })
                     }
-                    NumberRow("Max output tokens per reply", s.num("maxOutputTokens"), 1024.0, 128_000.0) { update("maxOutputTokens" to it.toLong()) }
-                    SwitchRow("Fast mode", "Faster output at a higher price (extra usage on a Claude plan).", s.bool("fastMode") == true) { update("fastMode" to it) }
-                    SwitchRow("Send queued messages together", "One request when the turn ends instead of several.", s.bool("sendQueuedTogether") == true) {
+                    NumberRow(tr("Max output tokens per reply"), s.num("maxOutputTokens"), 1024.0, 128_000.0) { update("maxOutputTokens" to it.toLong()) }
+                    SwitchRow(tr("Fast mode"), tr("Faster output at a higher price (extra usage on a Claude plan)."), s.bool("fastMode") == true) { update("fastMode" to it) }
+                    SwitchRow(tr("Send queued messages together"), tr("One request when the turn ends instead of several."), s.bool("sendQueuedTogether") == true) {
                         update("sendQueuedTogether" to it)
                     }
                 }
             }
 
-            item { SectionTitle("Limits") }
+            item { SectionTitle(tr("Limits")) }
             item {
                 Card {
-                    NumberRow("Budget per task (USD)", s.num("perTaskBudgetUsd"), 0.01, 100.0, decimals = 2) { update("perTaskBudgetUsd" to it) }
-                    NumberRow("Daily budget (USD)", s.num("dailyBudgetUsd"), 0.01, 500.0, decimals = 2) { update("dailyBudgetUsd" to it) }
+                    NumberRow(tr("Budget per task (USD)"), s.num("perTaskBudgetUsd"), 0.01, 100.0, decimals = 2) { update("perTaskBudgetUsd" to it) }
+                    NumberRow(tr("Daily budget (USD)"), s.num("dailyBudgetUsd"), 0.01, 500.0, decimals = 2) { update("dailyBudgetUsd" to it) }
                     OptionalNumberRow(
-                        "Ask before tasks with a budget from (USD)",
-                        offLabel = "Never ask",
+                        tr("Ask before tasks with a budget from (USD)"),
+                        offLabel = tr("Never ask"),
                         value = s.num("confirmTaskBudgetAboveUsd"),
                         min = 0.0,
                         max = 100.0,
                         defaultOn = 2.0,
                         decimals = 2,
                     ) { update("confirmTaskBudgetAboveUsd" to it) }
-                    Text("The USD budgets cap API-key spending; Claude plan and Ollama tasks don't use them.", color = Void.dim, fontSize = 12.sp)
-                    NumberRow("Turns per run", s.num("maxTurns"), 1.0, 1000.0) { update("maxTurns" to it.toLong()) }
-                    NumberRow("Tasks working at the same time", s.num("maxRunningTasks"), 1.0, 8.0) { update("maxRunningTasks" to it.toLong()) }
+                    Text(tr("The USD budgets cap API-key spending; Claude plan and Ollama tasks don't use them."), color = Void.dim, fontSize = 12.sp)
+                    NumberRow(tr("Turns per run"), s.num("maxTurns"), 1.0, 1000.0) { update("maxTurns" to it.toLong()) }
+                    NumberRow(tr("Tasks working at the same time"), s.num("maxRunningTasks"), 1.0, 8.0) { update("maxRunningTasks" to it.toLong()) }
                 }
             }
 
-            item { SectionTitle("Commands") }
+            item { SectionTitle(tr("Commands")) }
             item {
                 Card {
-                    NumberRow("Command timeout (seconds)", s.num("commandTimeoutSec"), 5.0, 3600.0) { update("commandTimeoutSec" to it.toLong()) }
-                    NumberRow("Command output limit (KB)", s.num("commandOutputLimitKb"), 16.0, 4096.0) { update("commandOutputLimitKb" to it.toLong()) }
+                    NumberRow(tr("Command timeout (seconds)"), s.num("commandTimeoutSec"), 5.0, 3600.0) { update("commandTimeoutSec" to it.toLong()) }
+                    NumberRow(tr("Command output limit (KB)"), s.num("commandOutputLimitKb"), 16.0, 4096.0) { update("commandOutputLimitKb" to it.toLong()) }
                 }
             }
 
             item {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    SectionTitle("Safety")
+                    SectionTitle(tr("Safety"))
                     Icon(if (adminActive) Icons.Default.LockOpen else Icons.Default.Lock, null, tint = if (adminActive) Void.warn else Void.dim, modifier = Modifier.padding(top = 6.dp).size(14.dp))
                 }
             }
             item {
                 Card {
                     Text(
-                        if (adminActive) "Unlocked by the admin session." else if (admin?.bool("passwordSet") == true) "Needs your admin password." else "Set an admin password on the PC first (Settings → Admin).",
+                        if (adminActive) tr("Unlocked by the admin session.") else if (admin?.bool("passwordSet") == true) tr("Needs your admin password.") else tr("Set an admin password on the PC first (Settings → Admin)."),
                         color = if (adminActive) Void.warn else Void.dim,
                         fontSize = 12.sp,
                     )
                     val full = s.bool("fullAccess") == true
                     SwitchRow(
-                        "Full access (like Claude Code)",
-                        "No sandbox: builds, installs, other repos and the network just work. Risky commands still ask; keys stay blocked.",
+                        tr("Full access (like Claude Code)"),
+                        tr("No sandbox: builds, installs, other repos and the network just work. Risky commands still ask; keys stay blocked."),
                         full,
-                    ) { safety("fullAccess", it, "Full access") }
+                    ) { safety("fullAccess", it, tr("Full access")) }
                     if (full) {
-                        SwitchRow("Auto also pushes and publishes", "git push, gh, wrangler and release scripts run without asking in Auto.", s.bool("autoPublish") == true) {
-                            safety("autoPublish", it, "Auto publishing")
+                        SwitchRow(tr("Auto also pushes and publishes"), tr("git push, gh, wrangler and release scripts run without asking in Auto."), s.bool("autoPublish") == true) {
+                            safety("autoPublish", it, tr("Auto publishing"))
                         }
                     }
                     val sandboxOk = sandbox?.bool("available") != false
                     SwitchRow(
-                        "Sandbox agent commands",
-                        if (sandboxOk) "Writes only inside the project, no network unless allowed. Ignored with full access."
-                        else "Not available on the PC (missing: ${sandbox?.strs("missing")?.joinToString(", ")}).",
+                        tr("Sandbox agent commands"),
+                        if (sandboxOk) tr("Writes only inside the project, no network unless allowed. Ignored with full access.")
+                        else tr("Not available on the PC (missing: {list}).", "list" to sandbox?.strs("missing")?.joinToString(", ")),
                         s.bool("sandboxCommands") == true,
                         enabled = sandboxOk,
-                    ) { safety("sandboxCommands", it, "The sandbox") }
-                    SwitchRow("Gradle / Android builds", "Sandboxed builds may write the Gradle caches and reach the Gradle, Maven and Google repositories.", s.bool("gradleBuilds") == true) {
-                        safety("gradleBuilds", it, "Gradle builds")
+                    ) { safety("sandboxCommands", it, tr("The sandbox")) }
+                    SwitchRow(tr("Gradle / Android builds"), tr("Sandboxed builds may write the Gradle caches and reach the Gradle, Maven and Google repositories."), s.bool("gradleBuilds") == true) {
+                        safety("gradleBuilds", it, tr("Gradle builds"))
                     }
-                    SwitchRow("GitHub, push and release commands", "gh, git push, wrangler and release.sh become approvable; they always ask.", s.bool("allowPublishCommands") == true) {
-                        safety("allowPublishCommands", it, "Publishing commands")
+                    SwitchRow(tr("GitHub, push and release commands"), tr("gh, git push, wrangler and release.sh become approvable; they always ask."), s.bool("allowPublishCommands") == true) {
+                        safety("allowPublishCommands", it, tr("Publishing commands"))
                     }
                 }
             }
 
-            item { SectionTitle("Desktop") }
+            item { SectionTitle(tr("Desktop")) }
             item {
                 Card {
-                    Text("Theme on the PC", fontWeight = FontWeight.Medium)
+                    Text(tr("Theme on the PC"), fontWeight = FontWeight.Medium)
                     val themes = BUILTIN_THEMES.map { Triple(it.id, it.name.removeSuffix(" (default)"), it.accent) } +
                         (state?.arr("customThemes") ?: emptyList()).mapNotNull { t ->
                             t.str("id")?.let { Triple(it, t.str("name") ?: it, paletteFromJson(t)?.accent ?: Void.cyan) }
@@ -285,10 +287,10 @@ fun PcSettingsScreen(onBack: () -> Unit) {
                             )
                         }
                     }
-                    SwitchRow("Keep running in the background", "Closing the window hides it to the tray, so VOID Portal keeps working.", s.bool("runInBackground") == true) {
+                    SwitchRow(tr("Keep running in the background"), tr("Closing the window hides it to the tray, so VOID Portal keeps working."), s.bool("runInBackground") == true) {
                         update("runInBackground" to it)
                     }
-                    SwitchRow("Start at login", "Starts hidden in the tray when you log in.", s.bool("startAtLogin") == true) { update("startAtLogin" to it) }
+                    SwitchRow(tr("Start at login"), tr("Starts hidden in the tray when you log in."), s.bool("startAtLogin") == true) { update("startAtLogin" to it) }
                 }
             }
 
@@ -296,8 +298,8 @@ fun PcSettingsScreen(onBack: () -> Unit) {
                 item { SectionTitle("Ollama") }
                 item {
                     Card {
-                        TextSettingRow("Server address", s.str("ollamaUrl") ?: "", "http://127.0.0.1:11434") { update("ollamaUrl" to it) }
-                        Text("Must be on the PC itself (http://127.0.0.1:PORT or http://localhost:PORT).", color = Void.dim, fontSize = 12.sp)
+                        TextSettingRow(tr("Server address"), s.str("ollamaUrl") ?: "", "http://127.0.0.1:11434") { update("ollamaUrl" to it) }
+                        Text(tr("Must be on the PC itself (http://127.0.0.1:PORT or http://localhost:PORT)."), color = Void.dim, fontSize = 12.sp)
                     }
                 }
             }
@@ -305,9 +307,9 @@ fun PcSettingsScreen(onBack: () -> Unit) {
     }
     pendingSafety?.let { p ->
         AdminPasswordDialog(
-            title = "${p.label}: turn ${if (p.value) "on" else "off"}?",
-            text = "Safety settings on the PC need your admin password.",
-            confirm = "Change",
+            title = if (p.value) tr("{setting}: turn on?", "setting" to p.label) else tr("{setting}: turn off?", "setting" to p.label),
+            text = tr("Safety settings on the PC need your admin password."),
+            confirm = tr("Change"),
             onDismiss = { pendingSafety = null },
         ) { pw ->
             Portal.call("settings.update", json(p.key to p.value, "adminPassword" to pw))

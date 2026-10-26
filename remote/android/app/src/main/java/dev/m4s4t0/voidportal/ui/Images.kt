@@ -57,6 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
 
 /** Pictures already fetched this run, so scrolling back does not download them again. */
 private object ImageCache : LruCache<String, Bitmap>(48 * 1024 * 1024) {
@@ -80,7 +81,7 @@ private suspend fun fetchImage(taskId: String, imageId: String): Bitmap {
         var sample = 1
         while (maxOf(bounds.outWidth, bounds.outHeight) / sample > 2048) sample *= 2
         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample })
-            ?: throw PortalError("image", "That image could not be shown.")
+            ?: throw PortalError("image", tr("That image could not be shown."))
     }
 }
 
@@ -125,14 +126,14 @@ fun ImageRow(taskId: String, item: TImage) {
                             } catch (e: PortalError) {
                                 error = e.message
                             } catch (e: Exception) {
-                                error = "Could not load the image."
+                                error = tr("Could not load the image.")
                             } finally {
                                 loading = false
                             }
                         }
                     },
                     modifier = Modifier.padding(top = 6.dp),
-                ) { Text(if (error != null) "Try again" else "Load image") }
+                ) { Text(if (error != null) tr("Try again") else tr("Load image")) }
                 error?.let { Text(it, color = Void.bad, fontSize = 12.sp) }
             }
         }

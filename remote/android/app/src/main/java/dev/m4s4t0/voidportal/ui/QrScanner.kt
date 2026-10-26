@@ -74,6 +74,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
+import dev.m4s4t0.voidportal.tr
 
 /** True for anything that looks like a VOID Portal pairing code (short or long form). */
 fun isPairingCode(text: String) = text.trim().lowercase().startsWith("voidportal://")
@@ -91,14 +92,14 @@ fun QrScanner(onResult: (String) -> Unit, onClose: () -> Unit) {
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         if (granted) CameraPreview(onResult) else {
             Column(Modifier.fillMaxSize().padding(32.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("VOID Portal needs the camera to scan the pairing code on your PC.", textAlign = TextAlign.Center, color = Void.text)
+                Text(tr("VOID Portal needs the camera to scan the pairing code on your PC."), textAlign = TextAlign.Center, color = Void.text)
                 Spacer(Modifier.height(16.dp))
-                Button(onClick = { ask.launch(Manifest.permission.CAMERA) }) { Text("Allow camera") }
+                Button(onClick = { ask.launch(Manifest.permission.CAMERA) }) { Text(tr("Allow camera")) }
             }
             androidx.compose.runtime.LaunchedEffect(Unit) { ask.launch(Manifest.permission.CAMERA) }
         }
         IconButton(onClick = onClose, modifier = Modifier.systemBarsPadding().padding(8.dp).align(Alignment.TopStart)) {
-            Icon(Icons.Default.Close, "Close", tint = Color.White)
+            Icon(Icons.Default.Close, tr("Close"), tint = Color.White)
         }
     }
 }
@@ -110,7 +111,7 @@ private fun CameraPreview(onResult: (String) -> Unit) {
     val owner = LocalLifecycleOwner.current
     var camera by remember { mutableStateOf<Camera?>(null) }
     var torch by remember { mutableStateOf(false) }
-    var hint by remember { mutableStateOf("Point the camera at the code in VOID Workshop") }
+    var hint by remember { mutableStateOf(tr("Point the camera at the code in VOID Workshop")) }
     val done = remember { AtomicBoolean(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
     val scanner = remember { BarcodeScanning.getClient(BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()) }
@@ -145,7 +146,7 @@ private fun CameraPreview(onResult: (String) -> Unit) {
                             when {
                                 raw == null -> Unit
                                 isPairingCode(raw) -> if (done.compareAndSet(false, true)) onResult(raw.trim())
-                                else -> hint = "That QR code isn't a VOID Portal pairing code"
+                                else -> hint = tr("That QR code isn't a VOID Portal pairing code")
                             }
                         }
                         .addOnCompleteListener { proxy.close() }
@@ -154,7 +155,7 @@ private fun CameraPreview(onResult: (String) -> Unit) {
                     provider.unbindAll()
                     camera = provider.bindToLifecycle(owner, CameraSelector.DEFAULT_BACK_CAMERA, preview, analysis)
                 } catch (e: Exception) {
-                    hint = "Could not start the camera: ${e.message}"
+                    hint = tr("Could not start the camera: {error}", "error" to e.message)
                 }
             }, ContextCompat.getMainExecutor(c))
             // Tap to focus.
@@ -172,13 +173,13 @@ private fun CameraPreview(onResult: (String) -> Unit) {
     Viewfinder()
     Column(Modifier.fillMaxSize().systemBarsPadding().padding(24.dp), verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(hint, color = Color.White, fontSize = 15.sp, textAlign = TextAlign.Center)
-        Text("Tap to focus · hold 20–30 cm from the screen", color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+        Text(tr("Tap to focus · hold 20–30 cm from the screen"), color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
         Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.Center) {
             if (camera?.cameraInfo?.hasFlashUnit() == true) {
                 IconButton(onClick = {
                     torch = !torch
                     camera?.cameraControl?.enableTorch(torch)
-                }) { Icon(if (torch) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff, "Torch", tint = Color.White) }
+                }) { Icon(if (torch) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff, tr("Torch"), tint = Color.White) }
             }
         }
     }

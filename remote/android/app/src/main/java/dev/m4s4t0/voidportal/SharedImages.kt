@@ -86,8 +86,8 @@ object SharedImages {
     /** Shrink, upload and return the PC's id for it. */
     suspend fun upload(ctx: Context, uri: Uri): String {
         val bytes = withContext(Dispatchers.IO) { decode(ctx, uri, MAX_SIDE)?.let(::jpeg) }
-            ?: throw PortalError("not-image", "That picture could not be read.")
+            ?: throw PortalError("not-image", tr("That picture could not be read."))
         val res = Portal.call("image.upload", json("data" to Base64.encodeToString(bytes, Base64.NO_WRAP)), timeoutMs = 90_000) as? JsonObject
-        return res?.str("imageId") ?: throw PortalError("upload", "The PC did not take the picture.")
+        return res?.str("imageId") ?: throw PortalError("upload", tr("The PC did not take the picture."))
     }
 }

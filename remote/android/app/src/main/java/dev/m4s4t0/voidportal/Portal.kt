@@ -131,7 +131,7 @@ object Portal {
         val req = try {
             Request.Builder().url("${p.relayUrl}/v1/channel/${p.keys.channelId}?role=phone").header("Authorization", "Bearer ${p.keys.token}").build()
         } catch (e: IllegalArgumentException) {
-            lastError.value = "Bad relay address: ${p.relayUrl}"
+            lastError.value = tr("Bad relay address: {url}", "url" to p.relayUrl)
             link.value = Link.OFFLINE
             return
         }
@@ -151,7 +151,7 @@ object Portal {
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = dropped(socket, code, null)
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) =
-                dropped(socket, response?.code ?: 0, response?.let { "Relay answered ${it.code}" } ?: t.message)
+                dropped(socket, response?.code ?: 0, response?.let { tr("Relay answered {code}", "code" to it.code) } ?: t.message)
         })
         ws = socket
     }
@@ -159,17 +159,17 @@ object Portal {
     private fun dropped(socket: WebSocket, code: Int, error: String?) {
         if (ws !== socket) return
         ws = null
-        for (d in pending.values) d.completeExceptionally(PortalError("offline", "The connection dropped."))
+        for (d in pending.values) d.completeExceptionally(PortalError("offline", tr("The connection dropped.")))
         pending.clear()
         if (code == 4001) {
             // Removed on the PC: this pairing is gone for good.
-            Notifier.show(app, Cue.ALERT, "Unpaired", "This phone was removed in VOID Workshop on ${pairing.value?.pcName ?: "the PC"}.", null)
+            Notifier.show(app, Cue.ALERT, tr("Unpaired"), tr("This phone was removed in VOID Workshop on {pc}.", "pc" to (pairing.value?.pcName ?: tr("the PC"))), null)
             unpair()
             return
         }
         lastError.value = when (code) {
-            403 -> "The relay refused this pairing. Pair again from the PC."
-            404 -> "The PC hasn't set up this pairing on the relay yet. Is VOID Workshop running?"
+            403 -> tr("The relay refused this pairing. Pair again from the PC.")
+            404 -> tr("The PC hasn't set up this pairing on the relay yet. Is VOID Workshop running?")
             else -> error
         }
         link.value = Link.OFFLINE
@@ -213,10 +213,10 @@ object Portal {
         pc.value = now
         val prev = lastKnownPc
         lastKnownPc = now
-        val name = pairing.value?.pcName ?: "PC"
+        val name = pairing.value?.pcName ?: tr("PC")
         if (prev != null && prev != now) {
-            if (online) Notifier.show(app, Cue.PC_ONLINE, "$name is online", "VOID Workshop is reachable again.", null)
-            else Notifier.show(app, Cue.PC_OFFLINE, "$name went offline", "VOID Workshop stopped answering. Tasks pause until it is back.", null)
+            if (online) Notifier.show(app, Cue.PC_ONLINE, tr("{name} is online", "name" to name), tr("VOID Workshop is reachable again."), null)
+            else Notifier.show(app, Cue.PC_OFFLINE, tr("{name} went offline", "name" to name), tr("VOID Workshop stopped answering. Tasks pause until it is back."), null)
         }
         if (online) scope.launch { runCatching { refresh() } } else LiveProgress.clear(app)
     }
@@ -236,7 +236,7 @@ object Portal {
                 if (msg.bool("ok") == true) d.complete(msg["result"] ?: JsonNull)
                 else {
                     val e = msg.obj("error")
-                    d.completeExceptionally(PortalError(e?.str("code") ?: "error", e?.str("message") ?: "The PC refused the request."))
+                    d.completeExceptionally(PortalError(e?.str("code") ?: "error", e?.str("message") ?: tr("The PC refused the request.")))
                 }
             }
             "event" -> {
@@ -294,10 +294,10 @@ object Portal {
     }
 
     suspend fun call(method: String, params: JsonObject = JsonObject(emptyMap()), timeoutMs: Long = 60_000): JsonElement {
-        val p = pairing.value ?: throw PortalError("unpaired", "Pair with VOID Workshop first.")
+        val p = pairing.value ?: throw PortalError("unpaired", tr("Pair with VOID Workshop first."))
         val socket = ws
-        if (link.value != Link.CONNECTED || socket == null) throw PortalError("offline", "No connection to the relay right now.")
-        if (pc.value == Pc.OFFLINE) throw PortalError("pc-offline", "${p.pcName} is offline.")
+        if (link.value != Link.CONNECTED || socket == null) throw PortalError("offline", tr("No connection to the relay right now."))
+        if (pc.value == Pc.OFFLINE) throw PortalError("pc-offline", tr("{name} is offline.", "name" to p.pcName))
         val id = UUID.randomUUID().toString()
         val reply = CompletableDeferred<JsonElement>()
         pending[id] = reply
@@ -314,12 +314,12 @@ object Portal {
         }
         if (!socket.send(frame.toString())) {
             pending.remove(id)
-            throw PortalError("offline", "Could not send to the relay.")
+            throw PortalError("offline", tr("Could not send to the relay."))
         }
         try {
             return withTimeout(timeoutMs) { reply.await() }
         } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
-            throw PortalError("timeout", "The PC did not answer in time.")
+            throw PortalError("timeout", tr("The PC did not answer in time."))
         } finally {
             pending.remove(id)
         }

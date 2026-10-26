@@ -95,6 +95,7 @@ import dev.m4s4t0.voidportal.str
 import dev.m4s4t0.voidportal.strs
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
 
 // ---- Pairing ------------------------------------------------------------------------------------
 
@@ -118,7 +119,7 @@ fun PairScreen(error: String?, onLink: (String) -> Unit) {
         Spacer(Modifier.height(16.dp))
         Text("VOID Portal", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
         Text(
-            "Your remote for VOID Workshop. On the PC open Settings → VOID Portal (phone) → Pair a phone, then scan the code.",
+            tr("Your remote for VOID Workshop. On the PC open Settings → VOID Portal (phone) → Pair a phone, then scan the code."),
             color = Void.dim,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 12.dp),
@@ -129,13 +130,13 @@ fun PairScreen(error: String?, onLink: (String) -> Unit) {
         ) {
             Icon(Icons.Default.QrCodeScanner, null)
             Spacer(Modifier.size(8.dp))
-            Text("Scan pairing code")
+            Text(tr("Scan pairing code"))
         }
         error?.let { Text(it, color = Void.bad, modifier = Modifier.padding(top = 10.dp), textAlign = TextAlign.Center) }
         Spacer(Modifier.height(28.dp))
-        Text("Or paste the pairing link", color = Void.dim, fontSize = 13.sp)
+        Text(tr("Or paste the pairing link"), color = Void.dim, fontSize = 13.sp)
         OutlinedTextField(value = paste, onValueChange = { paste = it }, singleLine = true, modifier = Modifier.fillMaxWidth(), placeholder = { Text("VOIDPORTAL://P/…") })
-        TextButton(onClick = { onLink(paste) }, enabled = paste.isNotBlank()) { Text("Pair") }
+        TextButton(onClick = { onLink(paste) }, enabled = paste.isNotBlank()) { Text(tr("Pair")) }
     }
 }
 
@@ -143,7 +144,7 @@ fun tryPair(link: String): String? = try {
     Portal.pair(Pairing.parse(link))
     null
 } catch (e: IllegalArgumentException) {
-    e.message ?: "That is not a VOID Portal pairing code."
+    e.message ?: tr("That is not a VOID Portal pairing code.")
 }
 
 // ---- New task -----------------------------------------------------------------------------------
@@ -166,15 +167,15 @@ fun NewTaskScreen(onBack: () -> Unit, onStarted: (String) -> Unit) {
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
-                title = { Text("New task") },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, tr("Back")) } },
+                title = { Text(tr("New task")) },
             )
         },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad).padding(16.dp).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            SectionTitle("Project")
+            SectionTitle(tr("Project"))
             val folders = state?.arr("folders") ?: emptyList()
-            if (projects.isEmpty() && folders.isEmpty()) Text("Open a project in VOID Workshop on the PC first.", color = Void.dim)
+            if (projects.isEmpty() && folders.isEmpty()) Text(tr("Open a project in VOID Workshop on the PC first."), color = Void.dim)
             for (p in projects) {
                 val path = p.str("path") ?: continue
                 Row(
@@ -190,9 +191,9 @@ fun NewTaskScreen(onBack: () -> Unit, onStarted: (String) -> Unit) {
             if (folders.isNotEmpty()) {
                 var showAll by rememberSaveable { mutableStateOf(false) }
                 var find by rememberSaveable { mutableStateOf("") }
-                TextButton(onClick = { showAll = !showAll }) { Text(if (showAll) "Hide all projects" else "All projects (${folders.size})") }
+                TextButton(onClick = { showAll = !showAll }) { Text(if (showAll) tr("Hide all projects") else tr("All projects ({n})", "n" to folders.size)) }
                 if (showAll) {
-                    OutlinedTextField(value = find, onValueChange = { find = it }, modifier = Modifier.fillMaxWidth(), singleLine = true, placeholder = { Text("Find a project") })
+                    OutlinedTextField(value = find, onValueChange = { find = it }, modifier = Modifier.fillMaxWidth(), singleLine = true, placeholder = { Text(tr("Find a project")) })
                     val shown = folders.filter { (it.str("name") ?: "").contains(find.trim(), ignoreCase = true) }.take(60)
                     for (f in shown) {
                         val path = f.str("path") ?: continue
@@ -207,10 +208,10 @@ fun NewTaskScreen(onBack: () -> Unit, onStarted: (String) -> Unit) {
                     }
                 }
             }
-            SectionTitle("What should it do?")
-            OutlinedTextField(value = prompt, onValueChange = { prompt = it }, modifier = Modifier.fillMaxWidth(), minLines = 4, placeholder = { Text("e.g. Add input validation to the signup form and a test for it") })
+            SectionTitle(tr("What should it do?"))
+            OutlinedTextField(value = prompt, onValueChange = { prompt = it }, modifier = Modifier.fillMaxWidth(), minLines = 4, placeholder = { Text(tr("e.g. Add input validation to the signup form and a test for it")) })
             SnippetChips(current = prompt) { s -> prompt = if (prompt.isBlank()) s else "${prompt.trimEnd()}\n\n$s" }
-            SectionTitle("Mode")
+            SectionTitle(tr("Mode"))
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 for ((m, label) in MODES) FilterChip(selected = mode == m, onClick = { mode = m }, label = { Text(label) })
             }
@@ -224,7 +225,7 @@ fun NewTaskScreen(onBack: () -> Unit, onStarted: (String) -> Unit) {
                             Haptics.confirm(ctx)
                             t.str("id")?.let(onStarted)
                         } catch (e: PortalError) {
-                            snack.showSnackbar(e.message ?: "Could not start the task")
+                            snack.showSnackbar(e.message ?: tr("Could not start the task"))
                         } finally {
                             busy = false
                         }
@@ -232,7 +233,7 @@ fun NewTaskScreen(onBack: () -> Unit, onStarted: (String) -> Unit) {
                 },
                 enabled = !busy && root != null && prompt.isNotBlank(),
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-            ) { Text(if (busy) "Starting…" else "Start on the PC") }
+            ) { Text(if (busy) tr("Starting…") else tr("Start on the PC")) }
         }
     }
 }
@@ -273,55 +274,55 @@ fun ApprovalSheet(approvalId: String, onClose: () -> Unit) {
     ModalBottomSheet(onDismissRequest = onClose, sheetState = sheet, containerColor = Void.panel) {
         Column(Modifier.fillMaxWidth().padding(16.dp).navigationBarsPadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (a == null) {
-                Text("This request was already answered.", color = Void.dim)
-                TextButton(onClick = onClose) { Text("Close") }
+                Text(tr("This request was already answered."), color = Void.dim)
+                TextButton(onClick = onClose) { Text(tr("Close")) }
                 return@Column
             }
             val kind = a.str("kind")
             Text(
                 when (kind) {
-                    "command" -> "Run a command?"
-                    "file-change" -> if (a.str("isNew") == "true") "Create a file?" else "Change a file?"
-                    else -> "Read a sensitive file?"
+                    "command" -> tr("Run a command?")
+                    "file-change" -> if (a.str("isNew") == "true") tr("Create a file?") else tr("Change a file?")
+                    else -> tr("Read a sensitive file?")
                 },
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(a.str("summary") ?: "", color = Void.text)
-            a.str("sensitive")?.let { Text("Sensitive: $it", color = Void.warn, fontSize = 13.sp) }
+            a.str("sensitive")?.let { Text(tr("Sensitive: {what}", "what" to it), color = Void.warn, fontSize = 13.sp) }
             if (kind == "command") {
                 Code(a.str("command") ?: "")
-                a.str("cwd")?.let { Text("in $it", color = Void.dim, fontSize = 12.sp) }
+                a.str("cwd")?.let { Text(tr("in {path}", "path" to it), color = Void.dim, fontSize = 12.sp) }
                 a.obj("assessment")?.let { asm ->
                     if ("publishes" in asm.strs("categories")) {
-                        Text("Publishes for real (GitHub, git push or Cloudflare)", color = Void.bad, fontWeight = FontWeight.SemiBold)
+                        Text(tr("Publishes for real (GitHub, git push or Cloudflare)"), color = Void.bad, fontWeight = FontWeight.SemiBold)
                     }
                     asm.strs("warnings").forEach { w -> Text("• $w", color = Void.warn, fontSize = 13.sp) }
                 }
-                Text(if (a.str("sandboxed") == "true") "Runs in the sandbox (project-only writes)" else "Runs without the sandbox", color = Void.dim, fontSize = 12.sp)
+                Text(if (a.str("sandboxed") == "true") tr("Runs in the sandbox (project-only writes)") else tr("Runs without the sandbox"), color = Void.dim, fontSize = 12.sp)
             }
             if (kind == "file-change") {
                 a.str("rel")?.let { Text(it, fontFamily = FontFamily.Monospace, color = Void.cyan) }
                 a.str("diff")?.let { Diff(it) }
             }
             if (kind == "read") a.str("rel")?.let { Code(it) }
-            OutlinedTextField(value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth(), placeholder = { Text("Note to the agent (optional)") })
+            OutlinedTextField(value = note, onValueChange = { note = it }, modifier = Modifier.fillMaxWidth(), placeholder = { Text(tr("Note to the agent (optional)")) })
             error?.let { Text(it, color = Void.bad) }
             if (kind == "command" && a.str("canAlwaysAllow") == "true") {
                 OutlinedButton(onClick = { respond("allow", always = true) }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                    Text("Always allow this exact command")
+                    Text(tr("Always allow this exact command"))
                 }
             }
             if (a.str("canAllowAll") == "true") {
                 OutlinedButton(onClick = { respond("allow", allowAll = true) }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                    Text("Allow all · switch this task to Auto")
+                    Text(tr("Allow all · switch this task to Auto"))
                 }
-                Text("Risky commands (publishing, force-push, sudo, outside the project) still ask; blocked ones stay blocked.", color = Void.dim, fontSize = 12.sp)
+                Text(tr("Risky commands (publishing, force-push, sudo, outside the project) still ask; blocked ones stay blocked."), color = Void.dim, fontSize = 12.sp)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                OutlinedButton(onClick = { respond("deny") }, modifier = Modifier.weight(1f).height(48.dp)) { Text("Deny") }
+                OutlinedButton(onClick = { respond("deny") }, modifier = Modifier.weight(1f).height(48.dp)) { Text(tr("Deny")) }
                 Button(onClick = { respond("allow") }, modifier = Modifier.weight(1f).height(48.dp)) {
-                    Text(when (kind) { "command" -> "Run once"; "file-change" -> "Apply change"; else -> "Allow" })
+                    Text(when (kind) { "command" -> tr("Run once"); "file-change" -> tr("Apply change"); else -> tr("Allow") })
                 }
             }
         }
@@ -393,39 +394,46 @@ fun SettingsScreen(onBack: () -> Unit, onPcSettings: () -> Unit) {
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
-                title = { Text("Settings") },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, tr("Back")) } },
+                title = { Text(tr("Settings")) },
             )
         },
     ) { pad ->
         LazyColumn(Modifier.fillMaxSize().padding(pad), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            item { SectionTitle("The PC") }
+            item { SectionTitle(tr("The PC")) }
             item {
                 Card(Modifier.clickable(onClick = onPcSettings)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Computer, null, tint = Void.cyan)
                         Spacer(Modifier.size(10.dp))
                         Column(Modifier.weight(1f)) {
-                            Text("PC settings", fontWeight = FontWeight.Medium)
-                            Text("Mode, speed and tokens, limits, commands, safety, the desktop's theme", color = Void.dim, fontSize = 13.sp)
+                            Text(tr("PC settings"), fontWeight = FontWeight.Medium)
+                            Text(tr("Mode, speed and tokens, limits, commands, safety, the desktop's theme"), color = Void.dim, fontSize = 13.sp)
                         }
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null, tint = Void.dim)
                     }
                 }
             }
             item { AdminCard(onMessage = { m -> scope.launch { snack.showSnackbar(m) } }) }
-            item { SectionTitle("Theme") }
+            item { SectionTitle(tr("Theme")) }
             item { ThemePicker() }
-            item { SectionTitle("Sounds") }
+            item { SectionTitle(tr("Language")) }
+            item {
+                Card {
+                    LanguageChips()
+                    Text(tr("The PC has its own setting: VOID Workshop → Settings → Appearance."), color = Void.dim, fontSize = 12.sp)
+                }
+            }
+            item { SectionTitle(tr("Sounds")) }
             items(Cue.entries.toList()) { cue ->
                 refresh.let { _ ->
                     Card {
                         Text(cue.label, fontWeight = FontWeight.Medium)
-                        Text(if (Notifier.isCustom(ctx, cue)) "Your sound" else "VOID sound", color = Void.dim, fontSize = 13.sp)
+                        Text(if (Notifier.isCustom(ctx, cue)) tr("Your sound") else tr("VOID sound"), color = Void.dim, fontSize = 13.sp)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { Notifier.preview(ctx, cue) }) { Icon(Icons.Default.PlayArrow, "Play", tint = Void.cyan) }
-                            OutlinedButton(onClick = { picking = cue; pick.launch(Notifier.sound(ctx, cue)) }) { Text("Change") }
-                            if (Notifier.isCustom(ctx, cue)) TextButton(onClick = { Notifier.setSound(ctx, cue, null); refresh++ }) { Text("Use VOID sound") }
+                            IconButton(onClick = { Notifier.preview(ctx, cue) }) { Icon(Icons.Default.PlayArrow, tr("Play"), tint = Void.cyan) }
+                            OutlinedButton(onClick = { picking = cue; pick.launch(Notifier.sound(ctx, cue)) }) { Text(tr("Change")) }
+                            if (Notifier.isCustom(ctx, cue)) TextButton(onClick = { Notifier.setSound(ctx, cue, null); refresh++ }) { Text(tr("Use VOID sound")) }
                         }
                     }
                 }
@@ -435,13 +443,13 @@ fun SettingsScreen(onBack: () -> Unit, onPcSettings: () -> Unit) {
                 Card {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f)) {
-                            Text("Interface sounds", fontWeight = FontWeight.Medium)
-                            Text("Send, queue and new task. Quiet when the phone is on silent.", color = Void.dim, fontSize = 13.sp)
+                            Text(tr("Interface sounds"), fontWeight = FontWeight.Medium)
+                            Text(tr("Send, queue and new task. Quiet when the phone is on silent."), color = Void.dim, fontSize = 13.sp)
                         }
                         Switch(checked = on, onCheckedChange = { UiSounds.setEnabled(ctx, it) })
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        for ((label, kind) in listOf("Send" to UiSounds.Kind.SEND, "Queue" to UiSounds.Kind.QUEUE, "New task" to UiSounds.Kind.NEW_TASK)) {
+                        for ((label, kind) in listOf(tr("Send") to UiSounds.Kind.SEND, tr("Queue") to UiSounds.Kind.QUEUE, tr("New task") to UiSounds.Kind.NEW_TASK)) {
                             TextButton(onClick = { UiSounds.play(kind) }) {
                                 Icon(Icons.Default.PlayArrow, null, tint = Void.cyan)
                                 Text(label)
@@ -452,47 +460,47 @@ fun SettingsScreen(onBack: () -> Unit, onPcSettings: () -> Unit) {
             }
             item {
                 val on by Haptics.enabled.collectAsState()
-                ToggleCard("Haptics", "A short tap when something is approved, denied, sent or committed.", on) { Haptics.setEnabled(ctx, it) }
+                ToggleCard(tr("Haptics"), tr("A short tap when something is approved, denied, sent or committed."), on) { Haptics.setEnabled(ctx, it) }
             }
             item {
                 val on by LiveProgress.enabled.collectAsState()
                 ToggleCard(
-                    "Live progress",
-                    "While a task runs: what it is doing, its to-do progress, Stop and Reply, in one quiet notification (a Live Update on Android 16).",
+                    tr("Live progress"),
+                    tr("While a task runs: what it is doing, its to-do progress, Stop and Reply, in one quiet notification (a Live Update on Android 16)."),
                     on,
                 ) { LiveProgress.setEnabled(ctx, it) }
             }
             item {
                 Text(
-                    "To use your own sound file, copy it into the phone's Notifications folder first; it then shows up under Change.",
+                    tr("To use your own sound file, copy it into the phone's Notifications folder first; it then shows up under Change."),
                     color = Void.dim,
                     fontSize = 12.sp,
                 )
             }
-            item { SectionTitle("Stay connected") }
+            item { SectionTitle(tr("Stay connected")) }
             item {
                 Card {
                     val pm = ctx.getSystemService(PowerManager::class.java)
                     val exempt = pm?.isIgnoringBatteryOptimizations(ctx.packageName) == true
-                    Text(if (exempt) "Battery optimisation is off for VOID Portal." else "Android may pause VOID Portal to save battery, delaying notifications.")
+                    Text(if (exempt) tr("Battery optimisation is off for VOID Portal.") else tr("Android may pause VOID Portal to save battery, delaying notifications."))
                     if (!exempt) {
                         Button(onClick = {
                             ctx.startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${ctx.packageName}")))
-                        }) { Text("Let it run in the background") }
+                        }) { Text(tr("Let it run in the background")) }
                     }
                     OutlinedButton(onClick = {
                         ctx.startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName))
-                    }) { Text("Notification settings") }
+                    }) { Text(tr("Notification settings")) }
                 }
             }
-            item { SectionTitle("Updates") }
+            item { SectionTitle(tr("Updates")) }
             item { UpdatesCard() }
-            item { SectionTitle("Pairing") }
+            item { SectionTitle(tr("Pairing")) }
             item {
                 Card {
-                    Text("Paired with ${pairing?.pcName ?: "—"}")
+                    Text(tr("Paired with {name}", "name" to (pairing?.pcName ?: "—")))
                     Text(pairing?.relayUrl ?: "", color = Void.dim, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
-                    Button(onClick = { confirmUnpair = true }, colors = ButtonDefaults.buttonColors(containerColor = Void.bad.copy(alpha = 0.85f))) { Text("Unpair this phone") }
+                    Button(onClick = { confirmUnpair = true }, colors = ButtonDefaults.buttonColors(containerColor = Void.bad.copy(alpha = 0.85f))) { Text(tr("Unpair this phone")) }
                 }
             }
             item { Text("VOID Portal ${BuildConfig.VERSION_NAME}", color = Void.dim, fontSize = 12.sp, modifier = Modifier.padding(top = 8.dp)) }
@@ -501,10 +509,10 @@ fun SettingsScreen(onBack: () -> Unit, onPcSettings: () -> Unit) {
     if (confirmUnpair) {
         AlertDialog(
             onDismissRequest = { confirmUnpair = false },
-            title = { Text("Unpair?") },
-            text = { Text("This phone forgets the PC. Also remove it in VOID Workshop (Settings → VOID Portal) so the relay channel is deleted.") },
-            confirmButton = { TextButton(onClick = { confirmUnpair = false; Portal.unpair(); onBack() }) { Text("Unpair", color = Void.bad) } },
-            dismissButton = { TextButton(onClick = { confirmUnpair = false }) { Text("Cancel") } },
+            title = { Text(tr("Unpair?")) },
+            text = { Text(tr("This phone forgets the PC. Also remove it in VOID Workshop (Settings → VOID Portal) so the relay channel is deleted.")) },
+            confirmButton = { TextButton(onClick = { confirmUnpair = false; Portal.unpair(); onBack() }) { Text(tr("Unpair"), color = Void.bad) } },
+            dismissButton = { TextButton(onClick = { confirmUnpair = false }) { Text(tr("Cancel")) } },
         )
     }
 }
@@ -522,7 +530,7 @@ private fun ToggleCard(title: String, sub: String, on: Boolean, onChange: (Boole
     }
 }
 
-/** The desktop's themes, the PC's own saved ones, and "Match my PC", each previewed with the logo in its colours. */
+/** The desktop's themes, the PC's own saved ones, and tr("Match my PC"), each previewed with the logo in its colours. */
 @Composable
 private fun ThemePicker() {
     val choice by Themes.choice.collectAsState()
@@ -533,15 +541,15 @@ private fun ThemePicker() {
     val wallpaper = remember(choice) { Themes.wallpaperPalette() }
     Card {
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            ThemeTile("Match my PC", pc?.name ?: "Not seen yet", pc ?: BUILTIN_THEMES.first(), choice == Themes.MATCH_PC) { Themes.choose(Themes.MATCH_PC) }
-            wallpaper?.let { ThemeTile("Match my wallpaper", "Material You", it, choice == Themes.WALLPAPER) { Themes.choose(Themes.WALLPAPER) } }
+            ThemeTile(tr("Match my PC"), pc?.name ?: tr("Not seen yet"), pc ?: BUILTIN_THEMES.first(), choice == Themes.MATCH_PC) { Themes.choose(Themes.MATCH_PC) }
+            wallpaper?.let { ThemeTile(tr("Match my wallpaper"), "Material You", it, choice == Themes.WALLPAPER) { Themes.choose(Themes.WALLPAPER) } }
             for (t in BUILTIN_THEMES) ThemeTile(t.name.removeSuffix(" (default)"), null, t, choice == t.id) { Themes.choose(t.id) }
-            for (t in pcThemes) ThemeTile(t.name, "From your PC", t, choice == t.id) { Themes.choose(t.id) }
+            for (t in pcThemes) ThemeTile(t.name, tr("From your PC"), t, choice == t.id) { Themes.choose(t.id) }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("Recolour the app icon too", fontWeight = FontWeight.Medium)
-                Text("Some launchers move the icon when it changes; add it back to the home screen if it disappears.", color = Void.dim, fontSize = 12.sp)
+                Text(tr("Recolour the app icon too"), fontWeight = FontWeight.Medium)
+                Text(tr("Some launchers move the icon when it changes; add it back to the home screen if it disappears."), color = Void.dim, fontSize = 12.sp)
             }
             Switch(checked = iconFollows, onCheckedChange = { Themes.setIconFollows(it) })
         }

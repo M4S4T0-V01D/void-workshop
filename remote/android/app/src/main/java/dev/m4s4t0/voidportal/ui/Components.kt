@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.m4s4t0.voidportal.tr
 
 @Composable
 fun Card(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
@@ -73,18 +74,18 @@ fun StatusLine(color: Color, text: String) {
     }
 }
 
-private val STATE_LABEL = mapOf(
-    "planning" to ("Planning" to Void.cyan),
-    "awaiting-plan-approval" to ("Plan ready" to Void.violet),
-    "executing" to ("Working" to Void.cyan),
-    "idle" to ("Waiting for you" to Void.violet),
-    "completed" to ("Completed" to Void.ok),
-    "cancelled" to ("Cancelled" to Void.dim),
-    "failed" to ("Failed" to Void.bad),
-    "stopped-budget" to ("Limit reached" to Void.warn),
-    "stopped-billing" to ("Billing stop" to Void.bad),
-    "stopped-limit" to ("Plan limit" to Void.warn),
-    "interrupted" to ("Interrupted" to Void.warn),
+private val STATE_LABEL get() = mapOf(
+    "planning" to (tr("Planning") to Void.cyan),
+    "awaiting-plan-approval" to (tr("Plan ready") to Void.violet),
+    "executing" to (tr("Working") to Void.cyan),
+    "idle" to (tr("Waiting for you") to Void.violet),
+    "completed" to (tr("Completed") to Void.ok),
+    "cancelled" to (tr("Cancelled") to Void.dim),
+    "failed" to (tr("Failed") to Void.bad),
+    "stopped-budget" to (tr("Limit reached") to Void.warn),
+    "stopped-billing" to (tr("Billing stop") to Void.bad),
+    "stopped-limit" to (tr("Plan limit") to Void.warn),
+    "interrupted" to (tr("Interrupted") to Void.warn),
 )
 
 val RUNNING_STATES = setOf("planning", "executing")
@@ -120,9 +121,9 @@ fun ago(ms: Double?): String {
     ms ?: return ""
     val min = ((System.currentTimeMillis() - ms) / 60_000).toLong()
     return when {
-        min < 1 -> "now"
-        min < 60 -> "$min min"
-        min < 60 * 24 -> "${min / 60} h"
-        else -> "${min / (60 * 24)} d"
+        min < 1 -> tr("now")
+        min < 60 -> tr("{n} min", "n" to min)
+        min < 60 * 24 -> tr("{n} h", "n" to min / 60)
+        else -> tr("{n} d", "n" to min / (60 * 24))
     }
 }

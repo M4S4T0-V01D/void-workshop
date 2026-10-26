@@ -73,11 +73,11 @@ object PortalWidgetData {
         val link = Portal.link.value
         val pc = Portal.pc.value
         val status = when {
-            Portal.pairing.value == null -> "Not paired"
-            link != Portal.Link.CONNECTED -> "No connection"
-            pc == Portal.Pc.ONLINE -> "Online"
-            pc == Portal.Pc.OFFLINE -> "PC offline"
-            else -> "Waiting for the PC"
+            Portal.pairing.value == null -> tr("Not paired")
+            link != Portal.Link.CONNECTED -> tr("No connection")
+            pc == Portal.Pc.ONLINE -> tr("Online")
+            pc == Portal.Pc.OFFLINE -> tr("PC offline")
+            else -> tr("Waiting for the PC")
         }
         // Working first, then the latest; the agent's reply is cut to what fits in two lines.
         val tasks = Portal.tasks.value
@@ -100,7 +100,7 @@ object PortalWidgetData {
             }
         }
         return buildJsonObject {
-            put("pc", Portal.pairing.value?.pcName ?: "PC")
+            put("pc", Portal.pairing.value?.pcName ?: tr("PC"))
             put("status", status)
             put("online", link == Portal.Link.CONNECTED && pc == Portal.Pc.ONLINE)
             put("savedAt", System.currentTimeMillis())
@@ -205,7 +205,7 @@ class PortalWidget : GlanceAppWidget() {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(GlanceModifier.size(7.dp).cornerRadius(4.dp).background(if (snap?.bool("online") == true) Void.ok else Void.warn)) {}
                             Spacer(GlanceModifier.width(5.dp))
-                            Text("${snap?.str("pc") ?: "PC"} · ${snap?.str("status") ?: "Open Portal to pair"}", style = TextStyle(color = dim, fontSize = 11.sp), maxLines = 1)
+                            Text("${snap?.str("pc") ?: tr("PC")} · ${snap?.str("status") ?: tr("Open Portal to pair")}", style = TextStyle(color = dim, fontSize = 11.sp), maxLines = 1)
                         }
                     }
                     Text("⟳", style = TextStyle(color = dim, fontSize = 18.sp), modifier = GlanceModifier.padding(6.dp).clickable(actionRunCallback<RefreshWidgetAction>()))
@@ -236,11 +236,11 @@ class PortalWidget : GlanceAppWidget() {
                     Spacer(GlanceModifier.height(10.dp))
                 }
                 if (approvals.isEmpty() && tasks.isEmpty()) {
-                    Text(if (snap == null) "Open VOID Portal once to fill this in." else "No chats yet.", style = TextStyle(color = dim, fontSize = 13.sp))
+                    Text(if (snap == null) tr("Open VOID Portal once to fill this in.") else tr("No chats yet."), style = TextStyle(color = dim, fontSize = 13.sp))
                 }
                 for (a in shownApprovals) {
                     Card(open(ctx, a.str("taskId"), a.str("id")), accent = true) {
-                        Text("Needs you", style = TextStyle(color = ColorProvider(Void.violet), fontSize = 11.sp, fontWeight = FontWeight.Bold))
+                        Text(tr("Needs you"), style = TextStyle(color = ColorProvider(Void.violet), fontSize = 11.sp, fontWeight = FontWeight.Bold))
                         Text(a.str("summary") ?: "", style = TextStyle(color = text, fontSize = 13.sp), maxLines = 2)
                     }
                 }
@@ -250,16 +250,16 @@ class PortalWidget : GlanceAppWidget() {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(GlanceModifier.size(6.dp).cornerRadius(3.dp).background(stateColor(st))) {}
                             Spacer(GlanceModifier.width(6.dp))
-                            Text(t.str("title") ?: "Task", style = TextStyle(color = text, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1, modifier = GlanceModifier.defaultWeight())
+                            Text(t.str("title") ?: tr("Task"), style = TextStyle(color = text, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1, modifier = GlanceModifier.defaultWeight())
                             Spacer(GlanceModifier.width(8.dp))
                             Text(t.str("project") ?: "", style = TextStyle(color = dim, fontSize = 11.sp), maxLines = 1)
                         }
-                        val line = if (st == "executing" || st == "planning") "Working…" else t.str("summary") ?: stateText(st)
+                        val line = if (st == "executing" || st == "planning") tr("Working…") else t.str("summary") ?: stateText(st)
                         Text(line, style = TextStyle(color = dim, fontSize = 12.sp), maxLines = 2)
                     }
                 }
                 val more = approvals.size - shownApprovals.size + tasks.size - shownTasks.size
-                if (more > 0) Text("+$more more · tap to open", style = TextStyle(color = dim, fontSize = 11.sp), modifier = GlanceModifier.clickable(open(ctx)))
+                if (more > 0) Text(tr("+{n} more · tap to open", "n" to more), style = TextStyle(color = dim, fontSize = 11.sp), modifier = GlanceModifier.clickable(open(ctx)))
             }
         }
     }
@@ -323,7 +323,7 @@ class PortalWidget : GlanceAppWidget() {
 
     private fun shortLabel(r: JsonObject): String = when (r.str("kind")) {
         "session" -> "5h"
-        "weekly_all" -> "Week"
+        "weekly_all" -> tr("Week")
         else -> (r.str("label") ?: "").removeSuffix(" limit")
     }
 
@@ -336,12 +336,12 @@ class PortalWidget : GlanceAppWidget() {
     }
 
     private fun stateText(st: String): String = when (st) {
-        "idle" -> "Waiting for you"
-        "completed" -> "Done"
-        "awaiting-plan-approval" -> "Plan ready for review"
-        "failed" -> "Failed"
-        "cancelled" -> "Stopped"
-        "interrupted" -> "Interrupted"
+        "idle" -> tr("Waiting for you")
+        "completed" -> tr("Done")
+        "awaiting-plan-approval" -> tr("Plan ready for review")
+        "failed" -> tr("Failed")
+        "cancelled" -> tr("Stopped")
+        "interrupted" -> tr("Interrupted")
         else -> st.replace('-', ' ')
     }
 }

@@ -18,12 +18,21 @@ import androidx.compose.ui.graphics.toArgb
 import dev.m4s4t0.voidportal.ui.Void
 
 /** Kinds of notification, each with its own channel and dark VOID sound (res/raw, made by remote/sounds/make_sounds.py). */
-enum class Cue(val base: String, val label: String, val raw: String, val importance: Int) {
+enum class Cue(val base: String, private val english: String, val raw: String, val importance: Int) {
     DONE("done", "Task finished", "void_done", NotificationManager.IMPORTANCE_HIGH),
     APPROVAL("approval", "Needs you (approvals, plans)", "void_summon", NotificationManager.IMPORTANCE_HIGH),
     ALERT("alert", "Problems and account switches", "void_alert", NotificationManager.IMPORTANCE_DEFAULT),
     PC_ONLINE("pc_online", "PC came online", "void_rise", NotificationManager.IMPORTANCE_DEFAULT),
     PC_OFFLINE("pc_offline", "PC went offline", "void_fall", NotificationManager.IMPORTANCE_HIGH),
+    ;
+
+    val label: String get() = when (this) {
+        DONE -> tr("Task finished")
+        APPROVAL -> tr("Needs you (approvals, plans)")
+        ALERT -> tr("Problems and account switches")
+        PC_ONLINE -> tr("PC came online")
+        PC_OFFLINE -> tr("PC went offline")
+    }
 }
 
 object Notifier {
@@ -52,20 +61,20 @@ object Notifier {
     fun ensureChannels(ctx: Context) {
         val nm = ctx.getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(
-            NotificationChannel(SERVICE, "Connection", NotificationManager.IMPORTANCE_MIN).apply {
-                description = "Keeps VOID Portal connected to your PC"
+            NotificationChannel(SERVICE, tr("Connection"), NotificationManager.IMPORTANCE_MIN).apply {
+                description = tr("Keeps VOID Portal connected to your PC")
                 setShowBadge(false)
             },
         )
         nm.createNotificationChannel(
-            NotificationChannel(PROGRESS, "Live progress", NotificationManager.IMPORTANCE_LOW).apply {
-                description = "What a running task is doing right now"
+            NotificationChannel(PROGRESS, tr("Live progress"), NotificationManager.IMPORTANCE_LOW).apply {
+                description = tr("What a running task is doing right now")
                 setShowBadge(false)
             },
         )
         nm.createNotificationChannel(
-            NotificationChannel(EARLIER, "Earlier (while offline)", NotificationManager.IMPORTANCE_LOW).apply {
-                description = "Notifications that arrived while the phone was offline, shown without sound"
+            NotificationChannel(EARLIER, tr("Earlier (while offline)"), NotificationManager.IMPORTANCE_LOW).apply {
+                description = tr("Notifications that arrived while the phone was offline, shown without sound")
             },
         )
         // Channels from older sound generations (or a replaced custom sound) go, so settings show one per kind.
@@ -121,7 +130,7 @@ object Notifier {
             .setContentIntent(openApp(ctx, taskId, approvalId, id))
             .setCategory(if (cue == Cue.APPROVAL) Notification.CATEGORY_REMINDER else Notification.CATEGORY_STATUS)
         // Answer the agent right from the notification (a plan to approve has its own buttons in the app).
-        if (taskId != null && approvalId == null && cue != Cue.PC_ONLINE && cue != Cue.PC_OFFLINE) b.addAction(replyAction(ctx, taskId, id, progress = false, label = "Reply"))
+        if (taskId != null && approvalId == null && cue != Cue.PC_ONLINE && cue != Cue.PC_OFFLINE) b.addAction(replyAction(ctx, taskId, id, progress = false, label = tr("Reply")))
         try {
             NotificationManagerCompat.from(ctx).notify(id, b.build())
         } catch (e: SecurityException) {
@@ -143,20 +152,20 @@ object Notifier {
             )
         }
         val allowLabel = when (approval.str("kind")) {
-            "command" -> "Run once"
-            "file-change" -> "Apply"
-            else -> "Allow"
+            "command" -> tr("Run once")
+            "file-change" -> tr("Apply")
+            else -> tr("Allow")
         }
         val b = NotificationCompat.Builder(ctx, channelId(ctx, Cue.APPROVAL))
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(Void.violet.toArgb())
-            .setContentTitle(if (approval.bool("publishes") == true) "Approval needed · publishes" else "Approval needed")
+            .setContentTitle(if (approval.bool("publishes") == true) tr("Approval needed · publishes") else tr("Approval needed"))
             .setContentText(approval.str("summary") ?: "")
             .setStyle(NotificationCompat.BigTextStyle().bigText("${approval.str("summary") ?: ""}\n$detail".trim()))
             .setContentIntent(openApp(ctx, approval.str("taskId"), id, id.hashCode()))
-            .addAction(0, "Deny", action("deny", 1))
+            .addAction(0, tr("Deny"), action("deny", 1))
             .addAction(0, allowLabel, action("allow", 2))
-            .apply { if (approval.bool("canAllowAll") == true) addAction(0, "Allow all", action("allow", 3)) }
+            .apply { if (approval.bool("canAllowAll") == true) addAction(0, tr("Allow all"), action("allow", 3)) }
             .setAutoCancel(true)
             .setCategory(Notification.CATEGORY_REMINDER)
         try {
@@ -166,7 +175,7 @@ object Notifier {
         }
     }
 
-    /** A "Reply" button with a text box; ReplyReceiver sends the text to the task. */
+    /** A tr("Reply") button with a text box; ReplyReceiver sends the text to the task. */
     fun replyAction(ctx: Context, taskId: String, notificationId: Int, progress: Boolean, label: String): NotificationCompat.Action {
         val intent = Intent(ctx, ReplyReceiver::class.java)
             .putExtra(EXTRA_TASK, taskId)
@@ -175,7 +184,7 @@ object Notifier {
         // The text box fills the intent in, so it has to be mutable; it is explicit, so nothing else can receive it.
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or (if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_MUTABLE else 0)
         val pi = PendingIntent.getBroadcast(ctx, notificationId + 7, intent, flags)
-        val input = RemoteInput.Builder(EXTRA_REPLY).setLabel("Message to the agent").build()
+        val input = RemoteInput.Builder(EXTRA_REPLY).setLabel(tr("Message to the agent")).build()
         return NotificationCompat.Action.Builder(0, label, pi).addRemoteInput(input).setAllowGeneratedReplies(false).build()
     }
 

@@ -112,8 +112,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
+import dev.m4s4t0.voidportal.trn
 
-private val EFFORTS = listOf(null to "Default", "low" to "Low", "medium" to "Medium", "high" to "High", "xhigh" to "X-high", "max" to "Max")
+// A getter, so the labels follow the interface language.
+private val EFFORTS get() = listOf(null to tr("Default"), "low" to tr("Low"), "medium" to tr("Medium"), "high" to tr("High"), "xhigh" to tr("X-high"), "max" to tr("Max"))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,7 +144,7 @@ fun HomeScreen(onTask: (String) -> Unit, onNewTask: () -> Unit, onSettings: () -
             searchError = null
         } catch (e: PortalError) {
             hits = null
-            searchError = if (e.code == "not-allowed") "Update VOID Workshop on the PC to search tasks from here." else e.message ?: "Search failed"
+            searchError = if (e.code == "not-allowed") tr("Update VOID Workshop on the PC to search tasks from here.") else e.message ?: tr("Search failed")
         }
     }
 
@@ -156,7 +159,7 @@ fun HomeScreen(onTask: (String) -> Unit, onNewTask: () -> Unit, onSettings: () -
                 Portal.call("settings.update", json(*patch))
                 Portal.refresh()
             } catch (e: PortalError) {
-                snack.showSnackbar(e.message ?: "Failed")
+                snack.showSnackbar(e.message ?: tr("Failed"))
             }
         }
     }
@@ -169,23 +172,23 @@ fun HomeScreen(onTask: (String) -> Unit, onNewTask: () -> Unit, onSettings: () -
     val showError: (String) -> Unit = { m -> scope.launch { snack.showSnackbar(m) } }
     val lists: LazyListScope.() -> Unit = {
         if (approvals.isNotEmpty()) {
-            item(key = "h-needs") { SectionTitle("Needs you") }
+            item(key = "h-needs") { SectionTitle(tr("Needs you")) }
             items(approvals, key = { "a-" + (it.str("id") ?: "") }) { a -> ApprovalRow(a, Modifier.animateItem()) { a.str("id")?.let(onApproval) } }
         }
         if (active.isNotEmpty()) {
-            item(key = "h-active") { SectionTitle(if (active.size > 1) "Active · ${active.size}" else "Active") }
+            item(key = "h-active") { SectionTitle(if (active.size > 1) tr("Active · {n}", "n" to active.size) else tr("Active")) }
             items(active, key = { "t-" + (it.str("id") ?: "") }) { t -> TaskRow(t, state, Modifier.animateItem()) { t.str("id")?.let(onTask) } }
         }
         if (recent.isNotEmpty()) {
-            item(key = "h-recent") { SectionTitle("Recent") }
+            item(key = "h-recent") { SectionTitle(tr("Recent")) }
             items(recent, key = { "t-" + (it.str("id") ?: "") }) { t -> TaskRow(t, state, Modifier.animateItem()) { t.str("id")?.let(onTask) } }
         }
         if (tasks.isEmpty() && state != null) {
             item(key = "empty") {
                 Column(Modifier.fillMaxWidth().padding(vertical = 28.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Icon(Icons.Default.AutoAwesome, null, tint = Void.dim, modifier = Modifier.size(28.dp))
-                    Text("Nothing running yet", fontWeight = FontWeight.Medium)
-                    Text("Tap New task to start one on your PC.", color = Void.dim, fontSize = 13.sp)
+                    Text(tr("Nothing running yet"), fontWeight = FontWeight.Medium)
+                    Text(tr("Tap New task to start one on your PC."), color = Void.dim, fontSize = 13.sp)
                 }
             }
         }
@@ -199,21 +202,21 @@ fun HomeScreen(onTask: (String) -> Unit, onNewTask: () -> Unit, onSettings: () -
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 title = {
                     query?.let { q ->
-                        OutlinedTextField(q, { query = it }, Modifier.fillMaxWidth(), placeholder = { Text("Search tasks") }, singleLine = true)
+                        OutlinedTextField(q, { query = it }, Modifier.fillMaxWidth(), placeholder = { Text(tr("Search tasks")) }, singleLine = true)
                     }
                 },
                 actions = {
                     if (query != null) {
-                        IconButton(onClick = { query = null; hits = null; searchError = null }) { Icon(Icons.Default.Close, "Close search") }
+                        IconButton(onClick = { query = null; hits = null; searchError = null }) { Icon(Icons.Default.Close, tr("Close search")) }
                     } else {
-                        if (pc == Portal.Pc.ONLINE) IconButton(onClick = { query = "" }) { Icon(Icons.Default.Search, "Search tasks") }
+                        if (pc == Portal.Pc.ONLINE) IconButton(onClick = { query = "" }) { Icon(Icons.Default.Search, tr("Search tasks")) }
                         IconButton(onClick = { Ambience.setEnabled(ctx, !ambience) }) {
-                            Icon(if (ambience) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff, if (ambience) "Mute the ambience" else "Play the ambience")
+                            Icon(if (ambience) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff, if (ambience) tr("Mute the ambience") else tr("Play the ambience"))
                         }
                         IconButton(onClick = { scope.launch { runCatching { Portal.refresh() }.onFailure { snack.showSnackbar(it.message ?: "") } } }) {
-                            Icon(Icons.Default.Refresh, "Refresh")
+                            Icon(Icons.Default.Refresh, tr("Refresh"))
                         }
-                        IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, "Settings") }
+                        IconButton(onClick = onSettings) { Icon(Icons.Default.Settings, tr("Settings")) }
                     }
                 },
             )
@@ -223,7 +226,7 @@ fun HomeScreen(onTask: (String) -> Unit, onNewTask: () -> Unit, onSettings: () -
                 ExtendedFloatingActionButton(
                     onClick = onNewTask,
                     icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text("New task") },
+                    text = { Text(tr("New task")) },
                     containerColor = Void.violet,
                     contentColor = if (Void.light) Color.White else Void.bg,
                 )
@@ -276,10 +279,10 @@ private fun Hero(working: Int, waiting: Int, compact: Boolean) {
     val name = pairing?.pcName ?: "PC"
     val online = link == Portal.Link.CONNECTED && pc == Portal.Pc.ONLINE
     val (status, color) = when {
-        link != Portal.Link.CONNECTED -> (if (link == Portal.Link.CONNECTING) "Connecting to the relay…" else "No connection to the relay") to Void.warn
-        pc == Portal.Pc.ONLINE -> "Online" to Void.ok
-        pc == Portal.Pc.OFFLINE -> "Offline" to Void.bad
-        else -> "Waiting for $name…" to Void.dim
+        link != Portal.Link.CONNECTED -> (if (link == Portal.Link.CONNECTING) tr("Connecting to the relay…") else tr("No connection to the relay")) to Void.warn
+        pc == Portal.Pc.ONLINE -> tr("Online") to Void.ok
+        pc == Portal.Pc.OFFLINE -> tr("Offline") to Void.bad
+        else -> tr("Waiting for {name}…", "name" to name) to Void.dim
     }
     val tint by animateColorAsState(color, tween(900), label = "tint")
     val t = rememberInfiniteTransition(label = "hero")
@@ -304,13 +307,13 @@ private fun Hero(working: Int, waiting: Int, compact: Boolean) {
         Spacer(Modifier.height(6.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Pill(status, tint)
-            if (online && working > 0) Pill("$working active", Void.cyan)
-            if (waiting > 0) Pill("$waiting need${if (waiting == 1) "s" else ""} you", Void.violet)
+            if (online && working > 0) Pill(tr("{n} active", "n" to working), Void.cyan)
+            if (waiting > 0) Pill(trn(waiting, "{n} needs you", "{n} need you"), Void.violet)
         }
         error?.let { Text(it, color = Void.dim, fontSize = 13.sp, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 8.dp)) }
         if (pc == Portal.Pc.OFFLINE) {
             Text(
-                "Start VOID Workshop on the PC (or turn on \"Start at login\" there).",
+                tr("Start VOID Workshop on the PC (or turn on \"Start at login\" there)."),
                 color = Void.dim,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center,
@@ -356,10 +359,10 @@ private fun ApprovalRow(a: JsonObject, modifier: Modifier, onClick: () -> Unit) 
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(if (a.str("kind") == "command") Icons.Default.Terminal else Icons.Default.EditNote, null, tint = Void.violet)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(a.str("summary") ?: "Approval", fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(a.str("summary") ?: tr("Approval"), fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 (a.str("command") ?: a.str("rel"))?.let { Text(it, color = Void.dim, fontSize = 12.sp, fontFamily = FontFamily.Monospace, maxLines = 2, overflow = TextOverflow.Ellipsis) }
             }
-            Text("Review", color = Void.violet, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+            Text(tr("Review"), color = Void.violet, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -369,9 +372,9 @@ private fun SearchResults(query: String, hits: List<JsonObject>?, error: String?
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp, 4.dp, 16.dp, 96.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         val note = when {
             error != null -> error
-            query.trim().length < 2 -> "Type at least two letters."
-            hits == null -> "Searching…"
-            hits.isEmpty() -> "No tasks match."
+            query.trim().length < 2 -> tr("Type at least two letters.")
+            hits == null -> tr("Searching…")
+            hits.isEmpty() -> tr("No tasks match.")
             else -> null
         }
         if (note != null) item(key = "note") { Text(note, color = Void.dim, fontSize = 13.sp, modifier = Modifier.padding(vertical = 8.dp)) }
@@ -395,7 +398,7 @@ private fun TaskRow(t: JsonObject, pcState: JsonObject?, modifier: Modifier, onC
         Column {
             Column(Modifier.padding(start = 14.dp, end = 14.dp, top = 12.dp, bottom = if (running) 8.dp else 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(t.str("title") ?: "Task", Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Medium)
+                    Text(t.str("title") ?: tr("Task"), Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Medium)
                     Spacer(Modifier.width(8.dp))
                     StateBadge(st)
                 }
@@ -414,28 +417,28 @@ private fun EngineCard(s: JsonObject, update: (Array<out Pair<String, Any?>>) ->
     val settings = s.obj("settings") ?: JsonObject(emptyMap())
     val provider = settings.str("provider") ?: "anthropic"
     val auth = settings.str("anthropicAuth") ?: "api-key"
-    val runsOn = if (provider == "ollama") "Ollama" else if (auth == "subscription") "Claude plan" else "API key"
+    val runsOn = if (provider == "ollama") "Ollama" else if (auth == "subscription") tr("Claude plan") else tr("API key")
     val models = s.obj("models")?.arr(if (provider == "ollama") "ollama" else "anthropic") ?: emptyList()
     val current = settings.str("model")
-    val modelName = models.firstOrNull { it.str("id") == current }?.str("displayName") ?: current ?: "No model"
+    val modelName = models.firstOrNull { it.str("id") == current }?.str("displayName") ?: current ?: tr("No model")
     val extras = listOfNotNull(
-        settings.str("effort")?.takeIf { provider != "ollama" }?.let { e -> EFFORTS.firstOrNull { it.first == e }?.second?.let { "$it effort" } },
-        "Fast".takeIf { provider != "ollama" && settings.bool("fastMode") == true },
+        settings.str("effort")?.takeIf { provider != "ollama" }?.let { e -> EFFORTS.firstOrNull { it.first == e }?.second?.let { tr("{level} effort", "level" to it) } },
+        tr("Fast").takeIf { provider != "ollama" && settings.bool("fastMode") == true },
     )
     val chevron by animateFloatAsState(if (open) 180f else 0f, label = "chevron")
     Card {
         Row(Modifier.fillMaxWidth().clickable { open = !open }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Column(Modifier.weight(1f)) {
-                Text("ENGINE", color = Void.dim, fontSize = 10.sp, letterSpacing = 2.sp, fontWeight = FontWeight.SemiBold)
+                Text(tr("ENGINE"), color = Void.dim, fontSize = 10.sp, letterSpacing = 2.sp, fontWeight = FontWeight.SemiBold)
                 Text("$runsOn  ·  $modelName", fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 if (extras.isNotEmpty()) Text(extras.joinToString("  ·  "), color = Void.dim, fontSize = 12.sp)
             }
-            Icon(Icons.Default.ExpandMore, if (open) "Hide" else "Change", tint = Void.dim, modifier = Modifier.rotate(chevron))
+            Icon(Icons.Default.ExpandMore, if (open) tr("Hide") else tr("Change"), tint = Void.dim, modifier = Modifier.rotate(chevron))
         }
         AnimatedVisibility(open, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 EngineControls(s, update)
-                TextButton(onClick = onPcSettings) { Text("All PC settings") }
+                TextButton(onClick = onPcSettings) { Text(tr("All PC settings")) }
             }
         }
     }
@@ -451,9 +454,9 @@ private fun EngineControls(s: JsonObject, update: (Array<out Pair<String, Any?>>
     val limited = s.obj("planLimited")?.takeIf { (it.num("until") ?: 0.0) > System.currentTimeMillis() }
     fun set(vararg p: Pair<String, Any?>) = update(p)
 
-    SectionTitle("Runs on")
+    SectionTitle(tr("Runs on"))
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-        val options = listOf("Claude plan", "API key", "Ollama")
+        val options = listOf(tr("Claude plan"), tr("API key"), "Ollama")
         options.forEachIndexed { i, label ->
             SegmentedButton(
                 selected = selected == i,
@@ -470,36 +473,36 @@ private fun EngineControls(s: JsonObject, update: (Array<out Pair<String, Any?>>
     }
     val status = when (selected) {
         0 -> when {
-            sub?.bool("signedIn") != true -> "Not signed in to a Claude plan on the PC" to Void.bad
-            limited != null -> (limited.str("message") ?: "Plan limit reached") to Void.warn
-            else -> "Signed in${sub.str("subscriptionType")?.let { " · $it" } ?: ""}" to Void.ok
+            sub?.bool("signedIn") != true -> tr("Not signed in to a Claude plan on the PC") to Void.bad
+            limited != null -> (limited.str("message") ?: tr("Plan limit reached")) to Void.warn
+            else -> tr("Signed in") + (sub.str("subscriptionType")?.let { " · $it" } ?: "") to Void.ok
         }
         1 -> when {
-            s.bool("keyConfigured") != true -> "No API key on the PC" to Void.bad
-            s.obj("billingBlocked") != null -> "Stopped after a billing error" to Void.bad
-            else -> "Today ≈ $%.2f of $%.2f".format(s.num("spentTodayUsd") ?: 0.0, settings.num("dailyBudgetUsd") ?: 0.0) to Void.ok
+            s.bool("keyConfigured") != true -> tr("No API key on the PC") to Void.bad
+            s.obj("billingBlocked") != null -> tr("Stopped after a billing error") to Void.bad
+            else -> tr("Today ≈ {spent} of {budget}", "spent" to "$%.2f".format(s.num("spentTodayUsd") ?: 0.0), "budget" to "$%.2f".format(settings.num("dailyBudgetUsd") ?: 0.0)) to Void.ok
         }
-        else -> "Local models on the PC, free" to Void.ok
+        else -> tr("Local models on the PC, free") to Void.ok
     }
     StatusLine(status.second, status.first)
     if (selected != 2) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Switch when one runs out", Modifier.weight(1f), fontSize = 14.sp)
+            Text(tr("Switch when one runs out"), Modifier.weight(1f), fontSize = 14.sp)
             Switch(checked = settings.bool("authFallback") == true, onCheckedChange = { set("authFallback" to it) })
         }
     }
 
-    SectionTitle("Model")
+    SectionTitle(tr("Model"))
     val models = s.obj("models")?.arr(if (provider == "ollama") "ollama" else "anthropic") ?: emptyList()
     val current = settings.str("model")
     var open by remember { mutableStateOf(false) }
     Box {
         OutlinedButton(onClick = { open = true }, modifier = Modifier.fillMaxWidth()) {
-            Text(models.firstOrNull { it.str("id") == current }?.str("displayName") ?: current ?: "Choose a model", Modifier.weight(1f), maxLines = 1)
+            Text(models.firstOrNull { it.str("id") == current }?.str("displayName") ?: current ?: tr("Choose a model"), Modifier.weight(1f), maxLines = 1)
             Icon(Icons.Default.ArrowDropDown, null)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            if (models.isEmpty()) DropdownMenuItem(text = { Text("No models: refresh the list on the PC") }, onClick = { open = false })
+            if (models.isEmpty()) DropdownMenuItem(text = { Text(tr("No models: refresh the list on the PC")) }, onClick = { open = false })
             for (m in models) {
                 DropdownMenuItem(
                     text = { Column { Text(m.str("displayName") ?: ""); Text(m.str("id") ?: "", color = Void.dim, fontSize = 11.sp) } },
@@ -512,14 +515,14 @@ private fun EngineControls(s: JsonObject, update: (Array<out Pair<String, Any?>>
         }
     }
     if (provider != "ollama") {
-        SectionTitle("Effort")
+        SectionTitle(tr("Effort"))
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             for ((id, label) in EFFORTS) FilterChip(selected = settings.str("effort") == id, onClick = { set("effort" to id) }, label = { Text(label) })
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("Fast mode", fontSize = 14.sp)
-                Text("Faster output, higher price", color = Void.dim, fontSize = 12.sp)
+                Text(tr("Fast mode"), fontSize = 14.sp)
+                Text(tr("Faster output, higher price"), color = Void.dim, fontSize = 12.sp)
             }
             Switch(checked = settings.bool("fastMode") == true, onCheckedChange = { set("fastMode" to it) })
         }

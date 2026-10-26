@@ -89,8 +89,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
 
-val MODES = listOf("ask" to "Ask", "auto-edit" to "Edit auto", "auto" to "Auto", "plan" to "Plan")
+// A getter, so the labels follow the interface language.
+val MODES get() = listOf("ask" to tr("Ask"), "auto-edit" to tr("Edit auto"), "auto" to tr("Auto"), "plan" to tr("Plan"))
 
 /** Share sheets go through a Binder transaction (about 1 MB); longer exports are saved as a file instead. */
 private const val SHARE_MAX_CHARS = 100_000
@@ -119,7 +121,7 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
                 Portal.call(method, json("taskId" to taskId, *params))
                 after?.invoke()
             } catch (e: PortalError) {
-                snack.showSnackbar(e.message ?: "Failed")
+                snack.showSnackbar(e.message ?: tr("Failed"))
             }
         }
     }
@@ -134,7 +136,7 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
             val ok = withContext(Dispatchers.IO) {
                 runCatching { ctx.contentResolver.openOutputStream(uri)?.use { it.write(md.toByteArray()) } != null }.getOrDefault(false)
             }
-            snack.showSnackbar(if (ok) "Saved" else "Could not save the file")
+            snack.showSnackbar(if (ok) tr("Saved") else tr("Could not save the file"))
         }
     }
     fun export(share: Boolean) {
@@ -146,13 +148,13 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
                     exported = md
                     saveDoc.launch(name)
                 } else if (md.length > SHARE_MAX_CHARS) {
-                    snack.showSnackbar("Too long to share as text; use Save as Markdown")
+                    snack.showSnackbar(tr("Too long to share as text; use Save as Markdown"))
                 } else {
                     val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_SUBJECT, name).putExtra(Intent.EXTRA_TEXT, md)
-                    ctx.startActivity(Intent.createChooser(send, "Share task"))
+                    ctx.startActivity(Intent.createChooser(send, tr("Share task")))
                 }
             } catch (e: PortalError) {
-                snack.showSnackbar(if (e.code == "not-allowed") "Update VOID Workshop on the PC to export tasks" else e.message ?: "Export failed")
+                snack.showSnackbar(if (e.code == "not-allowed") tr("Update VOID Workshop on the PC to export tasks") else e.message ?: tr("Export failed"))
             }
         }
     }
@@ -173,7 +175,7 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
             timeline.clear()
             for (e in res.arr("events")) timeline.apply(e.str("kind") ?: continue, e.obj("payload") ?: JsonObject(emptyMap()))
         } catch (e: PortalError) {
-            snack.showSnackbar(e.message ?: "Could not load the task")
+            snack.showSnackbar(e.message ?: tr("Could not load the task"))
         }
     }
     LaunchedEffect(taskId) {
@@ -224,10 +226,10 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, tr("Back")) } },
                 title = {
                     Column {
-                        Text(task?.str("title") ?: "Task", maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 17.sp)
+                        Text(task?.str("title") ?: tr("Task"), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 17.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             StateBadge(state)
                             Spacer(Modifier.width(6.dp))
@@ -236,15 +238,15 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
                     }
                 },
                 actions = {
-                    if (running) IconButton(onClick = { act("task.cancel") }) { Icon(Icons.Default.Stop, "Stop", tint = Void.bad) }
+                    if (running) IconButton(onClick = { act("task.cancel") }) { Icon(Icons.Default.Stop, tr("Stop"), tint = Void.bad) }
                     Box {
-                        IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, "More") }
+                        IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, tr("More")) }
                         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                            DropdownMenuItem(text = { Text("Changes and commit") }, onClick = { menu = false; changes = true })
-                            DropdownMenuItem(text = { Text("Compact conversation") }, enabled = !running, onClick = { menu = false; act("task.compact") })
-                            DropdownMenuItem(text = { Text("Finish task") }, enabled = !running, onClick = { menu = false; act("task.finish") })
-                            DropdownMenuItem(text = { Text("Save as Markdown") }, onClick = { menu = false; export(share = false) })
-                            DropdownMenuItem(text = { Text("Share as text") }, onClick = { menu = false; export(share = true) })
+                            DropdownMenuItem(text = { Text(tr("Changes and commit")) }, onClick = { menu = false; changes = true })
+                            DropdownMenuItem(text = { Text(tr("Compact conversation")) }, enabled = !running, onClick = { menu = false; act("task.compact") })
+                            DropdownMenuItem(text = { Text(tr("Finish task")) }, enabled = !running, onClick = { menu = false; act("task.finish") })
+                            DropdownMenuItem(text = { Text(tr("Save as Markdown")) }, onClick = { menu = false; export(share = false) })
+                            DropdownMenuItem(text = { Text(tr("Share as text")) }, onClick = { menu = false; export(share = true) })
                         }
                     }
                 },
@@ -255,15 +257,15 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 LazyColumn(Modifier.fillMaxSize(), state = list, contentPadding = PaddingValues(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(timeline.items, key = { it.key }) { TimelineRow(it, taskId, running) }
-                    if (timeline.streaming.isNotEmpty()) item { Bubble("Agent", timeline.streaming, mine = false) }
+                    if (timeline.streaming.isNotEmpty()) item { Bubble(tr("Agent"), timeline.streaming, mine = false) }
                 }
                 if (list.canScrollBackward || list.canScrollForward) {
                     val up = jumpUp(messages, list.firstVisibleItemIndex, list.firstVisibleItemScrollOffset)
                     val down = jumpDown(messages, list.firstVisibleItemIndex)
                     Column(Modifier.align(Alignment.BottomEnd).padding(end = 8.dp, bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        JumpButton(Icons.Default.KeyboardArrowUp, "Previous message", up != null) { jump(up) }
-                        JumpButton(Icons.Default.KeyboardArrowDown, "Next message", down != null) { jump(down) }
-                        JumpButton(Icons.Default.KeyboardDoubleArrowDown, "Jump to the bottom", list.canScrollForward) {
+                        JumpButton(Icons.Default.KeyboardArrowUp, tr("Previous message"), up != null) { jump(up) }
+                        JumpButton(Icons.Default.KeyboardArrowDown, tr("Next message"), down != null) { jump(down) }
+                        JumpButton(Icons.Default.KeyboardDoubleArrowDown, tr("Jump to the bottom"), list.canScrollForward) {
                             Haptics.tick(ctx)
                             follow = true
                             scope.launch { if (lastIndex >= 0) list.animateScrollToItem(lastIndex) }
@@ -273,13 +275,13 @@ fun TaskScreen(taskId: String, onBack: () -> Unit, onApproval: (String) -> Unit)
             }
             for (a in mine) {
                 Card(Modifier.padding(horizontal = 12.dp, vertical = 4.dp).clickable { a.str("id")?.let(onApproval) }) {
-                    Text("Needs you: ${a.str("summary") ?: ""}", fontWeight = FontWeight.SemiBold, color = Void.violet)
-                    Text("Tap to review", color = Void.dim, fontSize = 12.sp)
+                    Text(tr("Needs you: {summary}", "summary" to (a.str("summary") ?: "")), fontWeight = FontWeight.SemiBold, color = Void.violet)
+                    Text(tr("Tap to review"), color = Void.dim, fontSize = 12.sp)
                 }
             }
             if (state == "awaiting-plan-approval") {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    for ((m, label) in listOf("ask" to "Approve", "auto-edit" to "Edit auto", "auto" to "Auto")) {
+                    for ((m, label) in listOf("ask" to tr("Approve"), "auto-edit" to tr("Edit auto"), "auto" to tr("Auto"))) {
                         OutlinedButton(onClick = { Haptics.confirm(ctx); mode = m; act("task.approvePlan", "mode" to m) }, modifier = Modifier.weight(1f)) { Text(label, fontSize = 13.sp, maxLines = 1) }
                     }
                 }
@@ -320,9 +322,9 @@ const val PUSH_REQUEST = "I committed your changes from my phone. Please push th
 private fun TimelineRow(item: TItem, taskId: String, running: Boolean) {
     when (item) {
         is TImage -> ImageRow(taskId, item)
-        is TUser -> Bubble("You", item.text, mine = true)
-        is TAgent -> Bubble("Agent", item.text, mine = false)
-        is TPlan -> Card { Text("Proposed plan", color = Void.violet, fontWeight = FontWeight.SemiBold); Text(item.text, fontSize = 14.sp) }
+        is TUser -> Bubble(tr("You"), item.text, mine = true)
+        is TAgent -> Bubble(tr("Agent"), item.text, mine = false)
+        is TPlan -> Card { Text(tr("Proposed plan"), color = Void.violet, fontWeight = FontWeight.SemiBold); Text(item.text, fontSize = 14.sp) }
         is TNotice -> Text(item.text, color = when (item.level) { "error" -> Void.bad; "warn" -> Void.warn; else -> Void.dim }, fontSize = 13.sp, modifier = Modifier.padding(horizontal = 4.dp))
         is TTool -> {
             var open by remember { mutableStateOf(false) }
@@ -374,13 +376,13 @@ private fun JumpButton(icon: ImageVector, label: String, enabled: Boolean, onCli
 @Composable
 private fun QueueList(queue: List<JsonObject>, running: Boolean, sendNow: (String) -> Unit, remove: (String) -> Unit) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp).clip(RoundedCornerShape(10.dp)).background(Void.panelAlt).padding(8.dp)) {
-        Text("${queue.size} queued · ${if (running) "sent when the agent finishes" else "paused"}", color = Void.dim, fontSize = 12.sp)
+        Text(if (running) tr("{n} queued · sent when the agent finishes", "n" to queue.size) else tr("{n} queued · paused", "n" to queue.size), color = Void.dim, fontSize = 12.sp)
         for (q in queue) {
             val id = q.str("id") ?: continue
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(q.str("text") ?: "", Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 14.sp)
-                IconButton(onClick = { sendNow(id) }) { Icon(Icons.Default.Bolt, "Send now", tint = Void.warn) }
-                IconButton(onClick = { remove(id) }) { Icon(Icons.Default.Close, "Remove") }
+                IconButton(onClick = { sendNow(id) }) { Icon(Icons.Default.Bolt, tr("Send now"), tint = Void.warn) }
+                IconButton(onClick = { remove(id) }) { Icon(Icons.Default.Close, tr("Remove")) }
             }
         }
     }
@@ -410,12 +412,12 @@ private fun Composer(
                 value = draft,
                 onValueChange = onDraft,
                 modifier = Modifier.weight(1f),
-                placeholder = { Text(if (running) "Queue a message…" else "Reply or ask for something else…") },
+                placeholder = { Text(if (running) tr("Queue a message…") else tr("Reply or ask for something else…")) },
                 maxLines = 6,
             )
             Spacer(Modifier.width(6.dp))
             Button(onClick = onSend, enabled = draft.isNotBlank(), contentPadding = PaddingValues(12.dp)) {
-                Icon(if (running) Icons.Default.PlaylistAdd else Icons.AutoMirrored.Filled.Send, if (running) "Queue" else "Send")
+                Icon(if (running) Icons.Default.PlaylistAdd else Icons.AutoMirrored.Filled.Send, if (running) tr("Queue") else tr("Send"))
             }
         }
     }

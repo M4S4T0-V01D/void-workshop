@@ -27,6 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import dev.m4s4t0.voidportal.ui.ApprovalSheet
@@ -40,6 +42,7 @@ import dev.m4s4t0.voidportal.ui.PortalTheme
 import dev.m4s4t0.voidportal.ui.SettingsScreen
 import dev.m4s4t0.voidportal.ui.ShareScreen
 import dev.m4s4t0.voidportal.ui.TaskScreen
+import dev.m4s4t0.voidportal.ui.WelcomeLanguage
 import dev.m4s4t0.voidportal.ui.Void
 import dev.m4s4t0.voidportal.ui.tryPair
 
@@ -62,6 +65,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        I18n.init(this)
         Portal.init(this)
         Themes.init(this)
         Ambience.init(this)
@@ -91,7 +95,9 @@ class MainActivity : ComponentActivity() {
                 val style = if (light) SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT) else SystemBarStyle.dark(AndroidColor.TRANSPARENT)
                 enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
             }
-            PortalTheme { CompositionLocalProvider(LocalContentColor provides Void.text) { Root() } }
+            // Arabic reads right to left; the layout mirrors with it.
+            val direction = if (I18n.language.rtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+            PortalTheme { CompositionLocalProvider(LocalContentColor provides Void.text, LocalLayoutDirection provides direction) { Root() } }
         }
     }
 
@@ -181,6 +187,7 @@ class MainActivity : ComponentActivity() {
                 approval?.let { id -> ApprovalSheet(id) { approval = null } }
             }
             if (intro) Intro { intro = false }
+            if (!intro && !I18n.chosen) WelcomeLanguage()
         }
     }
 

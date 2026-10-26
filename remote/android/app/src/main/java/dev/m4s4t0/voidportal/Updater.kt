@@ -66,7 +66,7 @@ object Updater {
                     state.value = State.UpToDate
                     return@withContext null
                 }
-                if (!res.isSuccessful) throw IllegalStateException("The relay answered ${res.code}")
+                if (!res.isSuccessful) throw IllegalStateException(tr("The relay answered {code}", "code" to res.code))
                 val j = Json.parseToJsonElement(res.body!!.string()).jsonObject
                 val r = Release(
                     versionCode = j.num("versionCode")?.toInt() ?: 0,
@@ -80,7 +80,7 @@ object Updater {
                     state.value = State.Available(r)
                     if (prefs(ctx).getInt("notified", 0) < r.versionCode) {
                         prefs(ctx).edit().putInt("notified", r.versionCode).apply()
-                        Notifier.show(ctx, Cue.ALERT, "VOID Portal ${r.versionName} is ready", r.notes.ifBlank { "Tap to update." }, null)
+                        Notifier.show(ctx, Cue.ALERT, tr("VOID Portal {version} is ready", "version" to r.versionName), r.notes.ifBlank { tr("Tap to update.") }, null)
                     }
                     r
                 } else {
@@ -89,7 +89,7 @@ object Updater {
                 }
             }
         } catch (e: Exception) {
-            if (!quiet) state.value = State.Failed("Could not check for updates: ${e.message}")
+            if (!quiet) state.value = State.Failed(tr("Could not check for updates: {error}", "error" to e.message))
             null
         }
     }
@@ -98,7 +98,7 @@ object Updater {
     suspend fun install(ctx: Context, r: Release) {
         val pm = ctx.packageManager
         if (!pm.canRequestPackageInstalls()) {
-            state.value = State.Failed("Allow VOID Portal to install updates, then tap Update again.", r)
+            state.value = State.Failed(tr("Allow VOID Portal to install updates, then tap Update again."), r)
             ctx.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${ctx.packageName}")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             return
         }
@@ -107,7 +107,7 @@ object Updater {
             state.value = State.Installing(r)
             withContext(Dispatchers.IO) { commit(ctx, file) }
         } catch (e: Exception) {
-            state.value = State.Failed(e.message ?: "The update failed.", r)
+            state.value = State.Failed(e.message ?: tr("The update failed."), r)
         }
     }
 
@@ -116,8 +116,8 @@ object Updater {
         val out = File(ctx.cacheDir, "update-${r.versionCode}.apk")
         val digest = MessageDigest.getInstance("SHA-256")
         client.newCall(req).execute().use { res ->
-            if (!res.isSuccessful) throw IllegalStateException("Download failed (${res.code})")
-            val body = res.body ?: throw IllegalStateException("Empty download")
+            if (!res.isSuccessful) throw IllegalStateException(tr("Download failed ({code})", "code" to res.code))
+            val body = res.body ?: throw IllegalStateException(tr("Empty download"))
             val total = body.contentLength().takeIf { it > 0 } ?: r.size
             var done = 0L
             var lastShown = 0f
@@ -142,7 +142,7 @@ object Updater {
         val sha = digest.digest().joinToString("") { "%02x".format(it) }
         if (!sha.equals(r.sha256, ignoreCase = true)) {
             out.delete()
-            throw IllegalStateException("The download was damaged (checksum mismatch). Try again.")
+            throw IllegalStateException(tr("The download was damaged (checksum mismatch). Try again."))
         }
         return out
     }
@@ -177,9 +177,9 @@ class UpdateReceiver : BroadcastReceiver() {
             }
             PackageInstaller.STATUS_SUCCESS -> Unit
             else -> {
-                val msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: "Installation failed"
+                val msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: tr("Installation failed")
                 val r = (Updater.state.value as? Updater.State.Installing)?.release
-                Updater.state.value = Updater.State.Failed("The update was not installed: $msg", r)
+                Updater.state.value = Updater.State.Failed(tr("The update was not installed: {error}", "error" to msg), r)
             }
         }
     }

@@ -92,7 +92,7 @@ data class Pairing(val relayUrl: String, val secret: ByteArray, val pcName: Stri
             val out = java.io.ByteArrayOutputStream()
             for (ch in text.uppercase()) {
                 val v = B32.indexOf(ch)
-                require(v >= 0) { "The pairing code is damaged." }
+                require(v >= 0) { tr("The pairing code is damaged.") }
                 value = (value shl 5) or v
                 bits += 5
                 if (bits >= 8) {
@@ -107,19 +107,19 @@ data class Pairing(val relayUrl: String, val secret: ByteArray, val pcName: Stri
             val trimmed = link.trim()
             SHORT.matchEntire(trimmed)?.let { m ->
                 val secret = unbase32(m.groupValues[1])
-                require(secret.size == 32) { "The pairing code is damaged." }
+                require(secret.size == 32) { tr("The pairing code is damaged.") }
                 return Pairing("wss://" + m.groupValues[2].lowercase(), secret, "PC")
             }
-            require(trimmed.startsWith("voidportal://pair?")) { "That is not a VOID Portal pairing code." }
+            require(trimmed.startsWith("voidportal://pair?")) { tr("That is not a VOID Portal pairing code.") }
             val q = trimmed.substringAfter('?').split('&').mapNotNull {
                 val i = it.indexOf('=')
                 if (i <= 0) null else URLDecoder.decode(it.substring(0, i), "UTF-8") to URLDecoder.decode(it.substring(i + 1), "UTF-8")
             }.toMap()
-            require(q["v"] == "1") { "This pairing code is from a newer VOID Workshop. Update VOID Portal." }
+            require(q["v"] == "1") { tr("This pairing code is from a newer VOID Workshop. Update VOID Portal.") }
             val relay = q["r"] ?: ""
-            require(relay.startsWith("wss://")) { "The pairing code has no secure relay address." }
+            require(relay.startsWith("wss://")) { tr("The pairing code has no secure relay address.") }
             val secret = Base64.getUrlDecoder().decode(q["s"] ?: "")
-            require(secret.size == 32) { "The pairing code is damaged." }
+            require(secret.size == 32) { tr("The pairing code is damaged.") }
             return Pairing(relay.trimEnd('/'), secret, (q["n"] ?: "PC").take(60))
         }
     }

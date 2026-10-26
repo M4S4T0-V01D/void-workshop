@@ -49,6 +49,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import dev.m4s4t0.voidportal.tr
+import dev.m4s4t0.voidportal.trn
 
 /** Files in these states are on disk and not committed yet. */
 val COMMITTABLE = setOf("applied", "accepted", "tested")
@@ -92,11 +94,11 @@ fun ChangesSheet(taskId: String, title: String?, running: Boolean, onClose: () -
 
     ModalBottomSheet(onDismissRequest = onClose, sheetState = sheet, containerColor = Void.panel) {
         Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Changes", fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(tr("Changes"), fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
             val list = files
             when {
-                list == null -> Text("Loading…", color = Void.dim)
-                list.isEmpty() -> Text("This task has not changed any files.", color = Void.dim)
+                list == null -> Text(tr("Loading…"), color = Void.dim)
+                list.isEmpty() -> Text(tr("This task has not changed any files."), color = Void.dim)
                 else -> LazyColumn(Modifier.fillMaxWidth().heightIn(max = 420.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     items(list, key = { it.str("rel") ?: "" }) { f -> FileRow(f, f.str("rel") in picked, open == f.str("rel"), onToggle = { on ->
                         val rel = f.str("rel") ?: return@FileRow
@@ -105,16 +107,16 @@ fun ChangesSheet(taskId: String, title: String?, running: Boolean, onClose: () -
                 }
             }
             committed?.let { sha ->
-                Text("Committed ${sha.take(7)}. Nothing was pushed.", color = Void.ok, fontSize = 14.sp)
+                Text(tr("Committed {sha}. Nothing was pushed.", "sha" to sha.take(7)), color = Void.ok, fontSize = 14.sp)
                 OutlinedButton(onClick = { onAskPush(); onClose() }, modifier = Modifier.fillMaxWidth()) {
-                    Text(if (running) "Queue: ask the agent to push" else "Ask the agent to push")
+                    Text(if (running) tr("Queue: ask the agent to push") else tr("Ask the agent to push"))
                 }
-                Text("The agent pushes after you approve it, like any publish step.", color = Void.dim, fontSize = 12.sp)
+                Text(tr("The agent pushes after you approve it, like any publish step."), color = Void.dim, fontSize = 12.sp)
             }
             if (!list.isNullOrEmpty()) {
-                OutlinedTextField(value = message, onValueChange = { message = it }, modifier = Modifier.fillMaxWidth(), label = { Text("Commit message") }, minLines = 2, maxLines = 6)
-                Text("Prefilled from the task title.", color = Void.dim, fontSize = 12.sp)
-                if (running) Text("The agent is still working; files may change after you commit.", color = Void.warn, fontSize = 12.sp)
+                OutlinedTextField(value = message, onValueChange = { message = it }, modifier = Modifier.fillMaxWidth(), label = { Text(tr("Commit message")) }, minLines = 2, maxLines = 6)
+                Text(tr("Prefilled from the task title."), color = Void.dim, fontSize = 12.sp)
+                if (running) Text(tr("The agent is still working; files may change after you commit."), color = Void.warn, fontSize = 12.sp)
                 error?.let { Text(it, color = Void.bad, fontSize = 13.sp) }
                 Button(
                     onClick = {
@@ -136,7 +138,7 @@ fun ChangesSheet(taskId: String, title: String?, running: Boolean, onClose: () -
                     },
                     enabled = !busy && picked.isNotEmpty() && message.isNotBlank(),
                     modifier = Modifier.fillMaxWidth().height(48.dp),
-                ) { Text(if (busy) "Committing…" else "Commit ${picked.size} file${if (picked.size == 1) "" else "s"}") }
+                ) { Text(if (busy) tr("Committing…") else trn(picked.size, "Commit {n} file", "Commit {n} files")) }
             }
             Text(" ", fontSize = 6.sp)
         }
@@ -153,16 +155,16 @@ private fun FileRow(f: JsonObject, checked: Boolean, open: Boolean, onToggle: (B
             Column(Modifier.weight(1f)) {
                 Text(f.str("rel") ?: "", fontFamily = FontFamily.Monospace, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 val note = listOfNotNull(
-                    if (f.bool("existed") == false) "new" else null,
+                    if (f.bool("existed") == false) tr("new") else null,
                     status,
-                    if (f.bool("externallyModified") == true) "edited outside the agent" else null,
+                    if (f.bool("externallyModified") == true) tr("edited outside the agent") else null,
                 ).joinToString(" · ")
                 Text(note, color = if (status == "committed") Void.ok else Void.dim, fontSize = 11.sp)
             }
         }
         if (open) {
             val diff = f.str("diff")
-            if (diff == null) Text("No diff to show.", color = Void.dim, fontSize = 12.sp, modifier = Modifier.padding(10.dp))
+            if (diff == null) Text(tr("No diff to show."), color = Void.dim, fontSize = 12.sp, modifier = Modifier.padding(10.dp))
             else DiffText(diff)
         }
     }
@@ -182,6 +184,6 @@ private fun DiffText(diff: String) {
             }
             Text(l, color = color, fontFamily = FontFamily.Monospace, fontSize = 11.sp, softWrap = false)
         }
-        if (diff.lineSequence().count() > lines.size) Text("… more on the PC", color = Void.dim, fontSize = 11.sp)
+        if (diff.lineSequence().count() > lines.size) Text(tr("… more on the PC"), color = Void.dim, fontSize = 11.sp)
     }
 }

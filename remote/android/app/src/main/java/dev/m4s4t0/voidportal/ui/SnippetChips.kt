@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.m4s4t0.voidportal.Haptics
 import dev.m4s4t0.voidportal.Snippets
+import dev.m4s4t0.voidportal.tr
 
 /**
  * Saved prompts as chips: tap puts one in the message, long-press offers to delete it, "+" saves a new one
@@ -44,26 +45,26 @@ fun SnippetChips(current: String = "", onPick: (String) -> Unit) {
     var adding by remember { mutableStateOf<String?>(null) }
     var deleting by remember { mutableStateOf<String?>(null) }
     Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Chip("+ Save", Void.violet, onClick = { adding = current.trim() }, onLongClick = null)
+        Chip(tr("+ Save"), Void.violet, onClick = { adding = current.trim() }, onLongClick = null)
         for (s in items) Chip(s, Void.text, onClick = { Haptics.tick(ctx); onPick(s) }, onLongClick = { deleting = s })
     }
     adding?.let { start ->
         var text by remember { mutableStateOf(start) }
         AlertDialog(
             onDismissRequest = { adding = null },
-            title = { Text("Save a snippet") },
-            text = { OutlinedTextField(value = text, onValueChange = { text = it.take(Snippets.MAX_LENGTH) }, minLines = 3, placeholder = { Text("A prompt you use often") }) },
-            confirmButton = { TextButton(onClick = { Snippets.save(text); adding = null }, enabled = text.isNotBlank()) { Text("Save") } },
-            dismissButton = { TextButton(onClick = { adding = null }) { Text("Cancel") } },
+            title = { Text(tr("Save a snippet")) },
+            text = { OutlinedTextField(value = text, onValueChange = { text = it.take(Snippets.MAX_LENGTH) }, minLines = 3, placeholder = { Text(tr("A prompt you use often")) }) },
+            confirmButton = { TextButton(onClick = { Snippets.save(text); adding = null }, enabled = text.isNotBlank()) { Text(tr("Save")) } },
+            dismissButton = { TextButton(onClick = { adding = null }) { Text(tr("Cancel")) } },
         )
     }
     deleting?.let { s ->
         AlertDialog(
             onDismissRequest = { deleting = null },
-            title = { Text("Delete this snippet?") },
+            title = { Text(tr("Delete this snippet?")) },
             text = { Text(s, maxLines = 6, overflow = TextOverflow.Ellipsis) },
-            confirmButton = { TextButton(onClick = { Snippets.remove(s); deleting = null }) { Text("Delete", color = Void.bad) } },
-            dismissButton = { TextButton(onClick = { deleting = null }) { Text("Keep") } },
+            confirmButton = { TextButton(onClick = { Snippets.remove(s); deleting = null }) { Text(tr("Delete"), color = Void.bad) } },
+            dismissButton = { TextButton(onClick = { deleting = null }) { Text(tr("Keep")) } },
         )
     }
 }

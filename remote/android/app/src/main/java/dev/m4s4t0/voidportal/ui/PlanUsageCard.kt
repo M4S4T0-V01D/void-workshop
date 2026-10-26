@@ -44,22 +44,24 @@ import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
+import dev.m4s4t0.voidportal.I18n
 
 private fun resetText(at: Double?, now: Long): String {
     if (at == null) return ""
     val mins = ((at - now) / 60_000).toLong()
     return when {
-        mins <= 0 -> "resetting now"
-        mins < 60 -> "resets in ${mins}m"
-        mins < 24 * 60 -> "resets in ${mins / 60}h ${mins % 60}m"
-        else -> "resets " + SimpleDateFormat("EEE HH:mm", Locale.getDefault()).format(Date(at.toLong()))
+        mins <= 0 -> tr("resetting now")
+        mins < 60 -> tr("resets in {m}m", "m" to mins)
+        mins < 24 * 60 -> tr("resets in {h}h {m}m", "h" to mins / 60, "m" to mins % 60)
+        else -> tr("resets {when}", "when" to SimpleDateFormat("EEE HH:mm", I18n.locale).format(Date(at.toLong())))
     }
 }
 
 private fun ago(at: Double?, now: Long): String {
-    if (at == null || at <= 0) return "not checked yet"
+    if (at == null || at <= 0) return tr("not checked yet")
     val mins = ((now - at) / 60_000).toLong()
-    return if (mins < 1) "checked just now" else if (mins < 60) "checked ${mins}m ago" else "checked ${mins / 60}h ago"
+    return if (mins < 1) tr("checked just now") else if (mins < 60) tr("checked {m}m ago", "m" to mins) else tr("checked {h}h ago", "h" to mins / 60)
 }
 
 private fun toneOf(row: JsonObject): Color {
@@ -93,7 +95,7 @@ fun PlanUsageCard(s: JsonObject) {
     Card {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("CLAUDE PLAN USAGE", color = Void.dim, fontSize = 10.sp, letterSpacing = 2.sp, fontWeight = FontWeight.SemiBold)
+                Text(tr("CLAUDE PLAN USAGE"), color = Void.dim, fontSize = 10.sp, letterSpacing = 2.sp, fontWeight = FontWeight.SemiBold)
                 Text(
                     listOfNotNull(usage?.str("subscriptionType")?.replaceFirstChar { it.uppercase() }, ago(usage?.num("checkedAt"), now)).joinToString("  ·  "),
                     color = Void.dim,
@@ -113,9 +115,9 @@ fun PlanUsageCard(s: JsonObject) {
                         busy = false
                     }
                 }
-            }) { Icon(Icons.Default.Refresh, "Check again", tint = Void.dim) }
+            }) { Icon(Icons.Default.Refresh, tr("Check again"), tint = Void.dim) }
         }
-        if (rows.isEmpty()) Text(if (usage?.str("problem") != null) "Not available right now" else "Checking…", color = Void.dim, fontSize = 13.sp)
+        if (rows.isEmpty()) Text(if (usage?.str("problem") != null) tr("Not available right now") else tr("Checking…"), color = Void.dim, fontSize = 13.sp)
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             for (r in rows) {
                 val pct = (r.num("percent") ?: 0.0).coerceIn(0.0, 100.0)
@@ -142,7 +144,8 @@ fun PlanUsageCard(s: JsonObject) {
                 val on = x.bool("enabled") == true
                 val reason = x.str("reason")?.replace('_', ' ')
                 Text(
-                    "Extra usage ${money(x.num("used"))} / ${money(x.num("limit"))} · " + if (on) "on" else "off${reason?.let { " ($it)" } ?: ""}",
+                    if (on) tr("Extra usage {used} / {limit} · on", "used" to money(x.num("used")), "limit" to money(x.num("limit")))
+                    else tr("Extra usage {used} / {limit} · off", "used" to money(x.num("used")), "limit" to money(x.num("limit"))) + (reason?.let { " ($it)" } ?: ""),
                     color = Void.dim,
                     fontSize = 12.sp,
                 )

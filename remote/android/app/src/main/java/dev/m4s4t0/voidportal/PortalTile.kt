@@ -15,12 +15,12 @@ import kotlinx.coroutines.withContext
 
 /** The tile's second line: what is running and what waits for you. */
 fun tileSubtitle(paired: Boolean, pcOnline: Boolean, running: Int, needsYou: Int): String = when {
-    !paired -> "Not paired"
-    !pcOnline -> "PC offline"
-    running == 0 && needsYou == 0 -> "Nothing running"
+    !paired -> tr("Not paired")
+    !pcOnline -> tr("PC offline")
+    running == 0 && needsYou == 0 -> tr("Nothing running")
     else -> listOfNotNull(
-        if (running > 0) "$running running" else null,
-        if (needsYou > 0) "$needsYou need${if (needsYou == 1) "s" else ""} you" else null,
+        if (running > 0) tr("{n} running", "n" to running) else null,
+        if (needsYou > 0) trn(needsYou, "{n} needs you", "{n} need you") else null,
     ).joinToString(" · ")
 }
 

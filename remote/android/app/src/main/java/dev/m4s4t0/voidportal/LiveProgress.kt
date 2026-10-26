@@ -68,7 +68,7 @@ object LiveProgress {
     fun onTask(ctx: Context, t: JsonObject) {
         val id = t.str("id") ?: return
         if (t.str("state") in RUNNING_STATES) {
-            val title = t.str("title") ?: "Task"
+            val title = t.str("title") ?: tr("Task")
             val project = projectName(t.str("project"))
             val run = runs[id]?.copy(title = title, project = project) ?: Run(id, title, project, System.currentTimeMillis())
             runs[id] = run
@@ -136,7 +136,7 @@ object LiveProgress {
         if (!enabled.value) return
         lastPost[taskId] = System.currentTimeMillis()
         val todos = run.todos
-        val step = todos?.current ?: run.tool ?: "Working…"
+        val step = todos?.current ?: run.tool ?: tr("Working…")
         val detail = listOfNotNull(todos?.current, run.tool).distinct().joinToString("\n")
         val nid = notificationId(taskId)
         val stop = PendingIntent.getBroadcast(
@@ -160,15 +160,15 @@ object LiveProgress {
             .setUsesChronometer(true)
             .setCategory(Notification.CATEGORY_PROGRESS)
             .setContentIntent(Notifier.openApp(ctx, taskId, null, nid))
-            .addAction(0, "Stop", stop)
-            .addAction(Notifier.replyAction(ctx, taskId, nid, progress = true, label = "Reply"))
+            .addAction(0, tr("Stop"), stop)
+            .addAction(Notifier.replyAction(ctx, taskId, nid, progress = true, label = tr("Reply")))
             .apply {
                 if (todos != null) setProgress(todos.total, todos.done, false) else setProgress(0, 0, true)
                 // Android 16 Live Updates (NotificationCompat has no setter for these yet).
                 addExtras(
                     Bundle().apply {
                         putBoolean("android.requestPromotedOngoing", true)
-                        putString("android.shortCriticalText", todos?.let { "${it.done}/${it.total}" } ?: "Working")
+                        putString("android.shortCriticalText", todos?.let { "${it.done}/${it.total}" } ?: tr("Working"))
                     },
                 )
             }

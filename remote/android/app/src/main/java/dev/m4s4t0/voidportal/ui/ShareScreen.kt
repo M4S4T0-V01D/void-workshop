@@ -66,6 +66,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import dev.m4s4t0.voidportal.tr
 
 /** Text and pictures shared from another app: start a task with them, or add them to one that is going. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,11 +96,11 @@ fun ShareScreen(text: String, uris: List<Uri>, onCancel: () -> Unit, onSent: (St
             try {
                 val ids = mutableListOf<String>()
                 for ((i, uri) in pictures.withIndex()) {
-                    busy = "Sending picture ${i + 1} of ${pictures.size}…"
+                    busy = tr("Sending picture {n} of {total}…", "n" to i + 1, "total" to pictures.size)
                     ids += SharedImages.upload(ctx, uri)
                 }
-                busy = "Sending…"
-                val words = message.trim().ifEmpty { if (ids.size == 1) "Look at this picture." else "Look at these pictures." }
+                busy = tr("Sending…")
+                val words = message.trim().ifEmpty { if (ids.size == 1) tr("Look at this picture.") else tr("Look at these pictures.") }
                 val imageIds = JsonArray(ids.map(::JsonPrimitive)).takeIf { ids.isNotEmpty() }
                 val id = if (newTask) {
                     val mode = state?.obj("settings")?.str("agentMode") ?: "ask"
@@ -113,7 +114,7 @@ fun ShareScreen(text: String, uris: List<Uri>, onCancel: () -> Unit, onSent: (St
                 id?.let(onSent) ?: onCancel()
             } catch (e: PortalError) {
                 Haptics.reject(ctx)
-                snack.showSnackbar(e.message ?: "Could not send it")
+                snack.showSnackbar(e.message ?: tr("Could not send it"))
             } finally {
                 busy = null
             }
@@ -126,33 +127,33 @@ fun ShareScreen(text: String, uris: List<Uri>, onCancel: () -> Unit, onSent: (St
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                navigationIcon = { IconButton(onClick = onCancel) { Icon(Icons.Default.Close, "Cancel") } },
-                title = { Text("Send to the PC") },
+                navigationIcon = { IconButton(onClick = onCancel) { Icon(Icons.Default.Close, tr("Cancel")) } },
+                title = { Text(tr("Send to the PC")) },
             )
         },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad).padding(16.dp).imePadding().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            if (pc != Portal.Pc.ONLINE) Text("The PC is offline. It can be sent once VOID Workshop is reachable.", color = Void.warn, fontSize = 13.sp)
+            if (pc != Portal.Pc.ONLINE) Text(tr("The PC is offline. It can be sent once VOID Workshop is reachable."), color = Void.warn, fontSize = 13.sp)
             if (pictures.isNotEmpty()) {
                 Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     for (uri in pictures.toList()) Thumbnail(uri) { pictures.remove(uri) }
                 }
-                if (uris.size > SharedImages.MAX_PICTURES) Text("Only the first ${SharedImages.MAX_PICTURES} pictures go with one message.", color = Void.dim, fontSize = 12.sp)
+                if (uris.size > SharedImages.MAX_PICTURES) Text(tr("Only the first {n} pictures go with one message.", "n" to SharedImages.MAX_PICTURES), color = Void.dim, fontSize = 12.sp)
             }
             OutlinedTextField(
                 value = message,
                 onValueChange = { message = it },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
-                placeholder = { Text("What should the agent do with it?") },
+                placeholder = { Text(tr("What should the agent do with it?")) },
             )
             SnippetChips { message = if (message.isBlank()) it else "${message.trimEnd()}\n\n$it" }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                FilterChip(selected = newTask, onClick = { newTask = true }, label = { Text("New task") })
-                FilterChip(selected = !newTask, onClick = { newTask = false }, enabled = active.isNotEmpty(), label = { Text("Add to a task (${active.size})") })
+                FilterChip(selected = newTask, onClick = { newTask = true }, label = { Text(tr("New task")) })
+                FilterChip(selected = !newTask, onClick = { newTask = false }, enabled = active.isNotEmpty(), label = { Text(tr("Add to a task ({n})", "n" to active.size)) })
             }
             if (newTask) {
-                if (projects.isEmpty()) Text("Open a project in VOID Workshop on the PC first.", color = Void.dim)
+                if (projects.isEmpty()) Text(tr("Open a project in VOID Workshop on the PC first."), color = Void.dim)
                 for (p in projects) {
                     val path = p.str("path") ?: continue
                     Choice(p.str("name") ?: projectName(path), path, root == path) { root = path }
@@ -160,11 +161,11 @@ fun ShareScreen(text: String, uris: List<Uri>, onCancel: () -> Unit, onSent: (St
             } else {
                 for (t in active) {
                     val id = t.str("id") ?: continue
-                    Choice(t.str("title") ?: "Task", projectName(t.str("project")), taskId == id) { taskId = id }
+                    Choice(t.str("title") ?: tr("Task"), projectName(t.str("project")), taskId == id) { taskId = id }
                 }
             }
             Button(onClick = ::send, enabled = ready, modifier = Modifier.fillMaxWidth().height(50.dp)) {
-                Text(busy ?: if (newTask) "Start on the PC" else "Send to the task")
+                Text(busy ?: if (newTask) tr("Start on the PC") else tr("Send to the task"))
             }
         }
     }
@@ -189,7 +190,7 @@ private fun Thumbnail(uri: Uri, onRemove: () -> Unit) {
         bmp?.let { Image(it.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
             ?: Text("…", color = Void.dim, modifier = Modifier.padding(8.dp))
         IconButton(onClick = onRemove, modifier = Modifier.size(32.dp).align(androidx.compose.ui.Alignment.TopEnd)) {
-            Icon(Icons.Default.Close, "Remove", tint = Color.White, modifier = Modifier.clip(RoundedCornerShape(50)).background(Color.Black.copy(alpha = 0.5f)).padding(2.dp))
+            Icon(Icons.Default.Close, tr("Remove"), tint = Color.White, modifier = Modifier.clip(RoundedCornerShape(50)).background(Color.Black.copy(alpha = 0.5f)).padding(2.dp))
         }
     }
 }

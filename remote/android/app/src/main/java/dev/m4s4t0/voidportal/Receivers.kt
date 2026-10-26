@@ -26,7 +26,7 @@ class ActionReceiver : BroadcastReceiver() {
                 try {
                     Portal.call("task.cancel", json("taskId" to taskId), timeoutMs = 15_000)
                 } catch (e: PortalError) {
-                    Notifier.show(context, Cue.ALERT, "Could not stop the task", e.message ?: "", null)
+                    Notifier.show(context, Cue.ALERT, tr("Could not stop the task"), e.message ?: "", null)
                 } finally {
                     pending.finish()
                 }
@@ -41,7 +41,7 @@ class ActionReceiver : BroadcastReceiver() {
                 Portal.call("approval.respond", json("approvalId" to id, "decision" to decision, "allowAll" to if (allowAll) true else null), timeoutMs = 15_000)
                 Notifier.cancelApproval(context, id)
             } catch (e: PortalError) {
-                Notifier.show(context, Cue.ALERT, "Could not ${if (decision == "allow") "approve" else "deny"}", e.message ?: "", null)
+                Notifier.show(context, Cue.ALERT, if (decision == "allow") tr("Could not approve") else tr("Could not deny"), e.message ?: "", null)
             } finally {
                 pending.finish()
             }
@@ -65,7 +65,7 @@ class ReplyReceiver : BroadcastReceiver() {
                 if (progress) LiveProgress.repost(context, taskId) else NotificationManagerCompat.from(context).cancel(nid)
             } catch (e: PortalError) {
                 if (progress) LiveProgress.repost(context, taskId) else NotificationManagerCompat.from(context).cancel(nid)
-                Notifier.show(context, Cue.ALERT, "Reply not sent", e.message ?: "", taskId)
+                Notifier.show(context, Cue.ALERT, tr("Reply not sent"), e.message ?: "", taskId)
             } finally {
                 pending.finish()
             }
@@ -76,6 +76,7 @@ class ReplyReceiver : BroadcastReceiver() {
 class PortalApp : android.app.Application() {
     override fun onCreate() {
         super.onCreate()
+        I18n.init(this)
         Themes.init(this)
         LiveProgress.init(this)
         Portal.init(this)

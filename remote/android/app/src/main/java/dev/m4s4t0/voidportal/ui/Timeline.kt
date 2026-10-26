@@ -9,6 +9,7 @@ import dev.m4s4t0.voidportal.bool
 import dev.m4s4t0.voidportal.num
 import dev.m4s4t0.voidportal.str
 import kotlinx.serialization.json.JsonObject
+import dev.m4s4t0.voidportal.tr
 
 sealed interface TItem {
     val key: Int
@@ -89,17 +90,18 @@ class Timeline {
             }
             "todos", "agent.todos" -> plan = p.arr("items")
             "agent.notice" -> notice(p.str("level") ?: "info", p.str("text") ?: "")
-            "stopped" -> notice(if (p.str("state") == "stopped-budget" || p.str("state") == "stopped-limit") "warn" else "error", p.str("message") ?: "Stopped")
+            "stopped" -> notice(if (p.str("state") == "stopped-budget" || p.str("state") == "stopped-limit") "warn" else "error", p.str("message") ?: tr("Stopped"))
             "approval.resolved" -> if (p.str("summary") != null) {
                 val auto = p.bool("auto") == true
-                val verb = if (auto) "Auto-approved" else if (p.str("decision") == "allow") "Approved" else "Denied"
-                notice(if (p.str("decision") == "allow") "info" else "warn", "$verb: ${p.str("summary")}")
+                val summary = "summary" to p.str("summary")
+                val text = if (auto) tr("Auto-approved: {summary}", summary) else if (p.str("decision") == "allow") tr("Approved: {summary}", summary) else tr("Denied: {summary}", summary)
+                notice(if (p.str("decision") == "allow") "info" else "warn", text)
             }
-            "agent.autoApproved" -> notice("info", "Auto-approved: ${p.str("summary") ?: ""}")
-            "policy.denied", "agent.policyDenied" -> notice("warn", "Blocked ${p.str("tool") ?: ""}: ${p.str("reason") ?: ""}")
-            "auth.switched" -> notice("warn", "Switched to ${if (p.str("to") == "subscription") "your Claude plan" else "your API key"}.")
-            "agent.retry" -> notice("warn", "API retry: ${p.str("error") ?: ""}")
-            "compact" -> notice("info", "Compacting the conversation to save tokens.")
+            "agent.autoApproved" -> notice("info", tr("Auto-approved: {summary}", "summary" to (p.str("summary") ?: "")))
+            "policy.denied", "agent.policyDenied" -> notice("warn", tr("Blocked {tool}: {reason}", "tool" to (p.str("tool") ?: ""), "reason" to (p.str("reason") ?: "")))
+            "auth.switched" -> notice("warn", if (p.str("to") == "subscription") tr("Switched to your Claude plan.") else tr("Switched to your API key."))
+            "agent.retry" -> notice("warn", tr("API retry: {error}", "error" to (p.str("error") ?: "")))
+            "compact" -> notice("info", tr("Compacting the conversation to save tokens."))
         }
     }
 }
