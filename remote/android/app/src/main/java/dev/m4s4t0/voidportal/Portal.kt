@@ -62,7 +62,9 @@ object Portal {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val client = OkHttpClient.Builder().pingInterval(20, TimeUnit.SECONDS).readTimeout(0, TimeUnit.MILLISECONDS).build()
     private val pending = ConcurrentHashMap<String, CompletableDeferred<JsonElement>>()
-    private var ws: WebSocket? = null
+    // Guards ws and reconnectJob: OkHttp calls the listener on its own threads, sometimes before newWebSocket returns.
+    private val lock = Any()
+    @Volatile private var ws: WebSocket? = null
     private var retry = 0
     private var reconnectJob: Job? = null
     @Volatile private var lastHostFrame = 0L
@@ -118,7 +120,7 @@ object Portal {
         connect()
     }
 
-    private fun disconnect() {
+    private fun disconnect() = synchronized(lock) {
         reconnectJob?.cancel()
         reconnectJob = null
         ws?.close(1000, "bye")
@@ -127,7 +129,6 @@ object Portal {
 
     private fun connect() {
         val p = pairing.value ?: return
-        link.value = Link.CONNECTING
         val req = try {
             Request.Builder().url("${p.relayUrl}/v1/channel/${p.keys.channelId}?role=phone").header("Authorization", "Bearer ${p.keys.token}").build()
         } catch (e: IllegalArgumentException) {
@@ -135,30 +136,36 @@ object Portal {
             link.value = Link.OFFLINE
             return
         }
-        lateinit var socket: WebSocket
-        socket = client.newWebSocket(req, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                if (ws !== socket) return
-                retry = 0
-                lastError.value = null
-                link.value = Link.CONNECTED
-            }
+        // The listener checks ws under the lock, so a callback that comes before newWebSocket returns (a failure
+        // to connect at once) waits until ws is this socket instead of being ignored or crashing.
+        synchronized(lock) {
+            if (ws != null) return
+            link.value = Link.CONNECTING
+            ws = client.newWebSocket(req, object : WebSocketListener() {
+                override fun onOpen(webSocket: WebSocket, response: Response) {
+                    synchronized(lock) { if (ws !== webSocket) return }
+                    retry = 0
+                    lastError.value = null
+                    link.value = Link.CONNECTED
+                }
 
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                if (ws === socket) onFrame(p, text)
-            }
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    if (synchronized(lock) { ws === webSocket }) onFrame(p, text)
+                }
 
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = dropped(socket, code, null)
+                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) = dropped(webSocket, code, null)
 
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) =
-                dropped(socket, response?.code ?: 0, response?.let { tr("Relay answered {code}", "code" to it.code) } ?: t.message)
-        })
-        ws = socket
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) =
+                    dropped(webSocket, response?.code ?: 0, response?.let { tr("Relay answered {code}", "code" to it.code) } ?: t.message)
+            })
+        }
     }
 
     private fun dropped(socket: WebSocket, code: Int, error: String?) {
-        if (ws !== socket) return
-        ws = null
+        synchronized(lock) {
+            if (ws !== socket) return
+            ws = null
+        }
         for (d in pending.values) d.completeExceptionally(PortalError("offline", tr("The connection dropped.")))
         pending.clear()
         if (code == 4001) {
@@ -174,9 +181,12 @@ object Portal {
         }
         link.value = Link.OFFLINE
         val wait = minOf(30_000L, 1000L shl minOf(retry++, 5)) + (if (code == 403) 60_000L else 0L)
-        reconnectJob = scope.launch {
-            delay(wait)
-            connect()
+        synchronized(lock) {
+            reconnectJob?.cancel()
+            reconnectJob = scope.launch {
+                delay(wait)
+                connect()
+            }
         }
     }
 
