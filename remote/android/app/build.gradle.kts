@@ -21,8 +21,8 @@ android {
         applicationId = "dev.m4s4t0.voidportal"
         minSdk = 26
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.11.0"
+        versionCode = 16
+        versionName = "1.11.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Phones are 64-bit ARM; x86_64 is for the emulator. Keeps the bundled ML Kit libraries small.
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
