@@ -4,13 +4,22 @@
 
 <p align="center">A local, approval-first AI coding workspace for Linux, powered by the Claude Agent SDK and <b>your own Claude plan or Anthropic Console API key</b>.</p>
 
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-a970ff" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/platform-Linux-22e3ff" alt="Linux">
+  <a href="https://github.com/M4S4T0-V01D/void-workshop/releases/latest"><img src="https://img.shields.io/github/v/release/M4S4T0-V01D/void-workshop?label=VOID%20Portal&color=a970ff" alt="Latest VOID Portal release"></a>
+  <img src="https://img.shields.io/badge/languages-13-22e3ff" alt="13 languages">
+</p>
+
 <p align="center"><a href="https://m4s4t0-v01d.github.io/void-workshop/">Website</a> · <a href="#install">Install</a> · <a href="#void-portal-your-phone-as-a-remote">VOID Portal</a> · <a href="guides/api-key.md">API key setup</a> · <a href="guides/claude-plan.md">Claude plan</a> · <a href="guides/billing.md">Billing &amp; limits</a> · <a href="guides/security.md">Security model</a> · <a href="guides/forking.md">Forking</a></p>
+
+<p align="center"><img src="assets/hero.png" alt="VOID Workshop: your code, your key, your approval. The desktop app showing a diff awaiting approval, next to two phones running VOID Portal"></p>
 
 ---
 
 You pick a project folder, describe a task in plain English, review the agent's plan, and approve every file change and shell command. VOID Workshop shows a diff for each edit, keeps the original of every file it touches so you can reject changes one by one, and stops itself at the spending limits you set.
 
-![VOID Workshop main window](docs/screenshots/workspace.png)
+<p align="center"><img src="assets/demo.gif" alt="A 20-second tour: the four modes, a diff awaiting approval, VOID Portal on three phones, a GitHub pull request, the Cloudflare panel, the token dashboard, themes and languages"></p>
 
 Everything runs on your machine with your own account: no telemetry, no shared server, nothing from the author's setup built in. You bring the Claude plan or API key (or free local models through Ollama), and if you want the phone app, you deploy your own relay in a few minutes on a free Cloudflare account.
 
@@ -24,11 +33,35 @@ Everything runs on your machine with your own account: no telemetry, no shared s
     <td align="center">Built-in editor, highlighting follows your theme</td>
   </tr>
   <tr>
+    <td><img src="docs/screenshots/modes.png" alt="The mode picker: Ask before edits, Edit automatically, Auto and Plan mode"></td>
+    <td><img src="docs/screenshots/workspace.png" alt="VOID Workshop main window with a task in progress"></td>
+  </tr>
+  <tr>
+    <td align="center">Four modes, from read-only plans to Auto</td>
+    <td align="center">Tasks, sessions and the project side by side</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/github-pr.png" alt="GitHub panel showing a pull request"></td>
+    <td><img src="docs/screenshots/cloudflare.png" alt="Cloudflare panel with Workers and Pages"></td>
+  </tr>
+  <tr>
+    <td align="center">GitHub: pull requests, issues, runs, releases</td>
+    <td align="center">Cloudflare: Workers, Pages, R2, D1 and KV</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/tokens.png" alt="Token usage dashboard for the last 30 days"></td>
     <td><img src="docs/screenshots/themes.png" alt="Theme editor with seven built-in themes"></td>
+  </tr>
+  <tr>
+    <td align="center">Token dashboard: where the weight goes</td>
+    <td align="center">Seven themes and a live colour editor</td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/language.png" alt="Language picker with 13 languages"></td>
     <td><img src="docs/screenshots/welcome.png" alt="First launch: sign in with a Claude plan or an API key"></td>
   </tr>
   <tr>
-    <td align="center">Seven themes and a live colour editor</td>
+    <td align="center">13 languages, right-to-left included</td>
     <td align="center">First launch: plan, API key or Ollama</td>
   </tr>
 </table>
@@ -38,7 +71,8 @@ Everything runs on your machine with your own account: no telemetry, no shared s
 - **Agent-first workflow.** A chat-style prompt box with a mode picker and a model picker, like Claude Code in VS Code. Four modes: *Ask before edits*, *Edit automatically*, *Auto* and *Plan mode* (read-only, then a plan to approve). Shift+Tab cycles them. Follow-ups continue the same SDK session; sessions can be resumed after a restart.
 - **Your Claude plan or your API key, with a switch.** Sign in with your Claude plan (Pro/Max) or use a Console API key held in the desktop Secret Service; a button under the prompt box switches between them, and when one runs out the task continues on the other. The plan login is VOID Workshop's own (your normal Claude Code login is left alone), and before each session the runtime's credential is checked: no request is sent if it isn't the one you chose.
 - **Queue messages while it works.** Keep typing while the agent runs: messages wait in a queue (edit, remove or *send now*) and go out together as one message when the turn ends.
-- **Lean on tokens, quick to respond.** A smaller tool set (~4k fewer tokens on every request), efficiency rules in the agent prompt, automatic compaction at 200k tokens, a context meter with one-click *Compact*, cache-hit rates per turn, a choice of prompt-cache lifetime, and effort and fast-mode switches in the prompt bar that apply to a running task immediately.
+- **GitHub and Cloudflare panels.** Sign in to GitHub (device login or a token) to browse the project's pull requests, issues, workflow runs and releases, read the threads and comment without leaving the app. Paste a Cloudflare API token to see your Workers, Pages, R2 buckets, D1 databases and KV namespaces. Both tokens stay in the keyring and never reach the window or the agent.
+- **Lean on tokens, quick to respond.** A token saver (on by default) that compacts at 120k tokens and trims command output, an optional cheaper model for implementing an approved plan, and a token usage dashboard (last 30 days, per model, and where the weight goes). Also a smaller tool set (~4k fewer tokens on every request), a context meter with one-click *Compact*, cache-hit rates per turn, a choice of prompt-cache lifetime, and effort and fast-mode switches in the prompt bar that apply to a running task immediately.
 - **VOID Portal: your phone as a remote.** Pair the Android app with a QR code and drive VOID Workshop from anywhere through your own Cloudflare relay, end-to-end encrypted: start and queue tasks, approve changes and commands (even from the notification), switch Claude plan / API key / Ollama, and get cosmic notification sounds when a task is done, needs you, or the PC goes offline. See [remote/README.md](remote/README.md).
 - **Admin dev sessions.** Behind a password you set, let the agent work on VOID Workshop and VOID Portal themselves: fixes and whole features, a new build installed and restarted into, the task carrying on afterwards. Start and end it from the PC or the phone; ending it puts everything back to normal. Most desktop settings can also be changed from VOID Portal. See [guides/admin-dev.md](guides/admin-dev.md).
 - **Reviewable changes.** Unified diff before every write; per-file accept/reject afterwards; clear *proposed → applied → tested → committed* states; external edits are detected and never silently overwritten.
@@ -54,8 +88,6 @@ VOID Workshop is developed and tested on Arch Linux; other distributions work wi
 
 ```bash
 # Arch Linux
-
-```bash
 sudo pacman -S --needed base-devel nodejs npm rust git webkit2gtk-4.1 gtk3 libsoup3 librsvg \
   libayatana-appindicator openssl libsecret bubblewrap socat ripgrep
 
@@ -126,7 +158,7 @@ node test/smoke.mjs wss://void-relay.<your-subdomain>.workers.dev   # checks the
 
 Then in VOID Workshop open **Settings → VOID Portal (phone)**, enter `wss://void-relay.<your-subdomain>.workers.dev` as the relay, and click **Pair a phone**. Install the app and scan the code:
 
-- **Download it:** the newest build is **VOID Portal 1.11.0** ([VOID-Portal-1.11.0.apk](https://github.com/M4S4T0-V01D/void-workshop/releases/download/portal-v1.11.0/VOID-Portal-1.11.0.apk)); every version is under [Releases](https://github.com/M4S4T0-V01D/void-workshop/releases). Android asks you to allow installs from your browser or file manager the first time.
+- **Download it:** the newest build is **VOID Portal 1.11.1** ([VOID-Portal-1.11.1.apk](https://github.com/M4S4T0-V01D/void-workshop/releases/download/portal-v1.11.1/VOID-Portal-1.11.1.apk)); every version is under [Releases](https://github.com/M4S4T0-V01D/void-workshop/releases). Android asks you to allow installs from your browser or file manager the first time.
 - **Or build it** with JDK 17: `cd remote/android && ./gradlew :app:assembleRelease`.
 
 Either way, the APK contains no relay, account or key: it learns your relay from the pairing code. The full guide, including the optional R2 bucket for app updates and what to do if a pairing code leaks, is in [remote/README.md](remote/README.md#your-own-relay).
