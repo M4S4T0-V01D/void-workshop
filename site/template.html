@@ -18,12 +18,19 @@
 {{ogAlternates}}
     <meta property="og:title" content="{{attr:ogTitle}}" />
     <meta property="og:description" content="{{attr:ogDescription}}" />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="{{attr:shotAlt}}" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="{{attr:ogImageAlt}}" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{attr:ogTitle}}" />
     <meta name="twitter:description" content="{{attr:ogDescription}}" />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="{{attr:ogImageAlt}}" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -37,8 +44,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -124,6 +131,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="{{root}}logo.svg" alt="{{attr:logoAlt}}" />
+        <a class="pill" href="#built">{{heroNew}}</a>
         <h1>{{heroTitle}}</h1>
         <p class="lead">{{heroLead}}</p>
         <div class="cta">
@@ -131,7 +139,18 @@
           <a class="btn" href="#portal">{{ctaPortal}}</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">{{ctaSource}}</a>
         </div>
-        <div class="shot"><img src="{{root}}screenshots/workspace.png" alt="{{attr:shotAlt}}" /></div>
+        <ul class="chips">
+          <li>{{chip1}}</li>
+          <li class="c">{{chip2}}</li>
+          <li>{{chip3}}</li>
+          <li class="c">{{chip4}}</li>
+          <li>{{chip5}}</li>
+          <li class="c">{{chip6}}</li>
+        </ul>
+        <div class="shot video">
+          <video src="{{root}}media/demo.mp4" poster="{{root}}media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="{{attr:videoAlt}}"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> {{videoSound}}</button>
+        </div>
       </div>
     </header>
 
@@ -162,6 +181,19 @@
           </ul>
         </div>
         <img src="{{root}}screenshots/review.png" alt="{{attr:reviewAlt}}" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>{{builtTitle}}</h2>
+        <p class="sub">{{builtSub}}</p>
+        <div class="showcase">
+          <figure><img src="{{root}}screenshots/modes.png" alt="{{attr:modesAlt}}" loading="lazy" width="1480" height="920" /><figcaption><h3>{{modesT}}</h3><p>{{modesD}}</p></figcaption></figure>
+          <figure><img src="{{root}}screenshots/github-pr.png" alt="{{attr:ghAlt}}" loading="lazy" width="1480" height="920" /><figcaption><h3>{{ghT}}</h3><p>{{ghD}}</p></figcaption></figure>
+          <figure><img src="{{root}}screenshots/cloudflare.png" alt="{{attr:cfAlt}}" loading="lazy" width="1480" height="920" /><figcaption><h3>{{cfT}}</h3><p>{{cfD}}</p></figcaption></figure>
+          <figure><img src="{{root}}screenshots/tokens.png" alt="{{attr:tokAlt}}" loading="lazy" width="1480" height="920" /><figcaption><h3>{{tokT}}</h3><p>{{tokD}}</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -319,6 +351,22 @@
       <div class="wrap">{{footer}}</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

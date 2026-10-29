@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop: 내 코드, 내 키, 내 승인" />
     <meta property="og:description" content="승인 우선의 오픈소스 Linux AI 코딩 작업 공간, 그리고 종단 간 암호화 Android 리모컨 VOID Portal. 제작 M4S4T0-V01D." />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="VOID Workshop 창: 파일 트리, 에이전트 대화, 계획 및 변경 패널, 터미널, 상태 표시줄" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop: 당신의 코드. 당신의 키. 당신의 승인. 승인을 기다리는 diff가 보이는 데스크톱 앱과 휴대폰 두 대의 VOID Portal" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: 내 코드, 내 키, 내 승인" />
     <meta name="twitter:description" content="승인 우선의 오픈소스 Linux AI 코딩 작업 공간, 그리고 종단 간 암호화 Android 리모컨 VOID Portal. 제작 M4S4T0-V01D." />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop: 당신의 코드. 당신의 키. 당신의 승인. 승인을 기다리는 diff가 보이는 데스크톱 앱과 휴대폰 두 대의 VOID Portal" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="VOID Workshop 로고" />
+        <a class="pill" href="#built"><b>새 기능</b> GitHub·Cloudflare 패널, 토큰 절약기, 사용량 대시보드</a>
         <h1>내 코드. 내 키.<br /><span class="grad">내 승인.</span></h1>
         <p class="lead">VOID Workshop은 Claude Agent SDK 기반의 무료 오픈소스 Linux 데스크톱 코딩 에이전트입니다. 무언가를 건드리기 전에 계획을 세우고, 모든 쓰기 전에 diff를 보여 주고, 모든 명령 전에 물어보며, 정해 둔 예산에서 멈춥니다. Claude 요금제, API 키 또는 로컬 Ollama 모델을 가져와 VOID Portal로 휴대폰에서 조작하세요.</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">VOID Portal 받기</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">소스 보기</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="VOID Workshop 창: 파일 트리, 에이전트 대화, 계획 및 변경 패널, 터미널, 상태 표시줄" /></div>
+        <ul class="chips">
+          <li>Claude 요금제, API 키 또는 Ollama</li>
+          <li class="c">GitHub·Cloudflare 내장</li>
+          <li>토큰 절약기</li>
+          <li class="c">종단 간 암호화</li>
+          <li>13개 언어</li>
+          <li class="c">MIT 라이선스</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="VOID Workshop 20초 둘러보기: 네 가지 모드, 승인을 기다리는 diff, 휴대폰 세 대의 VOID Portal, GitHub 풀 리퀘스트, Cloudflare 패널, 토큰 대시보드, 테마와 언어"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> 소리와 함께 재생</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="제안된 파일 변경의 unified diff를 보여 주는 승인 대화 상자" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>모든 것을 한 창에서</h2>
+        <p class="sub">앱을 떠나지 않고 계획, 구현, 리뷰, 배포까지. 토큰이 어디에 쓰이는지도 정확히 보입니다.</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="모드 선택: 편집 전에 묻기, 자동 편집, Auto, 계획 모드" loading="lazy" width="1480" height="920" /><figcaption><h3>네 가지 모드</h3><p>편집 전에 묻기, 자동 편집, 샌드박스 안의 Auto, 또는 계획 모드: 읽기만 한 뒤 승인할 계획을 제시합니다. Shift+Tab으로 작업 도중에도 전환할 수 있습니다.</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="풀 리퀘스트와 대화를 보여 주는 GitHub 패널" loading="lazy" width="1480" height="920" /><figcaption><h3>GitHub 패널</h3><p>기기 코드나 토큰으로 로그인해 풀 리퀘스트, 이슈, 워크플로 실행, 릴리스를 살펴보고 스레드를 읽고 댓글을 남기세요. 토큰은 키링에 보관됩니다.</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Workers와 Pages 프로젝트 목록을 보여 주는 Cloudflare 패널" loading="lazy" width="1480" height="920" /><figcaption><h3>Cloudflare 패널</h3><p>API 토큰을 붙여 넣으면 Workers, Pages 프로젝트, R2 버킷, D1 데이터베이스, KV 네임스페이스를 읽기 전용으로 한눈에 볼 수 있습니다.</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="최근 30일 일별 사용량을 보여 주는 토큰 사용량 대시보드" loading="lazy" width="1480" height="920" /><figcaption><h3>토큰 절약기와 대시보드</h3><p>기본으로 켜져 있음: 긴 세션을 120k 토큰에서 압축하고 명령 출력을 줄입니다. 대시보드는 최근 30일의 모델별 사용량과 무엇이 무거운지 보여 줍니다.</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">제작 <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub 소스</a> · MIT 라이선스.<br />VOID Workshop은 독립적인 오픈소스 프로젝트로, Anthropic과 제휴하거나 Anthropic의 보증을 받지 않았습니다. Claude 사용은 Anthropic 약관을 따르며 여러분의 계정으로 청구됩니다.</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

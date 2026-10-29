@@ -175,6 +175,142 @@ header.hero {
   width: 100%;
   height: auto;
 }
+/* "New" pill above the headline and the feature chips under the buttons, as in the hero image and video. */
+.pill {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 10px;
+  margin: 20px auto 0;
+  padding: 5px 14px 5px 5px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: color-mix(in srgb, var(--panel) 80%, transparent);
+  color: var(--dim);
+  font-size: 14px;
+  text-decoration: none;
+}
+.pill:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.pill b {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.chips {
+  list-style: none;
+  padding: 0;
+  margin: 26px auto 0;
+  max-width: 820px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  font-size: 14px;
+  color: var(--text);
+}
+.chips li::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+.chips li.c::before {
+  background: var(--accent2);
+  box-shadow: 0 0 10px var(--accent2);
+}
+/* The hero video: plays muted on a loop until the sound button restarts it with the music. */
+.shot.video {
+  position: relative;
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+.shot video {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sound {
+  position: absolute;
+  inset-inline-end: 16px;
+  top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  background: rgba(12, 10, 22, 0.78);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sound:hover {
+  border-color: var(--accent2);
+}
+.sound:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 2px;
+}
+.showcase {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.showcase figure {
+  margin: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition:
+    transform 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.showcase figure:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+.showcase img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid var(--border);
+}
+.showcase figcaption {
+  padding: 16px 20px 20px;
+}
+.showcase h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+}
+.showcase p {
+  margin: 0;
+  color: var(--dim);
+  font-size: 15px;
+}
 section {
   padding: 64px 0;
   border-top: 1px solid var(--border);
@@ -361,6 +497,12 @@ pre .p {
   .theme:hover {
     transform: none;
   }
+  .showcase figure {
+    transition: none;
+  }
+  .showcase figure:hover {
+    transform: none;
+  }
 }
 .theme .sw {
   display: flex;
@@ -522,8 +664,15 @@ code {
   background: color-mix(in srgb, var(--accent) 14%, var(--panel));
 }
 @media (max-width: 760px) {
-  .two {
+  .two,
+  .showcase {
     grid-template-columns: 1fr;
+  }
+  .sound {
+    inset-inline-end: 10px;
+    top: 10px;
+    padding: 7px 12px;
+    font-size: 13px;
   }
   nav .links a.hide-sm {
     display: none;

@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop: kode Anda, kunci Anda, keputusan Anda" />
     <meta property="og:description" content="Ruang kerja coding AI open source untuk Linux yang mengutamakan persetujuan, plus VOID Portal, remote Android dengan enkripsi end-to-end. Oleh M4S4T0-V01D." />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="Jendela VOID Workshop dengan pohon file, percakapan agen, panel rencana dan perubahan, terminal, dan bilah status" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop: Kodemu. Kuncimu. Persetujuanmu. Aplikasi desktop dengan diff yang menunggu persetujuan, dan VOID Portal di dua ponsel" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: kode Anda, kunci Anda, keputusan Anda" />
     <meta name="twitter:description" content="Ruang kerja coding AI open source untuk Linux yang mengutamakan persetujuan, plus VOID Portal, remote Android dengan enkripsi end-to-end. Oleh M4S4T0-V01D." />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop: Kodemu. Kuncimu. Persetujuanmu. Aplikasi desktop dengan diff yang menunggu persetujuan, dan VOID Portal di dua ponsel" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="Logo VOID Workshop" />
+        <a class="pill" href="#built"><b>Baru</b> panel GitHub &amp; Cloudflare, penghemat token, dan dasbor penggunaan</a>
         <h1>Kode Anda. Kunci Anda.<br /><span class="grad">Keputusan Anda.</span></h1>
         <p class="lead">VOID Workshop adalah agen coding gratis dan open source untuk desktop Linux, dibangun di atas Claude Agent SDK. Ia membuat rencana sebelum menyentuh apa pun, menunjukkan diff sebelum setiap penulisan, bertanya sebelum setiap perintah, dan berhenti pada anggaran yang Anda tetapkan. Bawa paket Claude, kunci API, atau model Ollama lokal, lalu kendalikan dari ponsel dengan VOID Portal.</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">Dapatkan VOID Portal</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">Lihat kode sumber</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="Jendela VOID Workshop dengan pohon file, percakapan agen, panel rencana dan perubahan, terminal, dan bilah status" /></div>
+        <ul class="chips">
+          <li>Paket Claude, kunci API, atau Ollama</li>
+          <li class="c">GitHub &amp; Cloudflare bawaan</li>
+          <li>Penghemat token</li>
+          <li class="c">Terenkripsi ujung ke ujung</li>
+          <li>13 bahasa</li>
+          <li class="c">Lisensi MIT</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="Tur 20 detik VOID Workshop: empat mode, diff yang menunggu persetujuan, VOID Portal di tiga ponsel, pull request GitHub, panel Cloudflare, dasbor token, tema dan bahasa"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> Putar dengan suara</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="Dialog persetujuan yang menampilkan unified diff dari perubahan file yang diusulkan" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>Semuanya dalam satu jendela</h2>
+        <p class="sub">Rencanakan, bangun, tinjau, dan rilis tanpa meninggalkan aplikasi, dan lihat persis ke mana token Anda pergi.</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="Pemilih mode: tanya sebelum mengedit, edit otomatis, Auto, dan mode Rencana" loading="lazy" width="1480" height="920" /><figcaption><h3>Empat mode</h3><p>Tanya sebelum mengedit, edit otomatis, Auto di dalam sandbox, atau mode Rencana: hanya baca, lalu rencana untuk Anda setujui. Shift+Tab berganti mode, bahkan di tengah tugas.</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="Panel GitHub menampilkan pull request dan diskusinya" loading="lazy" width="1480" height="920" /><figcaption><h3>Panel GitHub</h3><p>Masuk dengan kode perangkat atau token, lalu jelajahi pull request, issue, eksekusi workflow, dan rilis, baca diskusinya dan beri komentar. Token tetap di keyring Anda.</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Panel Cloudflare berisi daftar Workers dan proyek Pages" loading="lazy" width="1480" height="920" /><figcaption><h3>Panel Cloudflare</h3><p>Tempel token API untuk melihat sekilas Workers, proyek Pages, bucket R2, database D1, dan namespace KV Anda, hanya baca.</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="Dasbor penggunaan token dengan penggunaan harian 30 hari terakhir" loading="lazy" width="1480" height="920" /><figcaption><h3>Penghemat token dan dasbor</h3><p>Aktif secara bawaan: memadatkan sesi panjang pada 120k token dan memangkas keluaran perintah. Dasbor menampilkan 30 hari terakhir per model, dan dari mana beban terbesar.</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">Oleh <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Kode sumber di GitHub</a> · Lisensi MIT.<br />VOID Workshop adalah proyek open source independen dan tidak berafiliasi dengan atau didukung oleh Anthropic. Penggunaan Claude tunduk pada ketentuan Anthropic dan ditagihkan ke akun Anda sendiri.</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

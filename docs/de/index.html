@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop: dein Code, dein Schlüssel, deine Freigabe" />
     <meta property="og:description" content="Open-Source-KI-Arbeitsumgebung zum Programmieren unter Linux mit Freigabe zuerst, dazu VOID Portal, eine Ende-zu-Ende-verschlüsselte Android-Fernbedienung. Von M4S4T0-V01D." />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="Das VOID-Workshop-Fenster: Dateibaum, Unterhaltung mit dem Agenten, Plan- und Änderungsbereiche, Terminal und Statusleiste" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop: Dein Code. Dein Schlüssel. Deine Freigabe. Die Desktop-App mit einem Diff, das auf Freigabe wartet, und VOID Portal auf zwei Handys" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: dein Code, dein Schlüssel, deine Freigabe" />
     <meta name="twitter:description" content="Open-Source-KI-Arbeitsumgebung zum Programmieren unter Linux mit Freigabe zuerst, dazu VOID Portal, eine Ende-zu-Ende-verschlüsselte Android-Fernbedienung. Von M4S4T0-V01D." />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop: Dein Code. Dein Schlüssel. Deine Freigabe. Die Desktop-App mit einem Diff, das auf Freigabe wartet, und VOID Portal auf zwei Handys" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="VOID-Workshop-Logo" />
+        <a class="pill" href="#built"><b>Neu</b> GitHub- und Cloudflare-Panels, Token-Sparer und Verbrauchs-Dashboard</a>
         <h1>Dein Code. Dein Schlüssel.<br /><span class="grad">Deine Freigabe.</span></h1>
         <p class="lead">VOID Workshop ist ein kostenloser Open-Source-Coding-Agent für den Linux-Desktop auf Basis des Claude Agent SDK. Er plant, bevor er etwas anfasst, zeigt vor jedem Schreiben einen Diff, fragt vor jedem Befehl und stoppt beim Budget, das du festlegst. Bring dein Claude-Abo, einen API-Schlüssel oder lokale Ollama-Modelle mit und steuere alles mit VOID Portal vom Handy aus.</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">VOID Portal holen</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">Quellcode ansehen</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="Das VOID-Workshop-Fenster: Dateibaum, Unterhaltung mit dem Agenten, Plan- und Änderungsbereiche, Terminal und Statusleiste" /></div>
+        <ul class="chips">
+          <li>Claude-Abo, API-Schlüssel oder Ollama</li>
+          <li class="c">GitHub &amp; Cloudflare integriert</li>
+          <li>Token-Sparer</li>
+          <li class="c">Ende-zu-Ende-verschlüsselt</li>
+          <li>13 Sprachen</li>
+          <li class="c">MIT-lizenziert</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="Eine 20-sekündige Tour durch VOID Workshop: die vier Modi, ein Diff, das auf Freigabe wartet, VOID Portal auf drei Handys, ein GitHub-Pull-Request, das Cloudflare-Panel, das Token-Dashboard, Themes und Sprachen"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> Mit Ton abspielen</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="Freigabedialog mit dem Unified Diff einer vorgeschlagenen Dateiänderung" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>Alles in einem Fenster</h2>
+        <p class="sub">Planen, bauen, prüfen und ausliefern, ohne die App zu verlassen, und genau sehen, wohin deine Tokens gehen.</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="Die Modusauswahl: vor Änderungen fragen, automatisch bearbeiten, Auto und Planmodus" loading="lazy" width="1480" height="920" /><figcaption><h3>Vier Modi</h3><p>Vor Änderungen fragen, automatisch bearbeiten, Auto in der Sandbox oder Planmodus: erst nur lesen, dann ein Plan zur Freigabe. Umschalt+Tab wechselt, auch mitten in einer Aufgabe.</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="GitHub-Panel mit einem Pull Request und seiner Diskussion" loading="lazy" width="1480" height="920" /><figcaption><h3>GitHub-Panel</h3><p>Melde dich per Gerätecode oder Token an und durchsuche Pull Requests, Issues, Workflow-Läufe und Releases, lies die Diskussionen und kommentiere. Der Token bleibt in deinem Schlüsselbund.</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Cloudflare-Panel mit Workers und Pages-Projekten" loading="lazy" width="1480" height="920" /><figcaption><h3>Cloudflare-Panel</h3><p>Füge einen API-Token ein und sieh auf einen Blick deine Workers, Pages-Projekte, R2-Buckets, D1-Datenbanken und KV-Namespaces, nur lesend.</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="Token-Dashboard mit dem täglichen Verbrauch der letzten 30 Tage" loading="lazy" width="1480" height="920" /><figcaption><h3>Token-Sparer und Dashboard</h3><p>Standardmäßig an: verdichtet lange Sitzungen bei 120k Tokens und kürzt Befehlsausgaben. Das Dashboard zeigt die letzten 30 Tage pro Modell und wo das Gewicht liegt.</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">Erstellt von <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Quellcode auf GitHub</a> · MIT-Lizenz.<br />VOID Workshop ist ein unabhängiges Open-Source-Projekt, weder mit Anthropic verbunden noch von Anthropic unterstützt. Die Nutzung von Claude unterliegt den Bedingungen von Anthropic und wird über dein eigenes Konto abgerechnet.</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

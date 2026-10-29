@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop: ваш код, ваш ключ, ваше решение" />
     <meta property="og:description" content="Открытая ИИ-среда для программирования под Linux с подтверждением каждого шага, а также VOID Portal — Android-пульт со сквозным шифрованием. Автор M4S4T0-V01D." />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="Окно VOID Workshop: дерево файлов, диалог с агентом, панели плана и изменений, терминал и строка состояния" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop: Ваш код. Ваш ключ. Ваше одобрение. Настольное приложение с diff в ожидании одобрения и VOID Portal на двух телефонах" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: ваш код, ваш ключ, ваше решение" />
     <meta name="twitter:description" content="Открытая ИИ-среда для программирования под Linux с подтверждением каждого шага, а также VOID Portal — Android-пульт со сквозным шифрованием. Автор M4S4T0-V01D." />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop: Ваш код. Ваш ключ. Ваше одобрение. Настольное приложение с diff в ожидании одобрения и VOID Portal на двух телефонах" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="Логотип VOID Workshop" />
+        <a class="pill" href="#built"><b>Новое</b> панели GitHub и Cloudflare, экономия токенов и панель расхода</a>
         <h1>Ваш код. Ваш ключ.<br /><span class="grad">Ваше решение.</span></h1>
         <p class="lead">VOID Workshop — бесплатный агент для программирования с открытым исходным кодом для рабочего стола Linux на базе Claude Agent SDK. Он составляет план, прежде чем что-либо трогать, показывает diff перед каждой записью, спрашивает перед каждой командой и останавливается на заданном вами бюджете. Подключите подписку Claude, API-ключ или локальные модели Ollama и управляйте им с телефона через VOID Portal.</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">Скачать VOID Portal</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">Исходный код</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="Окно VOID Workshop: дерево файлов, диалог с агентом, панели плана и изменений, терминал и строка состояния" /></div>
+        <ul class="chips">
+          <li>Подписка Claude, API-ключ или Ollama</li>
+          <li class="c">GitHub и Cloudflare внутри</li>
+          <li>Экономия токенов</li>
+          <li class="c">Сквозное шифрование</li>
+          <li>13 языков</li>
+          <li class="c">Лицензия MIT</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="20-секундный обзор VOID Workshop: четыре режима, diff в ожидании одобрения, VOID Portal на трёх телефонах, pull request на GitHub, панель Cloudflare, панель токенов, темы и языки"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> Включить со звуком</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="Диалог подтверждения с unified diff предлагаемого изменения файла" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>Всё в одном окне</h2>
+        <p class="sub">Планируйте, пишите, проверяйте и выпускайте, не выходя из приложения, и точно знайте, куда уходят токены.</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="Выбор режима: спрашивать перед правками, править автоматически, Auto и режим плана" loading="lazy" width="1480" height="920" /><figcaption><h3>Четыре режима</h3><p>Спрашивать перед правками, править автоматически, Auto внутри песочницы или режим плана: только чтение, а затем план на ваше одобрение. Shift+Tab переключает их, даже посреди задачи.</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="Панель GitHub с pull request’ом и его обсуждением" loading="lazy" width="1480" height="920" /><figcaption><h3>Панель GitHub</h3><p>Войдите по коду устройства или токену и просматривайте pull request’ы, issues, запуски workflow и релизы, читайте обсуждения и комментируйте. Токен хранится в вашей связке ключей.</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Панель Cloudflare со списком Workers и проектов Pages" loading="lazy" width="1480" height="920" /><figcaption><h3>Панель Cloudflare</h3><p>Вставьте API-токен, чтобы сразу увидеть свои Workers, проекты Pages, бакеты R2, базы D1 и пространства имён KV, только для чтения.</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="Панель расхода токенов по дням за последние 30 дней" loading="lazy" width="1480" height="920" /><figcaption><h3>Экономия токенов и панель</h3><p>Включена по умолчанию: сжимает длинные сессии на 120k токенов и урезает вывод команд. Панель показывает последние 30 дней по моделям и то, что тяжелее всего.</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">Автор <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">Исходный код на GitHub</a> · Лицензия MIT.<br />VOID Workshop — независимый проект с открытым исходным кодом, не связанный с Anthropic и не одобренный ею. Использование Claude регулируется условиями Anthropic и оплачивается с вашего собственного аккаунта.</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

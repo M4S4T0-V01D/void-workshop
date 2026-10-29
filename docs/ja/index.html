@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop：あなたのコード、あなたのキー、あなたの承認" />
     <meta property="og:description" content="承認ファーストのオープンソース Linux 向け AI コーディング環境と、エンドツーエンド暗号化の Android リモコン VOID Portal。作者 M4S4T0-V01D。" />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="VOID Workshop のウィンドウ：ファイルツリー、エージェントとの会話、計画と変更のパネル、ターミナル、ステータスバー" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop：あなたのコード。あなたのキー。あなたの承認。承認待ちの差分を表示したデスクトップアプリと、2 台のスマホで動く VOID Portal" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop：あなたのコード、あなたのキー、あなたの承認" />
     <meta name="twitter:description" content="承認ファーストのオープンソース Linux 向け AI コーディング環境と、エンドツーエンド暗号化の Android リモコン VOID Portal。作者 M4S4T0-V01D。" />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop：あなたのコード。あなたのキー。あなたの承認。承認待ちの差分を表示したデスクトップアプリと、2 台のスマホで動く VOID Portal" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="VOID Workshop のロゴ" />
+        <a class="pill" href="#built"><b>新機能</b> GitHub・Cloudflare パネル、トークンセーバー、使用量ダッシュボード</a>
         <h1>あなたのコード。あなたのキー。<br /><span class="grad">あなたの承認。</span></h1>
         <p class="lead">VOID Workshop は Claude Agent SDK をベースにした、無料でオープンソースの Linux デスクトップ向けコーディングエージェントです。何かに手を付ける前に計画を立て、書き込みの前には diff を見せ、コマンドの前には必ず確認し、設定した予算で止まります。Claude のプラン、API キー、ローカルの Ollama モデルのどれでも使え、VOID Portal でスマホから操作できます。</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">VOID Portal を入手</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">ソースを見る</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="VOID Workshop のウィンドウ：ファイルツリー、エージェントとの会話、計画と変更のパネル、ターミナル、ステータスバー" /></div>
+        <ul class="chips">
+          <li>Claude プラン・API キー・Ollama</li>
+          <li class="c">GitHub と Cloudflare を内蔵</li>
+          <li>トークンセーバー</li>
+          <li class="c">エンドツーエンド暗号化</li>
+          <li>13 言語</li>
+          <li class="c">MIT ライセンス</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="VOID Workshop の 20 秒ツアー：4 つのモード、承認待ちの差分、3 台のスマホで動く VOID Portal、GitHub のプルリクエスト、Cloudflare パネル、トークンダッシュボード、テーマと言語"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> 音声付きで再生</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="提案されたファイル変更の unified diff を表示する承認ダイアログ" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>すべてをひとつのウィンドウで</h2>
+        <p class="sub">計画、実装、レビュー、リリースまでアプリから離れずに。トークンの行き先もひと目でわかります。</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="モード選択：編集前に確認、自動で編集、Auto、プランモード" loading="lazy" width="1480" height="920" /><figcaption><h3>4 つのモード</h3><p>編集前に確認、自動で編集、サンドボックス内の Auto、またはプランモード（読み取りのみで調査し、承認用のプランを提示）。Shift+Tab でタスクの途中でも切り替えられます。</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="プルリクエストとその会話を表示した GitHub パネル" loading="lazy" width="1480" height="920" /><figcaption><h3>GitHub パネル</h3><p>デバイスコードまたはトークンでサインインし、プルリクエスト、Issue、ワークフローの実行、リリースを閲覧。スレッドを読んでコメントもできます。トークンはキーリングに保存されます。</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Workers と Pages プロジェクトを一覧表示した Cloudflare パネル" loading="lazy" width="1480" height="920" /><figcaption><h3>Cloudflare パネル</h3><p>API トークンを貼り付けるだけで、Workers、Pages プロジェクト、R2 バケット、D1 データベース、KV 名前空間を読み取り専用でひと目で確認できます。</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="直近 30 日の日別使用量を表示したトークン使用量ダッシュボード" loading="lazy" width="1480" height="920" /><figcaption><h3>トークンセーバーとダッシュボード</h3><p>デフォルトで有効：長いセッションを 120k トークンで圧縮し、コマンド出力を切り詰めます。ダッシュボードには直近 30 日のモデル別使用量と、何が重いのかが表示されます。</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">制作 <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub のソース</a> · MIT ライセンス。<br />VOID Workshop は独立したオープンソースプロジェクトであり、Anthropic との提携や Anthropic による承認はありません。Claude の利用は Anthropic の規約に従い、あなた自身のアカウントに請求されます。</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

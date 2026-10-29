@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop: كودك، مفتاحك، قرارك" />
     <meta property="og:description" content="بيئة برمجة بالذكاء الاصطناعي مفتوحة المصدر لنظام Linux تطلب موافقتك أولًا، مع VOID Portal للتحكم عن بعد من Android بتشفير تام بين الطرفين. من إعداد M4S4T0-V01D." />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="نافذة VOID Workshop: شجرة الملفات، ومحادثة الوكيل، ولوحات الخطة والتغييرات، والطرفية، وشريط الحالة" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop: شيفرتك. مفتاحك. موافقتك. تطبيق سطح المكتب مع فرق ينتظر الموافقة، وVOID Portal على هاتفين" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: كودك، مفتاحك، قرارك" />
     <meta name="twitter:description" content="بيئة برمجة بالذكاء الاصطناعي مفتوحة المصدر لنظام Linux تطلب موافقتك أولًا، مع VOID Portal للتحكم عن بعد من Android بتشفير تام بين الطرفين. من إعداد M4S4T0-V01D." />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop: شيفرتك. مفتاحك. موافقتك. تطبيق سطح المكتب مع فرق ينتظر الموافقة، وVOID Portal على هاتفين" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="شعار VOID Workshop" />
+        <a class="pill" href="#built"><b>جديد</b> لوحتا GitHub وCloudflare، وموفّر الرموز ولوحة الاستخدام</a>
         <h1>كودك. مفتاحك.<br /><span class="grad">قرارك.</span></h1>
         <p class="lead">VOID Workshop وكيل برمجة مجاني ومفتوح المصدر لسطح مكتب Linux مبني على Claude Agent SDK. يضع خطة قبل أن يلمس أي شيء، ويعرض الفروقات قبل كل كتابة، ويسألك قبل كل أمر، ويتوقف عند الميزانية التي تحددها. استخدم اشتراك Claude أو مفتاح API أو نماذج Ollama المحلية، وتحكّم فيه من هاتفك عبر VOID Portal.</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">احصل على VOID Portal</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">عرض الكود المصدري</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="نافذة VOID Workshop: شجرة الملفات، ومحادثة الوكيل، ولوحات الخطة والتغييرات، والطرفية، وشريط الحالة" /></div>
+        <ul class="chips">
+          <li>خطة Claude أو مفتاح API أو Ollama</li>
+          <li class="c">GitHub وCloudflare مدمجان</li>
+          <li>موفّر الرموز</li>
+          <li class="c">تشفير من طرف إلى طرف</li>
+          <li>13 لغة</li>
+          <li class="c">ترخيص MIT</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="جولة في VOID Workshop مدتها 20 ثانية: الأوضاع الأربعة، وفرق ينتظر الموافقة، وVOID Portal على ثلاثة هواتف، وطلب سحب على GitHub، ولوحة Cloudflare، ولوحة الرموز، والسمات واللغات"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> تشغيل مع الصوت</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="نافذة موافقة تعرض unified diff لتغيير مقترح في ملف" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>كل شيء في نافذة واحدة</h2>
+        <p class="sub">خطّط وابنِ وراجع وانشر دون مغادرة التطبيق، واعرف بالضبط أين تذهب رموزك.</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="منتقي الوضع: السؤال قبل التعديل، والتعديل التلقائي، وAuto، ووضع الخطة" loading="lazy" width="1480" height="920" /><figcaption><h3>أربعة أوضاع</h3><p>السؤال قبل التعديل، أو التعديل التلقائي، أو Auto داخل صندوق العزل، أو وضع الخطة: قراءة فقط ثم خطة توافق عليها. يبدّل Shift+Tab بينها، حتى أثناء المهمة.</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="لوحة GitHub تعرض طلب سحب ونقاشه" loading="lazy" width="1480" height="920" /><figcaption><h3>لوحة GitHub</h3><p>سجّل الدخول برمز جهاز أو برمز مميز، ثم تصفّح طلبات السحب والمشكلات وتشغيلات سير العمل والإصدارات، واقرأ النقاشات وعلّق. يبقى الرمز في حلقة المفاتيح لديك.</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="لوحة Cloudflare تعرض Workers ومشاريع Pages" loading="lazy" width="1480" height="920" /><figcaption><h3>لوحة Cloudflare</h3><p>الصق رمز API لترى بنظرة واحدة Workers ومشاريع Pages وحاويات R2 وقواعد بيانات D1 ومساحات أسماء KV، للقراءة فقط.</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="لوحة استخدام الرموز مع الاستخدام اليومي لآخر 30 يومًا" loading="lazy" width="1480" height="920" /><figcaption><h3>موفّر الرموز ولوحة الاستخدام</h3><p>مفعّل افتراضيًا: يضغط الجلسات الطويلة عند 120 ألف رمز ويختصر مخرجات الأوامر. تعرض اللوحة آخر 30 يومًا لكل نموذج، وأين يذهب الثقل.</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">من إعداد <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">الكود المصدري على GitHub</a> · رخصة MIT.<br />VOID Workshop مشروع مستقل مفتوح المصدر، وليس تابعًا لـ Anthropic ولا معتمدًا منها. يخضع استخدام Claude لشروط Anthropic ويُحتسَب على حسابك الخاص.</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

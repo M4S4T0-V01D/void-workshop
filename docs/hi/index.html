@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="tr_TR" />
     <meta property="og:title" content="VOID Workshop: आपका कोड, आपकी कुंजी, आपकी मंज़ूरी" />
     <meta property="og:description" content="Linux के लिए अनुमति-पहले वाला ओपन सोर्स AI कोडिंग वर्कस्पेस, साथ में VOID Portal, एंड-टू-एंड एन्क्रिप्टेड Android रिमोट। निर्माता M4S4T0-V01D।" />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="VOID Workshop विंडो: फ़ाइल ट्री, एजेंट से बातचीत, योजना और बदलाव पैनल, टर्मिनल और स्टेटस बार" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop: आपका कोड। आपकी कुंजी। आपकी मंज़ूरी। मंज़ूरी की प्रतीक्षा में diff दिखाता डेस्कटॉप ऐप, और दो फ़ोन पर VOID Portal" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop: आपका कोड, आपकी कुंजी, आपकी मंज़ूरी" />
     <meta name="twitter:description" content="Linux के लिए अनुमति-पहले वाला ओपन सोर्स AI कोडिंग वर्कस्पेस, साथ में VOID Portal, एंड-टू-एंड एन्क्रिप्टेड Android रिमोट। निर्माता M4S4T0-V01D।" />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop: आपका कोड। आपकी कुंजी। आपकी मंज़ूरी। मंज़ूरी की प्रतीक्षा में diff दिखाता डेस्कटॉप ऐप, और दो फ़ोन पर VOID Portal" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="VOID Workshop लोगो" />
+        <a class="pill" href="#built"><b>नया</b> GitHub और Cloudflare पैनल, टोकन सेवर और उपयोग डैशबोर्ड</a>
         <h1>आपका कोड। आपकी कुंजी।<br /><span class="grad">आपकी मंज़ूरी।</span></h1>
         <p class="lead">VOID Workshop, Claude Agent SDK पर बना Linux डेस्कटॉप के लिए एक मुफ़्त और ओपन सोर्स कोडिंग एजेंट है। यह किसी भी चीज़ को छूने से पहले योजना बनाता है, हर लिखने से पहले diff दिखाता है, हर कमांड से पहले पूछता है, और आपके तय किए बजट पर रुक जाता है। अपना Claude प्लान, API कुंजी या लोकल Ollama मॉडल लाएँ, और VOID Portal से इसे अपने फ़ोन से चलाएँ।</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">VOID Portal पाएँ</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">सोर्स देखें</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="VOID Workshop विंडो: फ़ाइल ट्री, एजेंट से बातचीत, योजना और बदलाव पैनल, टर्मिनल और स्टेटस बार" /></div>
+        <ul class="chips">
+          <li>Claude प्लान, API कुंजी या Ollama</li>
+          <li class="c">GitHub और Cloudflare अंतर्निहित</li>
+          <li>टोकन सेवर</li>
+          <li class="c">एंड-टू-एंड एन्क्रिप्टेड</li>
+          <li>13 भाषाएँ</li>
+          <li class="c">MIT लाइसेंस</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="VOID Workshop का 20 सेकंड का दौरा: चार मोड, मंज़ूरी की प्रतीक्षा में एक diff, तीन फ़ोन पर VOID Portal, एक GitHub पुल रिक्वेस्ट, Cloudflare पैनल, टोकन डैशबोर्ड, थीम और भाषाएँ"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> आवाज़ के साथ चलाएँ</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="प्रस्तावित फ़ाइल बदलाव का unified diff दिखाता मंज़ूरी डायलॉग" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>सब कुछ एक ही विंडो में</h2>
+        <p class="sub">ऐप छोड़े बिना योजना बनाइए, बनाइए, समीक्षा कीजिए और रिलीज़ कीजिए, और ठीक-ठीक देखिए कि आपके टोकन कहाँ जा रहे हैं।</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="मोड चुनने वाला: बदलाव से पहले पूछें, अपने आप संपादित करें, Auto और प्लान मोड" loading="lazy" width="1480" height="920" /><figcaption><h3>चार मोड</h3><p>बदलाव से पहले पूछें, अपने आप संपादित करें, सैंडबॉक्स के अंदर Auto, या प्लान मोड: पहले केवल पढ़ना, फिर आपकी मंज़ूरी के लिए एक योजना। Shift+Tab इनके बीच बदलता है, काम के बीच में भी।</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="एक पुल रिक्वेस्ट और उसकी चर्चा दिखाता GitHub पैनल" loading="lazy" width="1480" height="920" /><figcaption><h3>GitHub पैनल</h3><p>डिवाइस कोड या टोकन से साइन इन करें, फिर पुल रिक्वेस्ट, इश्यू, वर्कफ़्लो रन और रिलीज़ देखें, चर्चाएँ पढ़ें और टिप्पणी करें। टोकन आपकी कीरिंग में रहता है।</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Workers और Pages प्रोजेक्ट की सूची दिखाता Cloudflare पैनल" loading="lazy" width="1480" height="920" /><figcaption><h3>Cloudflare पैनल</h3><p>एक API टोकन चिपकाइए और अपने Workers, Pages प्रोजेक्ट, R2 बकेट, D1 डेटाबेस और KV नेमस्पेस एक नज़र में देखिए, केवल पढ़ने के लिए।</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="पिछले 30 दिनों का दैनिक उपयोग दिखाता टोकन उपयोग डैशबोर्ड" loading="lazy" width="1480" height="920" /><figcaption><h3>टोकन सेवर और डैशबोर्ड</h3><p>डिफ़ॉल्ट रूप से चालू: लंबे सत्रों को 120k टोकन पर संक्षिप्त करता है और कमांड आउटपुट छोटा करता है। डैशबोर्ड पिछले 30 दिन मॉडल के हिसाब से दिखाता है, और बोझ कहाँ से आता है।</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">निर्माता <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub पर सोर्स</a> · MIT लाइसेंस।<br />VOID Workshop एक स्वतंत्र ओपन सोर्स प्रोजेक्ट है और Anthropic से संबद्ध या उसके द्वारा समर्थित नहीं है। Claude का इस्तेमाल Anthropic की शर्तों के अधीन है और आपके अपने अकाउंट पर बिल होता है।</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {

@@ -42,12 +42,19 @@
     <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:title" content="VOID Workshop：你的代码，你的密钥，你来批准" />
     <meta property="og:description" content="开源、审批优先的 Linux AI 编程工作区，另有端到端加密的 Android 遥控应用 VOID Portal。作者 M4S4T0-V01D。" />
-    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
-    <meta property="og:image:alt" content="VOID Workshop 窗口：文件树、智能体对话、计划与更改面板、终端和状态栏" />
+    <meta property="og:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:image:alt" content="VOID Workshop：你的代码，你的密钥，你来批准。桌面应用显示等待批准的差异，两部手机上运行 VOID Portal" />
+    <meta property="og:video" content="https://m4s4t0-v01d.github.io/void-workshop/media/demo.mp4" />
+    <meta property="og:video:type" content="video/mp4" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="VOID Workshop：你的代码，你的密钥，你来批准" />
     <meta name="twitter:description" content="开源、审批优先的 Linux AI 编程工作区，另有端到端加密的 Android 遥控应用 VOID Portal。作者 M4S4T0-V01D。" />
-    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png" />
+    <meta name="twitter:image" content="https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg" />
+    <meta name="twitter:image:alt" content="VOID Workshop：你的代码，你的密钥，你来批准。桌面应用显示等待批准的差异，两部手机上运行 VOID Portal" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -61,8 +68,8 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Linux",
             "license": "https://opensource.org/licenses/MIT",
-            "image": "https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png",
-            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
+            "image": "https://m4s4t0-v01d.github.io/void-workshop/media/og.jpg",
+            "screenshot": ["https://m4s4t0-v01d.github.io/void-workshop/screenshots/workspace.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/review.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/github-pr.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/tokens.png", "https://m4s4t0-v01d.github.io/void-workshop/screenshots/editor.png"],
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
             "author": { "@type": "Person", "name": "M4S4T0-V01D", "url": "https://github.com/M4S4T0-V01D" },
             "codeRepository": "https://github.com/M4S4T0-V01D/void-workshop"
@@ -159,6 +166,7 @@
     <header class="hero">
       <div class="wrap">
         <img class="logo" src="../logo.svg" alt="VOID Workshop 标志" />
+        <a class="pill" href="#built"><b>新功能</b> GitHub 与 Cloudflare 面板、令牌节省器和用量仪表盘</a>
         <h1>你的代码。你的密钥。<br /><span class="grad">你来批准。</span></h1>
         <p class="lead">VOID Workshop 是一款基于 Claude Agent SDK 的免费开源 Linux 桌面编程智能体。它在动手前先做计划，每次写入前展示 diff，每条命令前先征求同意，并在达到你设定的预算时停下。可使用你的 Claude 订阅、API 密钥或本地 Ollama 模型，还能用 VOID Portal 在手机上操控它。</p>
         <div class="cta">
@@ -166,7 +174,18 @@
           <a class="btn" href="#portal">获取 VOID Portal</a>
           <a class="btn" href="https://github.com/M4S4T0-V01D/void-workshop">查看源代码</a>
         </div>
-        <div class="shot"><img src="../screenshots/workspace.png" alt="VOID Workshop 窗口：文件树、智能体对话、计划与更改面板、终端和状态栏" /></div>
+        <ul class="chips">
+          <li>Claude 套餐、API 密钥或 Ollama</li>
+          <li class="c">内置 GitHub 与 Cloudflare</li>
+          <li>令牌节省器</li>
+          <li class="c">端到端加密</li>
+          <li>13 种语言</li>
+          <li class="c">MIT 许可</li>
+        </ul>
+        <div class="shot video">
+          <video src="../media/demo.mp4" poster="../media/demo-poster.jpg" width="1280" height="720" autoplay muted loop playsinline preload="metadata" aria-label="VOID Workshop 20 秒导览：四种模式、等待批准的差异、三部手机上的 VOID Portal、GitHub 拉取请求、Cloudflare 面板、令牌仪表盘、主题和语言"></video>
+          <button type="button" class="sound"><span aria-hidden="true">🔊</span> 有声播放</button>
+        </div>
       </div>
     </header>
 
@@ -197,6 +216,19 @@
           </ul>
         </div>
         <img src="../screenshots/review.png" alt="审批对话框，显示拟议文件更改的统一 diff" />
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="wrap">
+        <h2>一个窗口，应有尽有</h2>
+        <p class="sub">规划、构建、审查和发布都不必离开应用，还能清楚看到令牌花在了哪里。</p>
+        <div class="showcase">
+          <figure><img src="../screenshots/modes.png" alt="模式选择器：编辑前询问、自动编辑、Auto 和计划模式" loading="lazy" width="1480" height="920" /><figcaption><h3>四种模式</h3><p>编辑前询问、自动编辑、沙箱内的 Auto，或计划模式：先只读探索，再给出计划供你批准。Shift+Tab 切换，任务进行中也可以。</p></figcaption></figure>
+          <figure><img src="../screenshots/github-pr.png" alt="GitHub 面板显示一个拉取请求及其讨论" loading="lazy" width="1480" height="920" /><figcaption><h3>GitHub 面板</h3><p>用设备码或令牌登录，然后浏览拉取请求、议题、工作流运行和发布，阅读讨论并发表评论。令牌保存在你的密钥环中。</p></figcaption></figure>
+          <figure><img src="../screenshots/cloudflare.png" alt="Cloudflare 面板列出 Workers 和 Pages 项目" loading="lazy" width="1480" height="920" /><figcaption><h3>Cloudflare 面板</h3><p>粘贴一个 API 令牌，即可只读查看你的 Workers、Pages 项目、R2 存储桶、D1 数据库和 KV 命名空间。</p></figcaption></figure>
+          <figure><img src="../screenshots/tokens.png" alt="令牌用量仪表盘，显示最近 30 天的每日用量" loading="lazy" width="1480" height="920" /><figcaption><h3>令牌节省器与仪表盘</h3><p>默认开启：长会话在 120k 令牌时压缩，并精简命令输出。仪表盘按模型显示最近 30 天的用量，以及消耗主要来自哪里。</p></figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -354,6 +386,22 @@
       <div class="wrap">由 <a href="https://github.com/M4S4T0-V01D">M4S4T0-V01D</a> 制作 · <a href="https://github.com/M4S4T0-V01D/void-workshop">GitHub 上的源代码</a> · MIT 许可证。<br />VOID Workshop 是独立的开源项目，与 Anthropic 无关联，也未获其背书。Claude 的使用受 Anthropic 条款约束，费用计入你自己的账户。</div>
     </footer>
     <script>
+      // The hero video plays muted on a loop; the sound button restarts it with the music and native controls.
+      // With reduced motion it waits on its poster until played.
+      const demo = document.querySelector('.video video');
+      const sound = document.querySelector('.video .sound');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demo.removeAttribute('autoplay');
+        demo.pause();
+      }
+      sound.addEventListener('click', () => {
+        demo.muted = false;
+        demo.loop = false;
+        demo.controls = true;
+        demo.currentTime = 0;
+        demo.play();
+        sound.remove();
+      });
       // Remember the language picked from the menu, so the English page doesn't send this visitor elsewhere again.
       document.querySelectorAll('.lang .menu a').forEach((a) =>
         a.addEventListener('click', () => {
